@@ -12,12 +12,26 @@ OS specific plugins such as 3DEqualizer and that KeenTools suite are loaded diff
 General practises.
 Gizmos should not be loaded as "true gizmos" but rather as groups. This allows for the student to be able to move nuke scripts to outside the school without having to copy those as well. Furthermore this means that any uptade to the available plugin will not affect old scripts, ensurig that backwards compatibility is always retained.
 
-<h2>Custom Pipleines</h2>
+<h2>Custom Pipeline</h2>
+
+All the defintions that I'm about to mention will act only if both the nuke script is saved and a version numeber is present in the fine name
+
+<h4>INCREMENTAL SAVE</h4>
+
+The default behaviour of the Incremental Save has been overwritten by the new function <code>incrementalSave()</code>. This not only increases the version of the script, but also increment every Write and DeepWrite node in the script, to ensure that the render version always matches the scrip version.
 
 <h4>WRITE NODES</h4>
 
+When rendering form this customized version of Nuke the software automatically creates a copy of the script in the same location adding <i>_artifact</i> at the end of the file name. This ensures that it's always possible to restore the script that rendered a specific output.
+To further ensure that script are not overwritten after a render, Nuke will also ask whether to save an incremetal of the script after the render has been executed.
+These extra functionalities are implemented by changind the default values of the Python Knobs Before Render <code>writeBeforePipeline()</code> and After Render <code>writeAfterPipeline()</code>.
+These definitions contain further commands.
 
+<h4>NUKESTUDIO WRITE NODES</h4>
+When Write nodes have been generated either with NukeStudio or in a Nuke setup where the pipeline is not available, the Before and After Render behaviours are not in place.
+To ensure that standard write nodes are converted in "pipeline write nodes" the <code>incrementalSave()</code> function mentioned above has also been implemented to change the necessary Python Knobs. 
 
+<h4>CUSTOM PIPELINE WITH DEADLINE</h4>
 
 <h2>Custom Tools</h2>
 
