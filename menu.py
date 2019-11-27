@@ -300,7 +300,7 @@ def advancedSubmission():
         incrementalSave()
     return
 
-tbmenu.addCommand("Submit Nuke To Deadline", 'advancedSubmission()')
+tbmenu.addCommand("Submit Nuke To Deadline", 'advancedSubmission()', 'Alt+R')
 
 try:
     if nuke.env[ 'studio' ] or nuke.env[ 'NukeVersionMajor' ] >= 11:
