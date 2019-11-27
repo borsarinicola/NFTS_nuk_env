@@ -56,7 +56,7 @@ Data is stored on <code>%NUKE_PATH%/SharedToolSets</code>. Permissions for this 
 
 <h4>CUSTOM SHORTCUTS</h4>
 
-<table border="0">
+<table style="border:none!important;">
   <tr>
     <td width="50%">
       <ul>
