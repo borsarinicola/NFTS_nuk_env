@@ -55,18 +55,54 @@ This allows users to select some nodes or groups from the nodegraph and publish 
 Data is stored on <code>%NUKE_PATH%/SharedToolSets</code>. Permissions for this folder have been modified to allow users read and write access. All data contained in here is editable, exeption made for the preloaded lens distortion toolsets. This nodes are crucial for efficient lens distortion workflows and users should not atempt to remove or modify them.
 
 <h4>CUSTOM SHORTCUTS</h4>
-<ul>
-<li>Keymix          V</li>
-<li>Expression      E</li>
-<li>Invert          Alt+Ctrl+I</li>
-<li>Premult         Alt+Shift+P</li>
-<li>Unpremult       Alt+Shift+U</li>
-<li>ChannelMerge    Shift+M</li>
-<li>TransformMasked  Shift+T</li>
-<li>Backdrops       Alt+B</li>
-<li>Read from Write       Shift+R</li>
-<li>Reveal file in Browser      Alt+Shift+R</li>
-<li>Lable Shortcut       Shift+L</li>
-<li>Cycle Between Operations       Alt+X and Alt+Shift+X</li>
-<li>Sumbit to Deadline      Alt+R</li>
-</ul>
+
+<table border="0">
+  <tr>
+    <td width="50%">
+      <ul>
+        <li>Keymix          V</li>
+        <li>Expression      E</li>
+        <li>Invert          Alt+Ctrl+I</li>
+        <li>Premult         Alt+Shift+P</li>
+        <li>Unpremult       Alt+Shift+U</li>
+        <li>ChannelMerge    Shift+M</li>
+        <li>TransformMasked  Shift+T</li>
+      </ul>
+    </td>
+    <td width="50%">
+      <ul>
+        <li>Backdrops       Alt+B</li>
+        <li>Read from Write       Shift+R</li>
+        <li>Reveal file in Browser      Alt+Shift+R</li>
+        <li>Lable Shortcut       Shift+L</li>
+        <li>Cycle Between Operations       Alt+X and Alt+Shift+X</li>
+        <li>Sumbit to Deadline      Alt+R</li>
+      </ul>
+    </td>
+  </tr>
+</table>
+
+<h2>SCRIPTS</h2>
+
+To allow fast setup of direcories and Environment Variables, bat and bash scripts have been created.
+
+<h4>ENVIRONMENT VARIABLES</h4>
+
+There are two scripts available, one for Windows and one for MacOS.
+<code>set_hiero_env_win.bat</code> (WIN) creates the permanent user variable <code>HIERO_PLUGIN_PATH</code> adn directs it to the environment while <code>set_nuke_hiero_env_mac.command</code> (MAC) creates the temporary <code>HIERO_PLUGIN_PATH</code> nad <code>NUKE_PATH</code> variables. The MAC script needs to be runned at startup to ensure a working setup. At the NFTS the variable <code>NUKE_PATH</code> should be already set by default.
+
+<h4>DOCUMENTATION</h4>
+
+Documentation is often available. The Deadline guidelines for priorities and submission are stored in <code>documentation/deadline10_guidelines</code> and can also be accesed by navigating to the <code>Thinkbox/Documentation</code> within Nuke's interface.
+
+<h2>EXTRA NON-NUKE CONFIGURATIONS</h2>
+
+The Environment safely stores some important scripts and executables to quickly set up other bits of software.
+
+<h4>HOUDINI</h4>
+
+In the <code>scripts/houdini</code> folder, a the script <code>set_houdini_renderers.bat</code> is stored. When executed the script created a houdini17.0 folder in the user's Documents and populates it with a precompile <code>houdini.env</code> file. This contains the necessary text to allow Houdini 17 to run Redshift and Arnold. Note that if the file already exists, it will be replaced. 
+
+To install the Deadline submission tool for Houdini please run the <code>Houdini-submitter-windows-installer.exe</code> contained in the same folder. This will add extra lines to the <code>houdini.env</code> so make sure to run the Arnold and Redshift script first.
+
+<h4>DEADLINE</h4>
