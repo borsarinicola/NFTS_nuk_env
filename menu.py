@@ -12,6 +12,7 @@ Import standard Python modules.
 '''
 
 import os, sys, nuke
+import webbrowser
 
 ####################################
 
@@ -408,6 +409,9 @@ toolbar.addCommand('Transform/TransformMasked', 'nuke.createNode("TransformMaske
 
 ####################################
 
+# add environment help buton 
 
+def gitHubEnvHelp():
+  webbrowser.open("https://github.com/borsarinicola/nfts_nuk_env")
 
-
+nuke.menu( 'Nuke' ).addCommand('Environment Help', 'gitHubEnvHelp()')
