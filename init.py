@@ -14,7 +14,7 @@ Import standard Python modules.
 
 import nuke
 import os
-import network_drive_mapping #imports the custom py that maps the letters between os for ISIS and servers
+import network_drive_remapping #imports the custom py that maps the letters between os for ISIS and servers
 
 
 ####################################
