@@ -65,6 +65,11 @@ cryptomatte_utilities.setup_cryptomatte()
 # NFTS CUSTOM PIPELINE FUNCTIONS AND OVERRIDES
 
 
+
+
+
+
+
 #check the existence of versioning in the file name
 def ScriptVersionTest():
     filename = nuke.root().knob('name').value()
@@ -105,7 +110,38 @@ def writeAfterPipeline():
             incrementalSave()
     return
 
-#define a custom invremental save that also vesions up every write not in the script
+
+# old write pipeline (for legagy purposes)
+
+
+def write_studio_pipeline():
+    try:
+        ns = nuke.root().knob('timeline_write_node').value()
+        selection = nuke.allNodes() #store selection into list
+        x = 0 #counter for loop
+        
+        for each in selection:
+            processing = selection[x]
+        
+            if x <= len(selection):
+        
+                x = x+1
+        
+                #clear selection and prepare a new one for processing 
+                nukescripts.clear_selection_recursive()
+                processing.knob("selected").setValue(True)
+                if 'Write' in nuke.selectedNode().Class():
+					nuke.selectedNode().knob('beforeRender').setValue("writeBeforePipeline()")
+					nuke.selectedNode().knob('afterRender').setValue("writeAfterPipeline()")
+    
+    except:
+        print 'not studio'
+
+    return
+
+
+
+# define a custom invremental save that also vesions up every write not in the script
 
 def incrementalSave():
  
