@@ -22,16 +22,22 @@ The default behaviour of the Incremental Save has been overwritten by the new fu
 
 <h4>WRITE NODES</h4>
 
-When rendering form this customized version of Nuke the software automatically creates a copy of the script in the same location adding <i>_artifact</i> at the end of the file name. This ensures that it's always possible to restore the script that rendered a specific output.
-To further ensure that script are not overwritten after a render, Nuke will also ask whether to save an incremetal of the script after the render has been executed.
-These extra functionalities are implemented by changind the default values of the Python Knobs Before Render <code>writeBeforePipeline()</code> and After Render <code>writeAfterPipeline()</code>.
-These definitions contain further commands.
+To ensure that script are not overwritten after a render, Nuke will also ask whether to save an incremetal of the script after the render has been executed. Artifacts will also be created upon render.
+These extra functionalities are implemented by changind the default values of the Python Knobs <b>Before Render</b><code>writeBeforePipeline()</code> and <b>After Render</b> <code>writeAfterPipeline()</code>.
 
-<h4>NUKESTUDIO WRITE NODES</h4>
+<h4>ARTIFACTS</h4>
+
+When rendering form this customized version of Nuke the software automatically creates a copy of the script in the same location adding <i>_artifact</i> at the end of the file name. This ensures that it's always possible to restore the script that rendered a specific output. Aritifacts are created only from the GUI. This is done using the <code>nuke.GUI</code> variable.
+
+<h4>EXTERNAL WRITE NODES ISSUE</h4>
 When Write nodes have been generated either with NukeStudio or in a Nuke setup where the pipeline is not available, the Before and After Render behaviours are not in place.
 To ensure that standard write nodes are converted in "pipeline write nodes" the <code>incrementalSave()</code> function mentioned above has also been implemented to change the necessary Python Knobs. 
 
 <h4>CUSTOM PIPELINE WITH DEADLINE</h4>
+Deadline renders run in the non-GUI version of nuke. Therfore artifacts must be created during submission rather than at render time.
+This is achieved with the <code>advencedSubmission()</code> function. This will first run a script save <code>nuke.scriptsave()</code>, then it runs the standard Deadline Submission function <code>DealineNukeClient.main()</code> and upon succes of the last step the <code>createArtifact()</code>. 
+This also ensures that artifacts are generated only once and not evey time that a Deadline render task is initialized.
+
 
 <h2>Custom Tools</h2>
 
