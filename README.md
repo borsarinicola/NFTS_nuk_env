@@ -2,7 +2,7 @@
 
 <h2>General Infromations</h2>
 
-This repository contains the custom tools and default gizmos for Nuke, Nuke Studio and Hiero at the National Film and TV School.
+This repository contains the custom tools, pipelines and default gizmos for Nuke, Nuke Studio and Hiero at the National Film and TV School, DFX Department.
 
 This repo can be copyed to a network shared drive and all machines that need access to it must have the environment variables <code>NUKE_PATH</code> and <code>HIERO_PLUGIN_PATH</code> pointing to the shared volume.
 
