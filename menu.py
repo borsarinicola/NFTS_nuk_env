@@ -2,7 +2,7 @@
 
 '''
 NFTS - National Film and Television School.
-latest update: 2019-09-29
+latest update: 2019-11-27
 '''
 
 ####################################
@@ -11,8 +11,7 @@ latest update: 2019-09-29
 Import standard Python modules.
 '''
 
-import os
-import nuke
+import os, sys, nuke
 
 ####################################
 
@@ -29,7 +28,6 @@ import pixelfudger
 import AnimationMaker
 import CycleOperations
 
-IS_GUI = True
 
 ####################################
 
@@ -136,8 +134,6 @@ nuke.menu( 'Nuke' ).addCommand('NFTS Share/Paste Shared Nodes', 'nftsPaste()', '
 
 # shared_toolsets
 
-import sys
-
 if nuke.GUI:
 
   import shared_toolsets
@@ -168,18 +164,119 @@ if nuke.GUI:
 
 ####################################
 
-
-
-
-#install kentools for win nuke11.2
-
 from version_check import *
+import nuke
+import os
+
 
 if nuke.env['WIN32']:
-    from win_plugin_loader.py import *
+
+
+    if 'available_keentools_versions' not in globals():
+        available_keentools_versions = []
+        proper_keentools_version_found = False
+
+    current_keentools_version = (os.path.dirname(os.path.realpath(__file__)),
+                                 '11.2', 'WIN')
+    available_keentools_versions.append(current_keentools_version)
+
+
+    toolbar = nuke.menu('Nodes')
+    if check_nuke_version_and_os(current_keentools_version[1], current_keentools_version[2]):
+        proper_keentools_version_found = True
+
+        # add KeenTools menu to Nodes toolbar
+        toolbar.removeItem('KeenTools')
+        kt_menu = toolbar.addMenu('KeenTools', tooltip="""
+            KeenTools v1.4.7
+            loaded from "{0}"
+            """.format(current_keentools_version[0]),
+            icon='KeenTools.png')
+        kt_menu.addCommand('GeoTracker', lambda: nuke.createNode('GeoTracker'), icon='GeoTracker.png')
+        kt_menu.addCommand('PinTool', lambda: nuke.createNode('PinTool'), icon='PinTool.png')
+        kt_menu.addCommand('ReadRiggedGeo', lambda: nuke.createNode('ReadRiggedGeo'), icon='ReadRiggedGeo.png')
+        if 'ON' == 'ON':
+            kt_menu.addCommand('FaceBuilder', lambda: nuke.createNode('FaceBuilder'), icon='FaceBuilder.png')
+        if 'ON' == 'ON':
+            kt_menu.addCommand('FaceTracker (beta)', lambda: nuke.createNode('FaceTracker'), icon='FaceTracker.png')
+        if 'OFF' == 'ON':
+            kt_menu.addCommand('FlowEvaluationTool', lambda: nuke.createNode('FlowEvaluationTool'), icon='KeenTools.png')
+        if 'ON' == 'ON':
+            kt_menu.addCommand('TextureBuilder (beta)', lambda: nuke.createNode('TextureBuilder'), icon='TextureBuilder.png')
+
+
+    if not proper_keentools_version_found:
+        # add a warning to menu
+
+        def keentools_version_to_str(keentools_version):
+            path, nuke_v, os = keentools_version
+            return '  - Nuke{0} {1} at \n    "{2}"'.format(nuke_v, os, path)
+
+        available_keentools_versions_str = '\n'.join(
+            [keentools_version_to_str(x) for x in available_keentools_versions])
+        warning_text = ("You are using Nuke{0} on {1}\n"
+                        "There is no KeenTools for that configuration installed\n"
+                        "\n"
+                        "Available KeenTools installations:\n"
+                        "{2}").format(
+                            current_nuke_version(), current_platform(),
+                            available_keentools_versions_str)
+        toolbar.removeItem('KeenTools')
+        toolbar.addCommand('KeenTools', lambda: nuke.message(warning_text), icon='KeenTools.png')
 
 if nuke.env['MACOS']:
-    from mac_plugin_loader.py import *
+
+    if 'available_keentools_versions' not in globals():
+        available_keentools_versions = []
+        proper_keentools_version_found = False
+
+    current_keentools_version = (os.path.dirname(os.path.realpath(__file__)),
+                                 '11.2', 'OSX')
+    available_keentools_versions.append(current_keentools_version)
+
+
+    toolbar = nuke.menu('Nodes')
+    if check_nuke_version_and_os(current_keentools_version[1], current_keentools_version[2]):
+        proper_keentools_version_found = True
+
+        # add KeenTools menu to Nodes toolbar
+        toolbar.removeItem('KeenTools')
+        kt_menu = toolbar.addMenu('KeenTools', tooltip="""
+            KeenTools v1.4.7
+            loaded from "{0}"
+            """.format(current_keentools_version[0]),
+            icon='KeenTools.png')
+        kt_menu.addCommand('GeoTracker', lambda: nuke.createNode('GeoTracker'), icon='GeoTracker.png')
+        kt_menu.addCommand('PinTool', lambda: nuke.createNode('PinTool'), icon='PinTool.png')
+        kt_menu.addCommand('ReadRiggedGeo', lambda: nuke.createNode('ReadRiggedGeo'), icon='ReadRiggedGeo.png')
+        if 'ON' == 'ON':
+            kt_menu.addCommand('FaceBuilder', lambda: nuke.createNode('FaceBuilder'), icon='FaceBuilder.png')
+        if 'ON' == 'ON':
+            kt_menu.addCommand('FaceTracker (beta)', lambda: nuke.createNode('FaceTracker'), icon='FaceTracker.png')
+        if 'OFF' == 'ON':
+            kt_menu.addCommand('FlowEvaluationTool', lambda: nuke.createNode('FlowEvaluationTool'), icon='KeenTools.png')
+        if 'ON' == 'ON':
+            kt_menu.addCommand('TextureBuilder (beta)', lambda: nuke.createNode('TextureBuilder'), icon='TextureBuilder.png')
+
+
+    if not proper_keentools_version_found:
+        # add a warning to menu
+
+        def keentools_version_to_str(keentools_version):
+            path, nuke_v, os = keentools_version
+            return '  - Nuke{0} {1} at \n    "{2}"'.format(nuke_v, os, path)
+
+        available_keentools_versions_str = '\n'.join(
+            [keentools_version_to_str(x) for x in available_keentools_versions])
+        warning_text = ("You are using Nuke{0} on {1}\n"
+                        "There is no KeenTools for that configuration installed\n"
+                        "\n"
+                        "Available KeenTools installations:\n"
+                        "{2}").format(
+                            current_nuke_version(), current_platform(),
+                            available_keentools_versions_str)
+        toolbar.removeItem('KeenTools')
+        toolbar.addCommand('KeenTools', lambda: nuke.message(warning_text), icon='KeenTools.png')
 
 
 ####################################
@@ -190,6 +287,8 @@ if nuke.env['MACOS']:
 import DeadlineNukeClient
 menubar = nuke.menu("Nuke")
 tbmenu = menubar.addMenu("&Thinkbox")
+
+#advancedSumbission creates the artifact upon script sumbission
 
 def advancedSubmission():
     nuke.scriptSave()
@@ -215,7 +314,6 @@ except:
 
 
 
-
 ####################################
 
 # add extra main menu functions
@@ -226,7 +324,7 @@ nuke.menu('Nuke').addCommand('Edit/Autocrop Selected Nodes','nukescripts.autocro
 nuke.menu("Nuke").addCommand('File/Package Script', 'import Gizmo2Group\nGizmo2Group.Gizmo2Group()\nimport WrapItUp\nWrapItUp.WrapItUp()')  # add packages script - importing it when used - runs also gizmo to group
 nuke.menu("Nuke").addCommand('File/Save New Comp Version', 'incrementalSave()') #override save new comp version funtionalities
 
-if nuke.env['nukex'] == False: # Check Nuke or Nuke X
+if nuke.env['nukex'] == False: # Check Nuke or Nuke X and add menu only if cheep nuke is running
     switchX = nuke.menu("Nuke").addCommand('File/Switch to NukeX ', 'import nukeSwitch\nnukeSwitch.versionSwitch()')
 
 

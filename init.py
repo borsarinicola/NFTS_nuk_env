@@ -2,7 +2,7 @@
 
 '''
 NFTS - National Film and Television School.
-latest update: 2019-09-15
+latest update: 2019-11-27
 '''
 
 ####################################
@@ -16,8 +16,6 @@ import nuke
 import os
 import network_drive_mapping #imports the custom py that maps the letters between os for ISIS and servers
 
-
-IS_GUI = False
 
 ####################################
 
@@ -47,8 +45,8 @@ if nuke.env['MACOS']:
 Add viewer luts.
 '''
 
-nuke.ViewerProcess.register("Cineon", nuke.createNode, ("ViewerProcess_1DLUT","current Cineon" ))
-nuke.ViewerProcess.register("AlexaV3LogC", nuke.createNode, ("ViewerProcess_1DLUT","current AlexaV3LogC" ))
+#nuke.ViewerProcess.register("Cineon", nuke.createNode, ("ViewerProcess_1DLUT","current Cineon" ))
+#nuke.ViewerProcess.register("AlexaV3LogC", nuke.createNode, ("ViewerProcess_1DLUT","current AlexaV3LogC" ))
 
 ####################################
 
@@ -60,74 +58,23 @@ import cryptomatte_utilities
 cryptomatte_utilities.setup_cryptomatte()
 
 
+
+
 ####################################
 
+# NFTS CUSTOM PIPELINE FUNCTIONS AND OVERRIDES
 
-def write_studio_pipeline():
-    try:
-        ns = nuke.root().knob('timeline_write_node').value()
-        selection = nuke.allNodes() #store selection into list
-        x = 0 #counter for loop
-        
-        for each in selection:
-            processing = selection[x]
-        
-            if x <= len(selection):
-        
-                x = x+1
-        
-                #clear selection and prepare a new one for processing 
-                nukescripts.clear_selection_recursive()
-                processing.knob("selected").setValue(True)
-                if 'Write' in nuke.selectedNode().Class():
-                    nuke.selectedNode().knob('beforeRender').setValue("try:\n    ScriptVersionTest()\nexcept ValueError:\n    print 'skipping pipeline'\nelse:\n    createArtifact()")
-                    nuke.selectedNode().knob('afterRender').setValue("try:\n    ScriptVersionTest()\nexcept ValueError:\n    print 'skipping pipeline'\nelse:\n    if nuke.ask('Do you want to version up your script?'):\n        incrementalSave()")
-    
-    except:
-        print 'not studio'
 
+#check the existence of versioning in the file name
+def ScriptVersionTest():
+    filename = nuke.root().knob('name').value()
+    nukescripts.version_get(filename, 'v')
     return
 
-
-
-
-#override default incremental save with functions that also increments write nodes 
-
-def incrementalSave():
-    write_studio_pipeline()
-    
-    nuke.selectAll()
-    selection = nuke.selectedNodes()
-    x = 0
-    
-    for each in selection:
-        processing = selection[x]
-    
-        if x <= len(selection):
-            x = x+1
-            nukescripts.clear_selection_recursive()
-            processing.knob("selected").setValue(True)
-            name = nuke.selectedNode().Class() 
-
-            try:
-                if 'Write' in name and nuke.selectedNode().knob('name').getValue() != nuke.root().knob('timeline_write_node').value():
-                    nukescripts.version_up()
-
-            except:
-
-                if 'Write' in name:
-                    nukescripts.version_up()
-
-
-    nukescripts.script_version_up()
-
-    return
-
-
-
+#defice the creation of artifact by removing the last 3 characters form the file name (.nk) and adding _artifact.nk
 def createArtifact():
 
-	if IS_GUI == True:
+	if nuke.GUI == True:
 
 		filepath = nuke.value("root.name")
 		nukescript = filepath[:-3]
@@ -137,36 +84,73 @@ def createArtifact():
 	
 	return
 
+#define the before and after write functions with the version check - the try is not done in the script version test funciton for legacy purposes
 
-# adds version up functionalities after render to write and deep write
-
-def ScriptVersionTest():
-    filename = nuke.root().knob('name').value()
-    nukescripts.version_get(filename, 'v')
+def writeBeforePipeline():
+    try:
+        ScriptVersionTest()
+    except ValueError:
+        print 'skipping pipeline'
+    else:
+        createArtifact()
     return
 
-nuke.knobDefault('Write.beforeRender', "try:\n    ScriptVersionTest()\nexcept ValueError:\n    print 'skipping pipeline'\nelse:\n    createArtifact()")
-nuke.knobDefault('Write.afterRender', "try:\n    ScriptVersionTest()\nexcept ValueError:\n    print 'skipping pipeline'\nelse:\n    if nuke.ask('Do you want to version up your script?'):\n        incrementalSave()")
-nuke.knobDefault('DeepWrite.beforeRender', "try:\n    ScriptVersionTest()\nexcept ValueError:\n    print 'skipping pipeline'\nelse:\n    createArtifact()")
-nuke.knobDefault('DeepWrite.afterRender', "try:\n    ScriptVersionTest()\nexcept ValueError:\n    print 'skipping pipeline'\nelse:\n    if nuke.ask('Do you want to version up your script?'):\n        incrementalSave()")
+def writeAfterPipeline():
+    try:
+        ScriptVersionTest()
+    except ValueError:
+        print 'skipping pipeline'
+    else:
+        if nuke.ask('Do you want to version up your script?'):
+            incrementalSave()
+    return
+
+#define a custom invremental save that also vesions up every write not in the script
+
+def incrementalSave():
+ 
+    selection = nuke.allNodes()
+   
+    x = 0
+    
+    for each in selection:
+        processing = selection[x]
+    
+        if x <= len(selection):
+          
+            nukescripts.clear_selection_recursive()
+            processing.knob("selected").setValue(True)
+
+            name = nuke.selectedNode().Class() 
+
+            if 'Write' in name:
+                nuke.selectedNode().knob('beforeRender').setValue("writeBeforePipeline()")
+                nuke.selectedNode().knob('afterRender').setValue("writeAfterPipeline()")
+                nukescripts.version_up()
+
+            x = x + 1
+
+    nukescripts.script_version_up()
+
+    return
 
 
+# adds the new pipleine definitions as default values in the python tab of write and deep write
 
-
-
-
-
-
+nuke.knobDefault('Write.beforeRender', "writeBeforePipeline()")
+nuke.knobDefault('Write.afterRender', "writeAfterPipeline()")
+nuke.knobDefault('DeepWrite.beforeRender', "writeBeforePipeline()")
+nuke.knobDefault('DeepWrite.afterRender', "writeAfterPipeline()")
 
 
 
 ####################################
 
 
+#   install kentools for win nuke11.2
+
+
 if nuke.env['WIN32']:
-
-
-	#install kentools for win nuke11.2
 
 
 	# add KeenTools directory to python path to be able to import
@@ -223,8 +207,6 @@ if nuke.env['MACOS']:
 	    nuke.load('KeenTools')
 	else:
 	    print('loading KeenTools for Nuke11.2 OSX skipped')
-
-
 
 
 
