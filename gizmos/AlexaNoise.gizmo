@@ -1,0 +1,279 @@
+#! C:/Program Files/Nuke10.5v7/nuke-10.5.7.dll -nx
+version 10.5 v7
+Gizmo {
+ inputs 2
+ label "EI 800"
+ note_font Helvetica
+ mapsize {0.15 0.15}
+ addUserKnob {20 User}
+ addUserKnob {4 noisetype l "Noise Type" t "This allows you to select whether the noise sample is from a d03 plate (default) or an original, non-denoised plate." M {d03 d04 original ""}}
+ noisetype original
+ addUserKnob {26 ""}
+ addUserKnob {7 overallGain l Gain}
+ overallGain 0.1
+ addUserKnob {18 intensity l "RGB Intensity"}
+ intensity {1 1 1}
+ addUserKnob {6 intensity_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {6 invertMask l "Invert Incoming Mask" t "Invert Incoming Mask" +STARTLINE}
+}
+ Input {
+  inputs 0
+  name bg
+  xpos -718
+  ypos -625
+ }
+ NoOp {
+  name resIn
+  xpos -718
+  ypos -526
+ }
+set N74a8fc00 [stack 0]
+ Colorspace {
+  colorspace_out AlexaV3LogC
+  name Colorspace1
+  xpos -569
+  ypos -377
+ }
+ Input {
+  inputs 0
+  name mask
+  xpos -391
+  ypos -215
+  number 1
+ }
+ Dot {
+  name Dot7
+  xpos -357
+  ypos -56
+ }
+set N74a8f000 [stack 0]
+push $N74a8f000
+ Dot {
+  name Dot8
+  xpos -477
+  ypos -56
+ }
+ Invert {
+  name Invert1
+  xpos -511
+  ypos -23
+ }
+ Switch {
+  inputs 2
+  which {{parent.invertMask}}
+  name Switch1
+  xpos -511
+  ypos 62
+ }
+push $N74a8f000
+ Shuffle {
+  red black
+  green black
+  blue black
+  alpha black
+  name Shuffle1
+  xpos -391
+  ypos 5
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge4
+  xpos -391
+  ypos 62
+ }
+ Invert {
+  name Invert2
+  xpos -391
+  ypos 201
+ }
+push $N74a8fc00
+ Expression {
+  expr0 "r > 0.01060 ? 0.2471896*log10(( r + 0.00937677 ) / 0.18 ) +\n0.385537 : 0.9661776 * ((( r + 0.00937677 ) / 0.18 ) + 0.0444378604 )"
+  expr1 "g> 0.01060 ? 0.2471896*log10(( g + 0.00937677 ) / 0.18 ) +\n0.385537 : 0.9661776 * ((( g + 0.00937677 ) / 0.18 ) + 0.0444378604 )"
+  expr2 "b > 0.01060 ? 0.2471896*log10(( b + 0.00937677 ) / 0.18 ) +\n0.385537 : 0.9661776 * ((( b + 0.00937677 ) / 0.18 ) + 0.0444378604 )"
+  name Linear_to_AlexaLogC
+  label "800 EI scene linear to logC v3\ninvert arri formula relative\nexposure\n"
+  xpos -718
+  ypos -408
+ }
+ Clamp {
+  maximum 100
+  name Clamp1
+  xpos -718
+  ypos -298
+ }
+ Dot {
+  name Dot1
+  xpos -684
+  ypos -215
+ }
+set N75ac0c00 [stack 0]
+ Dot {
+  name Dot2
+  xpos -796
+  ypos -215
+ }
+ Dot {
+  name Dot3
+  xpos -796
+  ypos 33
+ }
+ Read {
+  inputs 0
+  file //digitalfxserver/CompEnvironment/resources/alexa_noise/EI800/v001/main/2880x1620/noise_tile.####.exr
+  format "2880 1620 0 0 2880 1620 1 "
+  first 1001
+  before bounce
+  last 1077
+  after bounce
+  origfirst 1001
+  origlast 1077
+  origset true
+  version 1
+  name Read2
+  xpos -1000
+  ypos -769
+ }
+ Dot {
+  name Dot9
+  xpos -966
+  ypos -561
+ }
+ Read {
+  inputs 0
+  file //digitalfxserver/CompEnvironment/resources/alexa_noise/EI800/v002/main/2880x1620/noise_tile_d03_v002.####.exr
+  format "2880 1620 0 0 2880 1620 1 "
+  first 1001
+  before bounce
+  last 1099
+  after bounce
+  origfirst 1001
+  origlast 1099
+  origset true
+  version 1
+  name Read3
+  xpos -1353
+  ypos -782
+ }
+ Grade {
+  blackpoint -0.0007
+  black_clamp false
+  name Grade3
+  xpos -1353
+  ypos -621
+ }
+set N75afb400 [stack 0]
+ Grade {
+  white 2
+  black_clamp false
+  name Grade2
+  xpos -1196
+  ypos -512
+ }
+push $N75afb400
+ Dot {
+  name Dot4
+  xpos -1319
+  ypos -499
+ }
+ Switch {
+  inputs 3
+  which {{parent.noisetype}}
+  name Switch2
+  xpos -1197
+  ypos -394
+ }
+ Grade {
+  white {{parent.overallGain i}}
+  multiply {{parent.intensity.r i} {parent.intensity.g i} {parent.intensity.b i} 1}
+  black_clamp false
+  name Grade1
+  xpos -1197
+  ypos -326
+ }
+ Reformat {
+  type scale
+  scale {{max(resIn.input.width/2880,resIn.input.height/1620)}}
+  name Reformat1
+  xpos -1197
+  ypos -263
+ }
+ Tile {
+  rows {{parent.Reformat1.scale}}
+  columns {{parent.Reformat1.scale}}
+  name Tile1
+  xpos -1197
+  ypos -205
+ }
+ Crop {
+  box {0 0 {resIn.input.width} {resIn.input.height}}
+  reformat true
+  crop false
+  name Crop1
+  xpos -1197
+  ypos -136
+ }
+ Dot {
+  name Dot10
+  xpos -1163
+  ypos -69
+ }
+push $N75ac0c00
+ ColorLookup {
+  lut {master {}
+    red {curve R 0 x0 0 S l x0.1172975674 4.546283398 x0.3417518735 2.043866011 x0.4368668199 1.16002432 x0.5139240623 0.8527641207 x0.5760449767 0.613313501 x0.7484635115 0.3841231136 x1 0 s0}
+    green {curve R 0 x0 0 S l x0.1107967347 3.984087767 x0.3459633291 1.892397412 x0.4430339932 1.039288591 x0.5171385407 0.8861127602 x0.5790994167 0.6067348479 x0.7588987947 0.4673935088 x1 0 s0}
+    blue {curve R 0 x0 0 S l x0.1130526587 4.480130892 x0.3493820727 1.767911953 x0.4459269643 0.9960496556 x0.5178385973 0.8263492119 x0.5814570785 0.5719656866 x0.7625516653 0.4314690673 x1 0 s0}
+    alpha {curve l 0 1}}
+  name alexa_response
+  xpos -718
+  ypos -156
+ }
+ Merge2 {
+  inputs 2
+  operation multiply
+  bbox B
+  name Merge2
+  xpos -718
+  ypos -73
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge3
+  xpos -718
+  ypos 30
+ }
+ Expression {
+  expr0 " r > 0.1496582 ? pow(10, ( r - 0.385537)/ 0.2471896) *0.18\n-0.00937677 : (r /0.9661776 - 0.04378604) *0.18 - 0.00937677"
+  expr1 " g> 0.1496582 ? pow(10, ( g - 0.385537)/ 0.2471896) *0.18\n-0.00937677 : (g /0.9661776 - 0.04378604) *0.18 - 0.00937677"
+  expr2 " b > 0.1496582 ? pow(10, ( b - 0.385537)/ 0.2471896) *0.18\n-0.00937677 : (b /0.9661776 - 0.04378604) *0.18 - 0.00937677"
+  name AlexaLogC_to_Linear
+  label "800 EI logC v3 to scene linear\narri formula relative\nexposure\n\n\n\n"
+  xpos -718
+  ypos 104
+ }
+push $N74a8fc00
+ Dot {
+  name Dot5
+  xpos -884
+  ypos -348
+ }
+ Dot {
+  name Dot6
+  xpos -884
+  ypos 208
+ }
+ Keymix {
+  inputs 3
+  name Keymix1
+  xpos -718
+  ypos 201
+ }
+ Output {
+  name Output1
+  xpos -718
+  ypos 325
+ }
+end_group

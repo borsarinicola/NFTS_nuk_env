@@ -1,0 +1,299 @@
+<root presetname="Grad Anim 2019 - Script Only" tasktype="hiero.exporters.FnShotProcessor.ShotProcessor">
+    <startFrameIndex valuetype="int">1001</startFrameIndex>
+    <exportRoot valuetype="str">{projectroot}/shots</exportRoot>
+    <versionIndex valuetype="int">1</versionIndex>
+    <cutUseHandles valuetype="bool">False</cutUseHandles>
+    <versionPadding valuetype="int">3</versionPadding>
+    <exportTemplate valuetype="list">
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/to_client/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/renders/previews/{shot}_main_comp_preview_gamma24_{version}.{ext}</SequenceItem>
+            <SequenceItem valuetype="hiero.exporters.FnExternalRender.NukeRenderPreset">
+                <root presetname="hiero.exporters.FnExternalRender.NukeRenderTask" tasktype="hiero.exporters.FnExternalRender.NukeRenderTask">
+                    <burninDataEnabled valuetype="bool">False</burninDataEnabled>
+                    <colourspace valuetype="unicode">Gamma2.4</colourspace>
+                    <file_type valuetype="unicode">mov</file_type>
+                    <create_directories valuetype="bool">True</create_directories>
+                    <mov valuetype="dict">
+                        <b_frames valuetype="int">0</b_frames>
+                        <bitrate_tolerance valuetype="int">40000000</bitrate_tolerance>
+                        <gop_size valuetype="int">12</gop_size>
+                        <quality_max valuetype="int">31</quality_max>
+                        <quality_min valuetype="int">2</quality_min>
+                        <codec valuetype="str">apcs&#x09;Apple ProRes 422 LT</codec>
+                        <encoder valuetype="str">mov64</encoder>
+                        <bitrate valuetype="int">20000</bitrate>
+                    </mov>
+                    <dpx valuetype="dict">
+                        <datatype valuetype="str">8 bit</datatype>
+                        <transfer valuetype="str">(auto detect)</transfer>
+                        <bigEndian valuetype="bool">True</bigEndian>
+                        <fill valuetype="bool">False</fill>
+                    </dpx>
+                    <channels valuetype="str">rgb</channels>
+                    <burninData valuetype="dict">
+                        <burnIn_bottomRight valuetype="NoneType">None</burnIn_bottomRight>
+                        <burnIn_topLeft valuetype="NoneType">None</burnIn_topLeft>
+                        <burnIn_topMiddle valuetype="NoneType">None</burnIn_topMiddle>
+                        <burnIn_padding valuetype="NoneType">None</burnIn_padding>
+                        <burnIn_topRight valuetype="NoneType">None</burnIn_topRight>
+                        <burnIn_bottomMiddle valuetype="NoneType">None</burnIn_bottomMiddle>
+                        <burnIn_bottomLeft valuetype="NoneType">None</burnIn_bottomLeft>
+                        <burnIn_textSize valuetype="NoneType">None</burnIn_textSize>
+                        <burnIn_font valuetype="NoneType">None</burnIn_font>
+                    </burninData>
+                    <writeNodeName valuetype="str">Write_{ext}</writeNodeName>
+                    <reformat valuetype="dict">
+                        <filter valuetype="str">Cubic</filter>
+                        <to_type valuetype="str">None</to_type>
+                        <scale valuetype="float">1.0</scale>
+                        <center valuetype="bool">True</center>
+                        <resize valuetype="str">width</resize>
+                    </reformat>
+                </root>
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/renders/{shot}_main_comp_gamma24/{shot}_main_comp_gamma24_{version}/{shot}_main_comp_gamma24_{version}_%07d.{ext}</SequenceItem>
+            <SequenceItem valuetype="hiero.exporters.FnExternalRender.NukeRenderPreset">
+                <root presetname="hiero.exporters.FnExternalRender.NukeRenderTask" tasktype="hiero.exporters.FnExternalRender.NukeRenderTask">
+                    <colourspace valuetype="unicode">Gamma2.4</colourspace>
+                    <file_type valuetype="str">dpx</file_type>
+                    <create_directories valuetype="bool">True</create_directories>
+                    <readAllLinesForExport valuetype="bool">True</readAllLinesForExport>
+                    <channels valuetype="unicode">rgb</channels>
+                    <deleteAudio valuetype="bool">True</deleteAudio>
+                    <burninDataEnabled valuetype="bool">False</burninDataEnabled>
+                    <useSingleSocket valuetype="bool">False</useSingleSocket>
+                    <additionalNodesEnabled valuetype="bool">False</additionalNodesEnabled>
+                    <additionalNodesData valuetype="list" />
+                    <dpx valuetype="dict">
+                        <datatype valuetype="str">10 bit</datatype>
+                        <transfer valuetype="str">(auto detect)</transfer>
+                        <bigEndian valuetype="bool">True</bigEndian>
+                        <fill valuetype="bool">False</fill>
+                    </dpx>
+                    <includeEffects valuetype="bool">True</includeEffects>
+                    <burninData valuetype="dict">
+                        <burnIn_bottomRight valuetype="NoneType">None</burnIn_bottomRight>
+                        <burnIn_topLeft valuetype="NoneType">None</burnIn_topLeft>
+                        <burnIn_topMiddle valuetype="NoneType">None</burnIn_topMiddle>
+                        <burnIn_padding valuetype="NoneType">None</burnIn_padding>
+                        <burnIn_topRight valuetype="NoneType">None</burnIn_topRight>
+                        <burnIn_bottomMiddle valuetype="NoneType">None</burnIn_bottomMiddle>
+                        <burnIn_bottomLeft valuetype="NoneType">None</burnIn_bottomLeft>
+                        <burnIn_textSize valuetype="NoneType">None</burnIn_textSize>
+                        <burnIn_font valuetype="NoneType">None</burnIn_font>
+                    </burninData>
+                    <includeAudio valuetype="bool">False</includeAudio>
+                    <writeNodeName valuetype="str">{shot}_comp_v001_#####_{ext}</writeNodeName>
+                    <reformat valuetype="dict">
+                        <filter valuetype="str">Cubic</filter>
+                        <to_type valuetype="str">None</to_type>
+                        <scale valuetype="float">1.0</scale>
+                        <center valuetype="bool">True</center>
+                        <resize valuetype="str">width</resize>
+                    </reformat>
+                    <keepNukeScript valuetype="bool">False</keepNukeScript>
+                    <method valuetype="str">Blend</method>
+                </root>
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/renders/precomps/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/mocap/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/data/3D/zBrush/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/data/3D/pfTrack/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/data/3D/Maya/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/data/3D/mari/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/data/3D/houdini/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/data/3D/3dsmax/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/data/3D/3de/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/data/3D/Substance/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/data/2D/photoshop/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/data/2D/nuke/{shot}_main_comp/{shot}_main_comp_{version}.nk</SequenceItem>
+            <SequenceItem valuetype="hiero.exporters.FnNukeShotExporter.NukeShotPreset">
+                <root presetname="hiero.exporters.FnNukeShotExporter.NukeShotExporter" tasktype="hiero.exporters.FnNukeShotExporter.NukeShotExporter">
+                    <postProcessScript valuetype="bool">True</postProcessScript>
+                    <colourspace valuetype="str">default</colourspace>
+                    <file_type valuetype="str">dpx</file_type>
+                    <create_directories valuetype="bool">True</create_directories>
+                    <annotationsPreCompPaths valuetype="list" />
+                    <channels valuetype="str">rgb</channels>
+                    <readPaths valuetype="list">
+                        <SequenceItem valuetype="str">{shot}_{track}_gamma24/{shot}_{track}_gamma24_%07d.dpx</SequenceItem>
+                    </readPaths>
+                    <connectTracks valuetype="bool">False</connectTracks>
+                    <collateSequence valuetype="bool">False</collateSequence>
+                    <additionalNodesData valuetype="list">
+                        <SequenceItem valuetype="tuple">
+                            <SequenceItem valuetype="unicode">Unconnected</SequenceItem>
+                            <SequenceItem valuetype="list" />
+                            <SequenceItem valuetype="unicode">BackdropNode {&#x0A; inputs 0&#x0A; name BackdropNode1&#x0A; tile_color 0x5e5147ff&#x0A; label &quot;&lt;center&gt;Viewer Input&quot;&#x0A; note_font_size 50&#x0A; selected true&#x0A; bdwidth 480&#x0A; bdheight 482&#x0A;}&#x0A;Group {&#x0A; name VIEWER_INPUT&#x0A; tile_color 0x7aa9ffff&#x0A; label &quot;\[value this.ar]:1&quot;&#x0A; selected true&#x0A; addUserKnob {20 aspectguides l &quot;Aspect Ratio Guide&quot;}&#x0A; addUserKnob {26 &quot;&quot;}&#x0A; addUserKnob {7 current_ar l INVISIBLE +INVISIBLE}&#x0A; current_ar {{(input.format.w*input.format.pixel_aspect)/input.format.h}}&#x0A; addUserKnob {26 asp l &quot;Aspect Ratio&quot; -STARTLINE T &quot;&quot;}&#x0A; addUserKnob {7 ar l &quot;&quot; -STARTLINE R 1 4}&#x0A; ar 2.39&#x0A; addUserKnob {6 draw_line l &quot;Draw Lines&quot; +STARTLINE}&#x0A; draw_line true&#x0A; addUserKnob {3 arw l Thickness t &quot;Thickness of the guide line in pixels&quot;}&#x0A; arw 2&#x0A; addUserKnob {18 ar_color l Color t &quot;Guide line color&quot;}&#x0A; ar_color {1 0.35 0}&#x0A; addUserKnob {6 ar_color_panelDropped l &quot;panel dropped state&quot; -STARTLINE +HIDDEN}&#x0A; addUserKnob {6 ar_color_panelDropped_1 l &quot;panel dropped state&quot; -STARTLINE +HIDDEN}&#x0A; addUserKnob {6 ar_color_panelDropped_1_1 l &quot;panel dropped state&quot; -STARTLINE +HIDDEN}&#x0A; addUserKnob {32 ar_default_color l &quot; default &quot; t &quot;Resets the default color&quot; -STARTLINE T &quot;knob this.ar_color \{1 0.35 0\}&quot;}&#x0A; addUserKnob {26 &quot;&quot;}&#x0A; addUserKnob {6 use_black l &quot;Use Blackout&quot; t &quot;Toggle Blackout On/Off&quot; +STARTLINE}&#x0A; use_black true&#x0A; addUserKnob {7 blackout l Mix t &quot;Mix value for the blackout&quot;}&#x0A; blackout 0.75&#x0A; addUserKnob {18 blackout_color l Color}&#x0A; blackout_color {0 0 0}&#x0A; addUserKnob {6 blackout_color_panelDropped l &quot;panel dropped state&quot; -STARTLINE +HIDDEN}&#x0A; addUserKnob {6 blackout_color_panelDropped_1 l &quot;panel dropped state&quot; -STARTLINE +HIDDEN}&#x0A; addUserKnob {6 blackout_color_panelDropped_1_1 l &quot;panel dropped state&quot; -STARTLINE +HIDDEN}&#x0A; addUserKnob {15 safeinside l INVISIBLE +INVISIBLE}&#x0A; safeinside {{this.Rectangle3.area.x} {this.Rectangle3.area.y} {this.Rectangle3.area.r} {this.Rectangle3.area.t}}&#x0A;}&#x0A; StickyNote {&#x0A;  inputs 0&#x0A;  name StickyNote1&#x0A;  label &quot;(input.format.h - (input.format.h - (input.format.w*input.format.pixel_aspect / \[value parent.ar] )) /2)\n\n(input.format.w-(input.format.w/1.333)) / 2&quot;&#x0A; }&#x0A; Rectangle {&#x0A;  inputs 0&#x0A;  output alpha&#x0A;  replace true&#x0A;  area {{curve i} {&quot;((input.format.h - (input.format.w*input.format.pixel_aspect / parent.ar)) /2)-(parent.arw&lt;=1?1:parent.arw)&quot; i} {input.format.w i} {&quot;((input.format.h - (input.format.h - (input.format.w*input.format.pixel_aspect / parent.ar)) /2))+(parent.arw&lt;=1?1:parent.arw)&quot; i}}&#x0A;  color {0 0 0 1}&#x0A;  name Rectangle10&#x0A; }&#x0A; Rectangle {&#x0A;  output alpha&#x0A;  area {0 {&quot;((input.format.h - (input.format.w*input.format.pixel_aspect / parent.ar)) /2)&quot; i} {input.format.w i} {&quot;(input.format.h - (input.format.h - (input.format.w*input.format.pixel_aspect / parent.ar)) /2)&quot; i}}&#x0A;  color 0&#x0A;  name Rectangle12&#x0A; }&#x0A; Input {&#x0A;  inputs 0&#x0A;  name Input1&#x0A; }&#x0A;set Nd783ac80 [stack 0]&#x0A; Rectangle {&#x0A;  area {{input.format.x} {input.format.y} {input.format.r} {input.format.t}}&#x0A;  color {{parent.ar_color.r} {parent.ar_color.g} {parent.ar_color.b} 0}&#x0A;  name Rectangle11&#x0A; }&#x0A; Rectangle {&#x0A;  output alpha&#x0A;  replace true&#x0A;  area {{&quot;parent.current_ar  &gt; parent.ar ? rint((input.format.w - ((input.format.h * parent.ar) / input.format.pixel_aspect)) / 2) - parent.arw : 0&quot;} {&quot;parent.current_ar  &lt; parent.ar ? ((input.format.h - ((input.format.w*input.format.pixel_aspect) / parent.ar)) / 2) - parent.arw : 0&quot;} {&quot;parent.current_ar  &gt; parent.ar ? rint(((input.format.w - ((input.format.h * parent.ar) / input.format.pixel_aspect)) / 2) + ((input.format.h * parent.ar) / input.format.pixel_aspect)) + parent.arw : input.format.w&quot;} {&quot;parent.current_ar  &lt; parent.ar ? ((input.format.h - ((input.format.w*input.format.pixel_aspect) / parent.ar)) / 2) + ((input.format.w*input.format.pixel_aspect) / parent.ar) + parent.arw: input.format.h&quot;}}&#x0A;  name Rectangle1&#x0A; }&#x0A; Rectangle {&#x0A;  output alpha&#x0A;  area {{&quot;parent.current_ar &gt; parent.ar ? rint((input.format.w - ((input.format.h * parent.ar) / input.format.pixel_aspect)) / 2)  : 0&quot;} {&quot;parent.current_ar &lt; parent.ar ? ((input.format.h - ((input.format.w*input.format.pixel_aspect) / parent.ar)) / 2) : 0&quot;} {&quot;parent.current_ar &gt; parent.ar ? rint(((input.format.w - ((input.format.h * parent.ar) / input.format.pixel_aspect)) / 2) + ((input.format.h * parent.ar) / input.format.pixel_aspect)) : input.format.w&quot;} {&quot;parent.current_ar &lt; parent.ar ? ((input.format.h - ((input.format.w*input.format.pixel_aspect) / parent.ar)) / 2) + ((input.format.w*input.format.pixel_aspect) / parent.ar) : input.format.h&quot;}}&#x0A;  color 0&#x0A;  name Rectangle2&#x0A; }&#x0A; Premult {&#x0A;  name Premult3&#x0A; }&#x0A;push $Nd783ac80&#x0A; Rectangle {&#x0A;  area {{input.format.x} {input.format.y} {input.format.r} {input.format.t}}&#x0A;  color {{parent.blackout_color.r} {parent.blackout_color.g} {parent.blackout_color.b} 0}&#x0A;  name Rectangle14&#x0A; }&#x0A; Rectangle {&#x0A;  output alpha&#x0A;  replace true&#x0A;  invert true&#x0A;  area {{&quot;parent.current_ar &gt; parent.ar ? rint((input.format.w - ((input.format.h * parent.ar) / input.format.pixel_aspect)) / 2)  : 0&quot; i} {&quot;parent.current_ar &lt; parent.ar ? ((input.format.h - ((input.format.w*input.format.pixel_aspect) / parent.ar)) / 2) : 0&quot; i} {&quot;parent.current_ar  &gt; parent.ar ? rint(((input.format.w - ((input.format.h * parent.ar) / input.format.pixel_aspect)) / 2) + ((input.format.h * parent.ar) / input.format.pixel_aspect)) : input.format.w&quot; i} {&quot;parent.current_ar  &lt; parent.ar ? ((input.format.h - ((input.format.w*input.format.pixel_aspect) / parent.ar)) / 2) + ((input.format.w*input.format.pixel_aspect) / parent.ar) : input.format.h&quot; i}}&#x0A;  name Rectangle3&#x0A; }&#x0A; Premult {&#x0A;  name Premult1&#x0A; }&#x0A;push $Nd783ac80&#x0A; Dot {&#x0A;  name Dot3&#x0A; }&#x0A; Dot {&#x0A;  name Dot4&#x0A; }&#x0A; Merge2 {&#x0A;  inputs 2&#x0A;  output {rgba.red rgba.green rgba.blue -rgba.alpha}&#x0A;  mix {{parent.blackout i}}&#x0A;  name Merge3&#x0A;  disable {{!parent.use_black i}}&#x0A; }&#x0A; Merge2 {&#x0A;  inputs 2&#x0A;  output {rgba.red rgba.green rgba.blue -rgba.alpha}&#x0A;  name Merge4&#x0A;  disable {{!parent.draw_line i}}&#x0A; }&#x0A; Output {&#x0A;  name Output1&#x0A; }&#x0A; Viewer {&#x0A;  frame_range 122-122&#x0A;  name Viewer1&#x0A;  selected true&#x0A; }&#x0A;end_group</SequenceItem>
+                        </SequenceItem>
+                    </additionalNodesData>
+                    <collateShotNames valuetype="bool">False</collateShotNames>
+                    <includeEffects valuetype="bool">True</includeEffects>
+                    <writePaths valuetype="list">
+                        <SequenceItem valuetype="unicode">{shot}/renders/previews/{shot}_main_comp_preview_gamma24_{version}.{ext}</SequenceItem>
+                        <SequenceItem valuetype="unicode">{shot}/renders/{shot}_main_comp_gamma24/{shot}_main_comp_gamma24_{version}/{shot}_main_comp_gamma24_{version}_%07d.{ext}</SequenceItem>
+                    </writePaths>
+                    <reformat valuetype="dict">
+                        <scale valuetype="float">1.0</scale>
+                        <center valuetype="bool">True</center>
+                        <to_type valuetype="str">To Sequence Resolution</to_type>
+                        <height valuetype="int">486</height>
+                        <filter valuetype="str">Cubic</filter>
+                        <width valuetype="int">720</width>
+                        <pixelAspect valuetype="float">0.910000026226</pixelAspect>
+                        <resize valuetype="str">width</resize>
+                        <name valuetype="str">NTSC</name>
+                    </reformat>
+                    <method valuetype="str">Motion</method>
+                    <includeAnnotations valuetype="bool">False</includeAnnotations>
+                    <enable valuetype="bool">True</enable>
+                    <showAnnotations valuetype="bool">True</showAnnotations>
+                    <collateCustomStart valuetype="bool">True</collateCustomStart>
+                    <burninDataEnabled valuetype="bool">False</burninDataEnabled>
+                    <additionalNodesEnabled valuetype="bool">True</additionalNodesEnabled>
+                    <timelineWriteNode valuetype="str">{shot}/renders/{shot}_main_comp_gamma24/{shot}_main_comp_gamma24_{version}/{shot}_main_comp_gamma24_{version}_%07d.{ext}</timelineWriteNode>
+                    <burninData valuetype="dict">
+                        <burnIn_bottomRight valuetype="NoneType">None</burnIn_bottomRight>
+                        <burnIn_topLeft valuetype="NoneType">None</burnIn_topLeft>
+                        <burnIn_topMiddle valuetype="NoneType">None</burnIn_topMiddle>
+                        <burnIn_padding valuetype="NoneType">None</burnIn_padding>
+                        <burnIn_topRight valuetype="NoneType">None</burnIn_topRight>
+                        <burnIn_textSize valuetype="NoneType">None</burnIn_textSize>
+                        <burnIn_bottomLeft valuetype="NoneType">None</burnIn_bottomLeft>
+                        <burnIn_bottomMiddle valuetype="NoneType">None</burnIn_bottomMiddle>
+                        <burnIn_font valuetype="NoneType">None</burnIn_font>
+                    </burninData>
+                    <dpx valuetype="dict">
+                        <datatype valuetype="str">8 bit</datatype>
+                        <transfer valuetype="str">(auto detect)</transfer>
+                        <bigEndian valuetype="bool">True</bigEndian>
+                        <fill valuetype="bool">False</fill>
+                    </dpx>
+                    <writeNodeName valuetype="str">Write_{ext}</writeNodeName>
+                    <collateTracks valuetype="bool">False</collateTracks>
+                </root>
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/data/2D/aftereffects/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/audio/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/assets/cam/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/assets/dmp/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/assets/mattes/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/assets/geo/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/assets/references/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/assets/smartVectors/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+    </exportTemplate>
+    <excludeTags valuetype="list" />
+    <includeTags valuetype="list">
+        <SequenceItem valuetype="str">Nuke</SequenceItem>
+    </includeTags>
+    <includeRetimes valuetype="bool">False</includeRetimes>
+    <startFrameSource valuetype="str">Source</startFrameSource>
+    <cutLength valuetype="bool">True</cutLength>
+    <cutHandles valuetype="int">10</cutHandles>
+</root>

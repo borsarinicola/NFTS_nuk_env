@@ -1,0 +1,271 @@
+Group {
+ name nChannelViewer1
+ tile_color 0x9e3c63ff
+ label "\[value ColorspaceV.colorspace_out]"
+ selected true
+ xpos 3357
+ ypos -3884
+ addUserKnob {20 User}
+ addUserKnob {41 colorspace_out l "output channels" T ColorspaceV.colorspace_out}
+ addUserKnob {41 doi l "display original image" -STARTLINE T Switch1.doi}
+ addUserKnob {41 mult l "resolution multiplier" T ContactSheet1.mult}
+}
+ Input {
+  inputs 0
+  name Inputsrc
+  xpos 790
+  ypos 218
+ }
+ Dot {
+  name Dot6
+  xpos 824
+  ypos 441
+ }
+set N79244e00 [stack 0]
+ Colorspace {
+  colorspace_out HSL
+  name ColorspaceV
+  xpos 790
+  ypos 613
+ }
+ Dot {
+  name Dot1
+  xpos 824
+  ypos 715
+ }
+set N79244700 [stack 0]
+ Shuffle {
+  green red
+  blue red
+  alpha red
+  name Shuffle1
+  label R
+  xpos 790
+  ypos 932
+ }
+ Text2 {
+  font_size_toolbar {{width/50 x1001 163.8399963}}
+  font_width_toolbar 100
+  font_height_toolbar 100
+  message R
+  old_message {{82}
+    }
+  box {{width/50 x1001 38.4} 0 {width x1001 1920} {height-(height/25)}}
+  transforms {{0 2}
+    }
+  font_size_values {{0 {width/50} 0 50}
+    }
+  font {{ Arial : Regular : arial.ttf : 0 }}
+  font_size 163.8399963
+  center {960 540}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {{0 1080}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 960 540 0 0 1 1 0 0 0 0}
+    }
+  name Text2
+  xpos 790
+  ypos 996
+ }
+push $N79244700
+ Dot {
+  name Dot4
+  xpos 1076
+  ypos 715
+ }
+set Na4171500 [stack 0]
+ Shuffle {
+  red green
+  blue green
+  alpha green
+  name Shuffle2
+  label G
+  xpos 1042
+  ypos 935
+ }
+ Text2 {
+  font_size_toolbar {{width/50 x1001 163.8399963}}
+  font_width_toolbar 100
+  font_height_toolbar 100
+  message G
+  old_message {{71}
+    }
+  box {{width/50 x1001 38.4} 0 {width x1001 1920} {height-(height/25)}}
+  transforms {{0 2}
+    }
+  font_size_values {{0 {width/50} 0 50}
+    }
+  font {{ Arial : Regular : arial.ttf : 0 }}
+  font_size 163.8399963
+  center {960 540}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {{0 1080}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 960 540 0 0 1 1 0 0 0 0}
+    }
+  name Text3
+  xpos 1042
+  ypos 999
+ }
+push $Na4171500
+ Dot {
+  name Dot3
+  xpos 1300
+  ypos 715
+ }
+ Shuffle {
+  red blue
+  green blue
+  alpha blue
+  name Shuffle3
+  label B
+  xpos 1266
+  ypos 942
+ }
+ Text2 {
+  font_size_toolbar {{width/50 x1001 163.8399963}}
+  font_width_toolbar 100
+  font_height_toolbar 100
+  message B
+  old_message {{66}
+    }
+  box {{width/50 x1001 38.4} 0 {width x1001 1920} {height-(height/25)}}
+  transforms {{0 2}
+    }
+  font_size_values {{0 {width/50} 0 50}
+    }
+  font {{ Arial : Regular : arial.ttf : 0 }}
+  font_size 163.8399963
+  center {960 540}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {{0 1080}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 960 540 0 0 1 1 0 0 0 0}
+    }
+  name Text4
+  xpos 1266
+  ypos 1006
+ }
+push $N79244700
+ Dot {
+  name Dot2
+  xpos 328
+  ypos 715
+ }
+ Text2 {
+  font_size_toolbar {{width/50 x1001 163.8399963}}
+  font_width_toolbar 100
+  font_height_toolbar 100
+  message "\[value ColorspaceV.colorspace_out]"
+  old_message {{72 83 76}
+    }
+  old_expression_markers {{0 2}
+    }
+  box {{width/50 x1001 38.4} 0 {width x1001 1920} {height-(height/25)}}
+  transforms {{0 2}
+    }
+  font_size_values {{0 {width/50} 1 {width/50} 2 {width/50} 0 50}
+    }
+  font {{ Arial : Regular : arial.ttf : 0 }}
+  font_size 163.8399963
+  center {960 540}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {{0 1080}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 960 540 0 0 1 1 0 0 0 0}
+    }
+  name Text5
+  xpos 294
+  ypos 965
+ }
+push $N79244e00
+ Dot {
+  name Dot7
+  xpos -89
+  ypos 441
+ }
+ Text2 {
+  font_size_toolbar {{width/50 x1001 163.8399963}}
+  font_width_toolbar 100
+  font_height_toolbar 100
+  message RGB
+  old_message {{82 71 66}
+    }
+  box {{width/50 x1001 38.4} 0 {width x1001 1920} {height-(height/25)}}
+  transforms {{0 2}
+    }
+  font_size_values {{0 {width/50} 1 {width/50} 2 {width/50} 0 50}
+    }
+  font {{ Arial : Regular : arial.ttf : 0 }}
+  font_size 163.8399963
+  center {960 540}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {{0 1080}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 960 540 0 0 1 1 0 0 0 0}
+    }
+  name Text1
+  xpos -123
+  ypos 964
+ }
+ Dot {
+  name Dot8
+  xpos -89
+  ypos 1323
+ }
+ Switch {
+  inputs 2
+  which {{1-doi}}
+  name Switch1
+  xpos 294
+  ypos 1319
+  addUserKnob {20 User}
+  addUserKnob {6 doi l "display original image" +STARTLINE}
+  doi true
+ }
+ Dot {
+  name Dot5
+  xpos 328
+  ypos 1503
+ }
+ ContactSheet {
+  inputs 4
+  width {{width*(mult<0.25?0.25:mult)}}
+  height {{height*(mult<0.25?0.25:mult)}}
+  rows 2
+  columns 2
+  gap {{width/50}}
+  center true
+  colorder RightLeft
+  name ContactSheet1
+  xpos 790
+  ypos 1499
+  addUserKnob {20 User}
+  addUserKnob {7 mult l "output size" R 0.25 3}
+  mult 1
+ }
+set Nf0514700 [stack 0]
+ Output {
+  name Output1
+  xpos 790
+  ypos 1761
+ }
+push $Nf0514700
+ Viewer {
+  frame_range 1001-1100
+  fps 25
+  name Viewer1
+  xpos 790
+  ypos 1551
+ }
+end_group

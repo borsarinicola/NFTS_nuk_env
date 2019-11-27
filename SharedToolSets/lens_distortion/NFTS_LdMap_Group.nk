@@ -1,0 +1,175 @@
+set cut_paste_input [stack 0]
+version 11.2 v5
+BackdropNode {
+ inputs 0
+ name BackdropNode2
+ tile_color 0x3b4735ff
+ label LD_Group
+ note_font_size 92
+ selected true
+ xpos -81
+ ypos -301
+ bdwidth 480
+ bdheight 476
+}
+push $cut_paste_input
+Group {
+ name NFTS_LdMap_Group1
+ tile_color 0xaa55ffff
+ selected true
+ xpos 128
+ ypos -67
+ addUserKnob {20 User}
+ addUserKnob {41 operation T Switch1.operation}
+ addUserKnob {41 channels T STMap1.channels}
+ addUserKnob {41 setformat l "Save Undistorted Format" t "this adds the undistorted format to the list of available formats in the project" T Crop2.setformat}
+ addUserKnob {26 ""}
+ addUserKnob {26 info l "" +STARTLINE T "This node expects an image containing \nstmap data generated with the NFTS lens distortion toolset.\n\nNFTS_LdMap_Group\nv1.0 - 14 September 2019"}
+}
+ BackdropNode {
+  inputs 0
+  name BackdropNode1
+  tile_color 0x383147ff
+  label Undistort
+  note_font_size 92
+  xpos -544
+  ypos -733
+  bdwidth 536
+  bdheight 997
+ }
+ BackdropNode {
+  inputs 0
+  name BackdropNode2
+  tile_color 0x2d3947ff
+  label Redistort
+  note_font_size 92
+  xpos 321
+  ypos -739
+  bdwidth 548
+  bdheight 1007
+ }
+ Input {
+  inputs 0
+  name Inputstmap
+  xpos 113
+  ypos -347
+  number 1
+ }
+ AdjBBox {
+  numpixels -1
+  name AdjBBox1
+  selected true
+  xpos 113
+  ypos -288
+ }
+ Dot {
+  name Dot1
+  xpos 147
+  ypos -243
+ }
+set N664936c0 [stack 0]
+ Input {
+  inputs 0
+  name Inputsrc
+  xpos 110
+  ypos -624
+ }
+ Dot {
+  name Dot5
+  xpos 144
+  ypos -567
+ }
+set N66497e60 [stack 0]
+ Dot {
+  name Dot8
+  xpos 594
+  ypos -567
+ }
+ Reformat {
+  type "to box"
+  format "2048 1152 0 0 2048 1152 1 AlexaMini_2K"
+  box_width {{AdjBBox1.width}}
+  box_height {{AdjBBox1.height}}
+  box_fixed true
+  resize none
+  pbb true
+  name Reformat3
+  xpos 560
+  ypos -350
+ }
+ STMap {
+  inputs 2
+  channels {{{parent.STMap1.channels}}}
+  uv backward
+  name STMap2
+  xpos 560
+  ypos -169
+ }
+ Reformat {
+  type "to box"
+  format "2048 1152 0 0 2048 1152 1 AlexaMini_2K"
+  box_width {{AdjBBox1.width}}
+  box_height {{AdjBBox1.height}}
+  box_fixed true
+  name Reformat4
+  xpos 560
+  ypos 57
+ }
+ Dot {
+  name Dot2
+  xpos 594
+  ypos 192
+ }
+push $N664936c0
+push $N66497e60
+ Dot {
+  name Dot6
+  xpos -308
+  ypos -567
+ }
+ BlackOutside {
+  name BlackOutside1
+  xpos -342
+  ypos -353
+ }
+ STMap {
+  inputs 2
+  uv forward
+  name STMap1
+  xpos -342
+  ypos -169
+ }
+ Crop {
+  box {{AdjBBox1.bbox.x} {AdjBBox1.bbox.y} {AdjBBox1.bbox.r} {AdjBBox1.bbox.t}}
+  reformat true
+  crop false
+  name Crop2
+  xpos -342
+  ypos 29
+  addUserKnob {20 User}
+  addUserKnob {3 formatw l format}
+  formatw {{trunc(bbox.r-bbox.x)}}
+  addUserKnob {3 formath l "" -STARTLINE}
+  formath {{bbox.t-bbox.y}}
+  addUserKnob {22 setformat l "Save Undistorted Format" t "this adds the undistorted format to the list of available formats in the project" T "formatW= int(nuke.thisNode().knob('formatw').getValue())\nformatH = int(nuke.thisNode().knob('formath').getValue())\n\nnewRes = str(formatW) + ' ' + str(formatH) + ' Undistorted Format'\n\nnuke.addFormat(newRes)" +STARTLINE}
+ }
+ Dot {
+  name Dot3
+  xpos -308
+  ypos 200
+ }
+ Switch {
+  inputs 2
+  which {{operation}}
+  name Switch1
+  xpos 118
+  ypos 407
+  addUserKnob {20 User}
+  addUserKnob {4 operation M {undistort redistort ""}}
+ }
+ Output {
+  name Output1
+  xpos 118
+  ypos 523
+ }
+end_group

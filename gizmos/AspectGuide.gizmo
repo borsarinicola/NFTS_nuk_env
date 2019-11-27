@@ -1,0 +1,198 @@
+Group {
+ name AspectGuide1
+ tile_color 0x7aa9ffff
+ label "\[value this.ar]:1"
+ selected true
+ xpos -479
+ ypos -22
+ addUserKnob {20 aspectguides l "Aspect Ratio Guide"}
+ addUserKnob {41 os l Os t "Select you os" T os_select.os}
+ addUserKnob {26 ""}
+ addUserKnob {7 current_ar l INVISIBLE +INVISIBLE}
+ current_ar {{(input.format.w*input.format.pixel_aspect)/input.format.h}}
+ addUserKnob {35 set_ar l "Aspect Ratio" M {1.19 "knob this.ar 1.19" 1.25 "knob this.ar 1.25" 1.33 "knob this.ar 1.33" 1.37 "knob this.ar 1.37" 1.43 "knob this.ar 1.43" 1.50 "knob this.ar 1.50" 1.56 "knob this.ar 1.56" 1.60 "knob this.ar 1.60" 1.66 "knob this.ar 1.66" 1.75 "knob this.ar 1.75" 1.77 "knob this.ar 1.777" 1.85 "knob this.ar 1.85" 2.00 "knob this.ar 2.00" 2.20 "knob this.ar 2.20" 2.35 "knob this.ar 2.35" 2.40 "knob this.ar 2.40" 2.55 "knob this.ar 2.55" 2.59 "knob this.ar 2.59" 2.76 "knob this.ar 2.76" 4.00 "knob this.ar 4.00" ""}}
+ addUserKnob {7 ar l "" -STARTLINE R 1 4}
+ ar 1.33
+ addUserKnob {6 draw_line l "Draw Lines" +STARTLINE}
+ draw_line true
+ addUserKnob {3 arw l Thickness t "Thickness of the guide line in pixels"}
+ arw 2
+ addUserKnob {6 tx_ar l "Draw Text Label" t "Toggles the display of the Guide value text On/Off" -STARTLINE}
+ tx_ar true
+ addUserKnob {18 ar_color l Color t "Guide line color"}
+ ar_color {1 0.35 0}
+ addUserKnob {6 ar_color_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {6 ar_color_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {32 ar_default_color l " default " t "Resets the default color" -STARTLINE T "knob this.ar_color \{1 0.35 0\}"}
+ addUserKnob {26 ""}
+ addUserKnob {6 use_black l "Use Blackout" t "Toggle Blackout On/Off" +STARTLINE}
+ use_black true
+ addUserKnob {7 blackout l Mix t "Mix value for the blackout"}
+ blackout 0.5
+ addUserKnob {18 blackout_color l Color}
+ blackout_color {0 0 0}
+ addUserKnob {6 blackout_color_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {6 blackout_color_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {15 safeinside l INVISIBLE +INVISIBLE}
+ safeinside {{this.Rectangle3.area.x} {this.Rectangle3.area.y} {this.Rectangle3.area.r} {this.Rectangle3.area.t}}
+}
+ StickyNote {
+  inputs 0
+  name StickyNote1
+  label "(input.format.h - (input.format.h - (input.format.w*input.format.pixel_aspect / \[value parent.ar] )) /2)\n\n(input.format.w-(input.format.w/1.333)) / 2"
+  xpos -1014
+  ypos -424
+ }
+ Rectangle {
+  inputs 0
+  output alpha
+  replace true
+  area {{curve i} {"((input.format.h - (input.format.w*input.format.pixel_aspect / parent.ar)) /2)-(parent.arw<=1?1:parent.arw)" i} {input.format.w i} {"((input.format.h - (input.format.h - (input.format.w*input.format.pixel_aspect / parent.ar)) /2))+(parent.arw<=1?1:parent.arw)" i}}
+  color {0 0 0 1}
+  name Rectangle10
+  xpos -459
+  ypos 256
+ }
+ Rectangle {
+  output alpha
+  area {0 {"((input.format.h - (input.format.w*input.format.pixel_aspect / parent.ar)) /2)" i} {input.format.w i} {"(input.format.h - (input.format.h - (input.format.w*input.format.pixel_aspect / parent.ar)) /2)" i}}
+  color 0
+  name Rectangle12
+  xpos -459
+  ypos 301
+ }
+ Viewer {
+  inputs 0
+  frame_range 1345739-1345889
+  name Viewer1
+  xpos -474
+  ypos 55
+ }
+ Input {
+  inputs 0
+  name Input1
+  xpos -848
+  ypos -297
+ }
+set Nfa5c6380 [stack 0]
+ Rectangle {
+  area {{input.format.x i} {input.format.y i} {input.format.r i} {input.format.t i}}
+  color {{parent.ar_color.r i} {parent.ar_color.g i} {parent.ar_color.b i} 0}
+  name Rectangle11
+  xpos -671
+  ypos -204
+ }
+ Rectangle {
+  output alpha
+  replace true
+  area {{"parent.current_ar  > parent.ar ? rint((input.format.w - ((input.format.h * parent.ar) / input.format.pixel_aspect)) / 2) - parent.arw : 0" i} {"parent.current_ar  < parent.ar ? ((input.format.h - ((input.format.w*input.format.pixel_aspect) / parent.ar)) / 2) - parent.arw : 0" i} {"parent.current_ar  > parent.ar ? rint(((input.format.w - ((input.format.h * parent.ar) / input.format.pixel_aspect)) / 2) + ((input.format.h * parent.ar) / input.format.pixel_aspect)) + parent.arw : input.format.w" i} {"parent.current_ar  < parent.ar ? ((input.format.h - ((input.format.w*input.format.pixel_aspect) / parent.ar)) / 2) + ((input.format.w*input.format.pixel_aspect) / parent.ar) + parent.arw: input.format.h" i}}
+  name Rectangle1
+  xpos -671
+  ypos -175
+ }
+ Rectangle {
+  output alpha
+  area {{"parent.current_ar > parent.ar ? rint((input.format.w - ((input.format.h * parent.ar) / input.format.pixel_aspect)) / 2)  : 0" i} {"parent.current_ar < parent.ar ? ((input.format.h - ((input.format.w*input.format.pixel_aspect) / parent.ar)) / 2) : 0" i} {"parent.current_ar > parent.ar ? rint(((input.format.w - ((input.format.h * parent.ar) / input.format.pixel_aspect)) / 2) + ((input.format.h * parent.ar) / input.format.pixel_aspect)) : input.format.w" i} {"parent.current_ar < parent.ar ? ((input.format.h - ((input.format.w*input.format.pixel_aspect) / parent.ar)) / 2) + ((input.format.w*input.format.pixel_aspect) / parent.ar) : input.format.h" i}}
+  color 0
+  name Rectangle2
+  xpos -671
+  ypos -130
+ }
+set Nfa60f880 [stack 0]
+ Text {
+  output alpha
+  message "\[value parent.ar]:1"
+  font /Library/Fonts/Arial.ttf
+  size {{input.format.h*0.025 x1345739 5}}
+  translate {{"parent.current_ar < parent.ar ? input.format.w*0.06 : rint((input.format.w - ((input.format.h * parent.ar) / input.format.pixel_aspect)) / 2) - parent.arw - 5"} {"parent.current_ar < parent.ar ? (((input.format.h - ((input.format.w*input.format.pixel_aspect) / parent.ar)) / 2) + ((input.format.w*input.format.pixel_aspect) / parent.ar)) + parent.arw + 5 : input.format.h * 0.8"}}
+  rotate {{"parent.current_ar > parent.ar ? 90 : 0"}}
+  name Text2
+  tile_color 0xc0c0c000
+  xpos -766
+  ypos -25
+  disable {{!parent.tx_ar}}
+ }
+push $Nfa60f880
+ Text {
+  output alpha
+  message "\[value parent.ar]:1"
+  font C:/Windows/Fonts/arial.ttf
+  size {{input.format.h*0.025 x1345739 5}}
+  translate {{"parent.current_ar < parent.ar ? input.format.w*0.06 : rint((input.format.w - ((input.format.h * parent.ar) / input.format.pixel_aspect)) / 2) - parent.arw - 5"} {"parent.current_ar < parent.ar ? (((input.format.h - ((input.format.w*input.format.pixel_aspect) / parent.ar)) / 2) + ((input.format.w*input.format.pixel_aspect) / parent.ar)) + parent.arw + 5 : input.format.h * 0.8"}}
+  rotate {{"parent.current_ar > parent.ar ? 90 : 0"}}
+  name Text3
+  tile_color 0xc0c0c000
+  xpos -648
+  ypos -11
+  disable {{!parent.tx_ar}}
+ }
+ Switch {
+  inputs 2
+  which {{os==1?1:0}}
+  name os_select
+  xpos -690
+  ypos 96
+  addUserKnob {20 User}
+  addUserKnob {4 os M {Windows Mac "" ""}}
+ }
+ Premult {
+  name Premult3
+  xpos -671
+  ypos 195
+ }
+push $Nfa5c6380
+ Rectangle {
+  area {{input.format.x i} {input.format.y i} {input.format.r i} {input.format.t i}}
+  color {{parent.blackout_color.r i} {parent.blackout_color.g i} {parent.blackout_color.b i} 0}
+  name Rectangle14
+  xpos -848
+  ypos -205
+ }
+ Rectangle {
+  output alpha
+  replace true
+  invert true
+  area {{"parent.current_ar > parent.ar ? rint((input.format.w - ((input.format.h * parent.ar) / input.format.pixel_aspect)) / 2)  : 0" i} {"parent.current_ar < parent.ar ? ((input.format.h - ((input.format.w*input.format.pixel_aspect) / parent.ar)) / 2) : 0" i} {"parent.current_ar  > parent.ar ? rint(((input.format.w - ((input.format.h * parent.ar) / input.format.pixel_aspect)) / 2) + ((input.format.h * parent.ar) / input.format.pixel_aspect)) : input.format.w" i} {"parent.current_ar  < parent.ar ? ((input.format.h - ((input.format.w*input.format.pixel_aspect) / parent.ar)) / 2) + ((input.format.w*input.format.pixel_aspect) / parent.ar) : input.format.h" i}}
+  name Rectangle3
+  xpos -848
+  ypos -176
+ }
+ Premult {
+  name Premult1
+  xpos -848
+  ypos -131
+ }
+push $Nfa5c6380
+ Dot {
+  name Dot3
+  xpos -922
+  ypos -191
+ }
+ Dot {
+  name Dot4
+  xpos -922
+  ypos 304
+ }
+ Merge2 {
+  inputs 2
+  output {rgba.red rgba.green rgba.blue -rgba.alpha}
+  mix {{parent.blackout i}}
+  name Merge3
+  xpos -848
+  ypos 299
+  disable {{!parent.use_black i}}
+ }
+ Merge2 {
+  inputs 2
+  output {rgba.red rgba.green rgba.blue -rgba.alpha}
+  name Merge4
+  xpos -671
+  ypos 299
+  disable {{!parent.draw_line i}}
+ }
+ Output {
+  name Output1
+  xpos -671
+  ypos 449
+ }
+end_group

@@ -1,0 +1,412 @@
+Group {
+ name BumpDisplace1
+ selected true
+ xpos -221
+ ypos 20
+ addUserKnob {20 User}
+ addUserKnob {4 normalsChan l "Bump Channel" M {alpha luminance "" ""}}
+ normalsChan luminance
+ addUserKnob {6 invertInput l "Invert Input" +STARTLINE}
+ addUserKnob {7 bumpMult l "Bump Height" R 0 4}
+ bumpMult 0.5
+ addUserKnob {41 size_1 l "Pre Blur" T preBlur.size}
+ addUserKnob {41 size l "Bump Blur" T BlurNormals.size}
+ addUserKnob {26 ""}
+ addUserKnob {4 lightType l "Light Type" M {point directional}}
+ addUserKnob {7 lightHeight l "Light Height" R 0 1000}
+ lightHeight 300
+ addUserKnob {41 pos l "Light Position" T lightPos.pos}
+ addUserKnob {41 specular l Intensity T BasicMaterial2.specular}
+ addUserKnob {26 ""}
+ addUserKnob {6 effectOnly l "Effect Only" +STARTLINE}
+ effectOnly true
+ addUserKnob {6 premult l Premult -STARTLINE}
+ addUserKnob {26 ""}
+ addUserKnob {6 outputAlpha l "Output In Alpha" t "For Shannagh" +STARTLINE}
+ addUserKnob {20 About}
+ addUserKnob {26 description l "" +STARTLINE T "BumpDisplace by Peter Jansen\n\nThanks to:\nTangent Space Normals Generator v0.1.1\ncolour-science.org - April 9, 2015\n"}
+}
+ NoOp {
+  inputs 0
+  name lightPos
+  xpos -1242
+  ypos 762
+  addUserKnob {20 User}
+  addUserKnob {12 pos}
+ }
+ Input {
+  inputs 0
+  name img
+  xpos -611
+  ypos 262
+ }
+set Nfa946e00 [stack 0]
+ Dot {
+  name in
+  xpos -577
+  ypos 402
+ }
+set Nfa946a80 [stack 0]
+ Multiply {
+  value 0
+  name Multiply1
+  xpos -797
+  ypos 431
+  disable {{1-effectOnly x1036 0}}
+ }
+push $Nfa946a80
+ Dot {
+  name Dot10
+  xpos -301
+  ypos 402
+ }
+set Nfa946380 [stack 0]
+ Dot {
+  name Dot13
+  xpos -204
+  ypos 402
+ }
+push $Nfa946380
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name Shuffle8
+  xpos -335
+  ypos 458
+ }
+ Switch {
+  inputs 2
+  which {{normalsChan}}
+  name Switch1
+  xpos -238
+  ypos 519
+ }
+ Invert {
+  name Invert1
+  xpos -238
+  ypos 565
+  disable {{1-parent.invertInput x1036 0}}
+ }
+ Grade {
+  multiply {{parent.bumpMult}}
+  name Grade1
+  xpos -238
+  ypos 611
+ }
+ Blur {
+  quality 100
+  name preBlur
+  xpos -238
+  ypos 637
+ }
+ Group {
+  name CreateNormals
+  tile_color 0xffbf00ff
+  xpos -238
+  ypos 695
+  addUserKnob {20 prewitt_tangent_space_normals_generator_Tab l "Tangent Space Normals Generator"}
+  addUserKnob {20 parameters_Group l Parameters n 1}
+  addUserKnob {7 size_Floating_Point_Slider l Size R 1 5}
+  size_Floating_Point_Slider 1
+  addUserKnob {7 intensity_Floating_Point_Slider l Intensity R -5 5}
+  intensity_Floating_Point_Slider 0.05
+  addUserKnob {20 parameters_endGroup l endGroup n -1}
+  addUserKnob {20 about_Tab l About}
+  addUserKnob {26 description_Text l "" +STARTLINE T "Tangent Space Normals Generator v0.1.1\n\ncolour-science.org - April 9, 2015\n\nThis Gizmo / Group generates tangent space normals from given input.\n\n\[1] Kolasinski, K. (2015). AwesomeBump v1.0, 1–7. Retrieved from http://awesomebump.besaba.com/wp-content/uploads/2015/01/ABoverwiev.pdf\n\[2] Wikipedia. (n.d.). Sobel operator. Retrieved April 7, 2015, from http://en.wikipedia.org/wiki/Sobel_operator"}
+ }
+  Input {
+   inputs 0
+   name Input
+   xpos -603
+   ypos -264
+  }
+  Saturation {
+   saturation 0
+   name Saturation
+   xpos -603
+   ypos -185
+  }
+  Blur {
+   size {{"parent.size_Floating_Point_Slider - 1"}}
+   quality {{"size * 0.5 + 8"}}
+   name Blur
+   xpos -603
+   ypos -159
+  }
+  Multiply {
+   value {{parent.intensity_Floating_Point_Slider}}
+   name intensity_Multiply
+   xpos -603
+   ypos -116
+  }
+  Expression {
+   expr0 "x / width"
+   expr1 "y / width"
+   name gradient_Expression
+   selected true
+   xpos -603
+   ypos -71
+  }
+set Nfa9b9c00 [stack 0]
+  Matrix {
+   matrix {
+       {-3 0 3}
+       {-10 0 10}
+       {-3 0 3}
+     }
+   name dx_Scharr_Matrix
+   xpos -700
+   ypos 29
+  }
+push $Nfa9b9c00
+  Matrix {
+   matrix {
+       {3 10 3}
+       {0 0 0}
+       {-3 -10 -3}
+     }
+   name dy_Scharr_Matrix
+   xpos -490
+   ypos 26
+  }
+  MergeExpression {
+   inputs 2
+   expr0 "Ag * Bb - Bg * Ab"
+   expr1 "Ar * Bb - Br * Ab"
+   expr2 "Ar * Bg - Br * Ag"
+   name dot_product_MergeExpression
+   label "\n"
+   xpos -590
+   ypos 85
+  }
+  Expression {
+   expr1 "- g"
+   name invert_green_Expression
+   xpos -590
+   ypos 111
+  }
+  Expression {
+   temp_name0 norme
+   temp_expr0 "sqrt(r * r + g * g + b * b)"
+   expr0 "r / abs(norme)"
+   expr1 "g / abs(norme)"
+   expr2 "b / abs(norme)"
+   name normalise_Expression
+   xpos -590
+   ypos 135
+  }
+set Nfa9b8000 [stack 0]
+  Viewer {
+   frame_range 1001-1031
+   fps 23.97602463
+   name Viewer1
+   xpos -117
+   ypos 161
+  }
+push $Nfa9b8000
+  Expression {
+   expr0 "r * 0.5 + 0.5"
+   expr1 "g * 0.5 + 0.5"
+   expr2 "b * 0.5 + 0.5"
+   name output_offset_Expression
+   xpos -590
+   ypos 159
+  }
+  Shuffle {
+   alpha white
+   name Shuffle
+   xpos -590
+   ypos 185
+  }
+  Output {
+   name Output
+   xpos -590
+   ypos 315
+  }
+ end_group
+ Blur {
+  name BlurNormals
+  xpos -238
+  ypos 732
+ }
+ Grade {
+  add {-0.5 -0.5 0 0}
+  black_clamp false
+  name Grade10
+  xpos -238
+  ypos 781
+ }
+push $Nfa946a80
+ Expression {
+  expr0 x-width/2
+  expr1 y-height/2
+  expr2 0
+  name positionpass
+  xpos -464
+  ypos 543
+ }
+ Reformat {
+  inputs 0
+  type "to box"
+  box_width {{img.width}}
+  box_height {{img.height}}
+  box_fixed true
+  resize none
+  filter Impulse
+  name Reformat1
+  xpos -623
+  ypos 590
+ }
+add_layer {p p.red p.green p.blue}
+ ShuffleCopy {
+  inputs 2
+  black red
+  white green
+  red2 blue
+  out2 p
+  name ShuffleCopy3
+  xpos -623
+  ypos 676
+ }
+add_layer {normals normals.X normals.Y normals.Z}
+ ShuffleCopy {
+  inputs 2
+  alpha alpha2
+  black red
+  white green
+  red2 blue
+  out2 normals
+  name ShuffleCopy2
+  xpos -623
+  ypos 781
+ }
+set Nfaa29500 [stack 0]
+ Dot {
+  name Dot11
+  xpos -693
+  ypos 785
+ }
+ BasicMaterial {
+  diffuse 0
+  specular 1
+  min_shininess 6.7
+  max_shininess 16.4
+  name BasicMaterial2
+  xpos -727
+  ypos 853
+ }
+ Camera2 {
+  inputs 0
+  translate {0 0 5000}
+  name Camera
+  xpos -850
+  ypos 972
+ }
+ Axis2 {
+  inputs 0
+  name Axis1
+  xpos -949
+  ypos 513
+ }
+push 0
+ Light2 {
+  inputs 2
+  light_type directional
+  translate {{parent.point.translate*5} {parent.point.translate*5} {parent.point.translate}}
+  depthmap_slope_bias 0.01
+  name dir
+  xpos -883
+  ypos 722
+ }
+ Light2 {
+  inputs 0
+  intensity 150
+  falloff_type Linear
+  translate {{"parent.lightPos.pos.x - img.width/2"} {"parent.lightPos.pos.y - img.height/2"} {lightHeight}}
+  depthmap_slope_bias 0.01
+  name point
+  xpos -1062
+  ypos 773
+  addUserKnob {20 User}
+  addUserKnob {12 pos}
+ }
+ Switch {
+  inputs 2
+  which {{parent.lightType}}
+  name Switch2
+  xpos -901
+  ypos 878
+ }
+push $Nfaa29500
+ ReLight {
+  inputs 4
+  normal normals
+  position p
+  name ReLight2
+  xpos -611
+  ypos 992
+ }
+set Nfaa79880 [stack 0]
+push $Nfaa79880
+push $Nfa946e00
+ Merge2 {
+  inputs 2
+  operation plus
+  output rgb
+  name Merge1
+  xpos -722
+  ypos 1225
+ }
+ Merge2 {
+  inputs 2
+  operation copy
+  name Merge2
+  xpos -722
+  ypos 1342
+  disable {{1-parent.effectOnly}}
+ }
+set Nfaa79180 [stack 0]
+push $Nfaa79880
+ Dot {
+  name Dot1
+  xpos -549
+  ypos 1474
+ }
+push $Nfaa79180
+ Copy {
+  inputs 2
+  from0 rgba.red
+  to0 rgba.alpha
+  name Copy1
+  xpos -722
+  ypos 1464
+  disable {{1-parent.outputAlpha}}
+ }
+ Remove {
+  operation keep
+  channels rgba
+  name Remove1
+  xpos -722
+  ypos 1577
+ }
+ Premult {
+  name Premult1
+  xpos -722
+  ypos 1642
+  disable {{1-parent.premult}}
+ }
+ Output {
+  name Output1
+  xpos -722
+  ypos 1764
+ }
+ Viewer {
+  inputs 2
+  frame_range 100-100
+  fps 23.97602463
+  name Viewer1
+  xpos -150
+  ypos 872
+ }
+end_group

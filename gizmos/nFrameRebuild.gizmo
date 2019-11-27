@@ -1,0 +1,129 @@
+Group {
+ name nFrameRebuild
+ tile_color 0xffd455ff
+ selected true
+ xpos -249
+ ypos -316
+ addUserKnob {20 User}
+ addUserKnob {41 useGPUIfAvailable l "Use GPU if available" T Kronos1.useGPUIfAvailable}
+ addUserKnob {26 ""}
+ addUserKnob {41 foi l "frame to rebuild" T frame_CTRL.foi}
+ addUserKnob {41 resetInputRange l "Reset Ranges" T Kronos1.resetInputRange}
+ addUserKnob {26 ""}
+ addUserKnob {41 retimedChannels l Channels T Kronos1.retimedChannels}
+ addUserKnob {41 interpolation l "Interpolation Method" T Kronos1.interpolation}
+ addUserKnob {41 vectorDetailReg l "Vector Detail" T Kronos1.vectorDetailReg}
+}
+ NoOp {
+  inputs 0
+  name frame_CTRL
+  xpos 1133
+  ypos 566
+  addUserKnob {20 User}
+  addUserKnob {3 foi l "frame to rebuild"}
+  foi 58
+ }
+ Input {
+  inputs 0
+  name InputSrc
+  xpos 1502
+  ypos 328
+ }
+ Dot {
+  name Dot60
+  xpos 1536
+  ypos 414
+ }
+set Nd5956700 [stack 0]
+ FrameHold {
+  first_frame {{parent.FrameHold1.knob.first_frame+2}}
+  name FrameHold2
+  xpos 1570
+  ypos 514
+ }
+ FrameRange {
+  first_frame {{parent.FrameHold2.knob.first_frame}}
+  last_frame {{parent.FrameHold2.knob.first_frame}}
+  time ""
+  name FrameRange2
+  xpos 1570
+  ypos 595
+ }
+push $Nd5956700
+ FrameHold {
+  first_frame {{parent.frame_CTRL.foi-1}}
+  name FrameHold1
+  xpos 1420
+  ypos 512
+ }
+ FrameRange {
+  first_frame {{parent.FrameHold1.knob.first_frame}}
+  last_frame {{parent.FrameHold1.knob.first_frame}}
+  time ""
+  name FrameRange1
+  xpos 1420
+  ypos 596
+ }
+ AppendClip {
+  inputs 2
+  firstFrame {{parent.FrameHold1.knob.first_frame}}
+  meta_from_first false
+  time ""
+  name AppendClip1
+  xpos 1502
+  ypos 717
+ }
+ Kronos {
+  input.first 57
+  input.last 156
+  retimedChannels all
+  timing2 Frame
+  timingFrame2 {{frame==frame_CTRL.foi?frame_CTRL.foi-0.5:frame<frame_CTRL.foi?frame_CTRL.foi-1:frame_CTRL.foi}}
+  showLegacyMode false
+  motionEstimation Regularized
+  vectorDetailReg 1
+  legacyModeNuke9 false
+  name Kronos1
+  xpos 1502
+  ypos 836
+ }
+push $Nd5956700
+ Dot {
+  name Dot2
+  xpos 1316
+  ypos 414
+ }
+ Dot {
+  name Dot1
+  xpos 1316
+  ypos 986
+ }
+ Switch {
+  inputs 2
+  which {{frame==frame_CTRL.foi?1:0}}
+  name Switch1
+  xpos 1502
+  ypos 982
+ }
+ FrameRange {
+  first_frame {{InputSrc.first_frame}}
+  last_frame {{InputSrc.last_frame}}
+  time ""
+  name FrameRange5
+  xpos 1502
+  ypos 1108
+ }
+ Output {
+  name Output1
+  xpos 1502
+  ypos 1193
+ }
+ Viewer {
+  frame 66
+  frame_range 1-200
+  fps 25
+  name Viewer1
+  xpos 1687
+  ypos 1328
+ }
+end_group

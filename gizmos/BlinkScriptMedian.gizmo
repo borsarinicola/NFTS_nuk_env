@@ -1,0 +1,42 @@
+Group {
+ name BlinkScriptMedian1
+ tile_color 0xcc804eff
+ selected true
+ xpos -265
+ ypos -89
+ addUserKnob {20 Median}
+ addUserKnob {41 "Local GPU: " T BlinkScript1.gpuName}
+ addUserKnob {41 "Use GPU if Available" T BlinkScript1.useGPUIfAvailable}
+ addUserKnob {26 ""}
+ addUserKnob {41 channels T BlinkScript1.channels}
+ addUserKnob {26 ""}
+ addUserKnob {14 kernel_size l size R 0 6}
+ kernel_size 3
+ addUserKnob {41 Size_X l INVISIBLE +INVISIBLE T BlinkScript1.Median_Size_X}
+ addUserKnob {41 Size_Y l INVISIBLE +INVISIBLE T BlinkScript1.Median_Size_Y}
+}
+ Input {
+  inputs 0
+  name Input1
+  xpos 148
+  ypos 165
+ }
+ BlinkScript {
+  recompileCount 1
+  ProgramGroup 1
+  KernelDescription "2 \"Median\" iterate componentWise 72e3d871e04a02c4287cf418d70db7783acfa08378ab97e29ad599ff41f78ed2 2 \"imageIn\" Read Ranged2D \"imageOut\" Write Point 2 \"Size_X\" Int 1 AwAAAA== \"Size_Y\" Int 1 AwAAAA== 2 \"x\" 1 1 \"y\" 1 1 3 \"imageInrangeMin\" Int 2 1 AAAAAAAAAAA= \"imageInrangeMax\" Int 2 1 AAAAAAAAAAA= \"_filterSize\" Int 1 1 AAAAAA=="
+  kernelSource "kernel Median : public ImageComputationKernel<eComponentWise>\n\{\n  Image<eRead, eAccessRanged2D, eEdgeClamped> imageIn; \n  Image<eWrite, eAccessPoint> imageOut;          \n\nparam:\n  int x;  //The horizontal radius of the median\n  int y;  //The vertical radius of the median\n\nlocal:\n  int _filterSize;\n  \n  void define() \{\n    defineParam(x, \"Size_X\", 3); \n    defineParam(y, \"Size_Y\", 3); \n  \}\n\n  void init() \{\n    //Set the range we need to access from the source \n\n    imageIn.setRange(-x, -y, x, y);\n    _filterSize = (2 * x + 1) * (2 * y + 1);\n\n  \}\n  void process(int2 pos)\n  \{\n    float vals\[25];\n\n    for (int j = -y, index = 0; j <= y; j++) \{\n      for (int i = -x; i <= x; i++, index++) \{\n        vals\[index] = imageIn(i, j);\n      \}\n    \}\n   \n    //The median function takes an array of floating-point values and an array length.\n    imageOut() = median(vals, _filterSize);\n    \n  \}\n\};"
+  rebuild ""
+  Median_Size_X {{"clamp(parent.kernel_size, 0 , 6)"}}
+  Median_Size_Y {{"clamp(parent.kernel_size, 0 , 6)"}}
+  rebuild_finalise ""
+  name BlinkScript1
+  xpos 148
+  ypos 260
+ }
+ Output {
+  name Output1
+  xpos 148
+  ypos 360
+ }
+end_group

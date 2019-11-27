@@ -1,0 +1,474 @@
+#! C:/Program Files/Nuke11.2v5/nuke-11.2.5.dll -nx
+version 11.2 v5
+define_window_layout_xml {<?xml version="1.0" encoding="UTF-8"?>
+<layout version="1.0">
+    <window x="2551" y="-9" w="2560" h="1361" maximized="1" screen="1">
+        <splitter orientation="1">
+            <split size="46"/>
+            <dock id="" hideTitles="1" activePageId="Toolbar.1">
+                <page id="Toolbar.1"/>
+            </dock>
+            <split size="1819" stretch="1"/>
+            <splitter orientation="2">
+                <split size="0"/>
+                <dock id=""/>
+                <split size="1309"/>
+                <dock id="" activePageId="DAG.1" focus="true">
+                    <page id="DAG.1"/>
+                    <page id="Curve Editor.1"/>
+                    <page id="DopeSheet.1"/>
+                </dock>
+            </splitter>
+            <split size="687"/>
+            <dock id="" activePageId="Properties.1">
+                <page id="Properties.1"/>
+                <page id="uk.co.thefoundry.backgroundrenderview.1"/>
+            </dock>
+        </splitter>
+    </window>
+    <window x="-10" y="2" w="2560" h="1349" screen="0">
+        <splitter orientation="2">
+            <split size="1349"/>
+            <dock id="" activePageId="Viewer.2">
+                <page id="Viewer.2"/>
+                <page id="Viewer.1"/>
+            </dock>
+        </splitter>
+    </window>
+</layout>
+}
+Root {
+ inputs 0
+ name //digitalfxserver/CompEnvironment/SharedToolSets/lens_distortion/NFTS_LdMap_EXR_Toolset.nk
+ colorManagement Nuke
+ workingSpaceLUT linear
+ monitorLut sRGB
+ int8Lut sRGB
+ int16Lut sRGB
+ logLut Cineon
+ floatLut linear
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode1
+ tile_color 0x453647ff
+ label "stMap Calculation"
+ note_font_size 92
+ xpos 140
+ ypos -1707
+ bdwidth 1357
+ bdheight 1967
+}
+StickyNote {
+ inputs 0
+ name StickyNote1
+ label "read lens grid plate"
+ note_font_size 30
+ xpos 920
+ ypos -1216
+}
+StickyNote {
+ inputs 0
+ name StickyNote2
+ label "sample black and white \npoint from the chart \nto get nice contrast"
+ note_font_size 30
+ xpos 877
+ ypos -1049
+}
+StickyNote {
+ inputs 0
+ name StickyNote3
+ label "calulate lens distortion\nset overscan (suggested 50px)\nremember to set output \nmode to stMap before render"
+ note_font_size 30
+ xpos 849
+ ypos -814
+}
+StickyNote {
+ inputs 0
+ name StickyNote6
+ label "fill up all fields to set chart overlays\nand output file name\nDO NOT USE SPACES!\n\nfile name is controleld by overlays\nexrs are saved in script location\nClick export EXR to render\nremember to save script before rendering"
+ note_font_size 30
+ xpos 487
+ ypos -455
+}
+Dot {
+ inputs 0
+ name Dot1
+ label INPUT
+ note_font_size 50
+ xpos 729
+ ypos -1209
+}
+Grade {
+ name Grade3
+ xpos 695
+ ypos -1018
+}
+LensDistortion2 {
+ distortionModelDisplayX "xu = xd / (1 + k0 * rd^2 + k1 * rd^4)"
+ distortionModelDisplayY "yu = yd / (1 + k0 * rd^2 + k1 * rd^4)"
+ keyFrame {{curve x1 1 x1001 1001}}
+ keyingInitialised true
+ "Adjust Bounding Box" 1
+ adjustBBox 50
+ crop {0 0 1920 1080}
+ featuresKnob "
+version 1
+entries 0
+entries 0
+"
+ name LensDistortion1
+ xpos 695
+ ypos -777
+}
+Group {
+ name NFTS_LdMap_EXR_Toolset1
+ tile_color 0xffbf00ff
+ label "\[value file]"
+ note_font_size 25
+ note_font_color 0xff
+ xpos 695
+ ypos -555
+ addUserKnob {20 User l Data}
+ addUserKnob {41 lensbrand l "lens brand" T TextCTRL1.lensbrand}
+ addUserKnob {41 lensmodel l "lens model" T TextCTRL1.lensmodel}
+ addUserKnob {41 focallenght l "focal length" T TextCTRL1.focallenght}
+ addUserKnob {41 serialnumber l "lens serial number" T TextCTRL1.serialnumber}
+ addUserKnob {41 cameramodel l "camera model" T TextCTRL1.cameramodel}
+ addUserKnob {41 resolution T TextCTRL1.resolution}
+ addUserKnob {41 filename l "" -STARTLINE +INVISIBLE T TextCTRL1.filename}
+ addUserKnob {41 filmback l "sensor size" T TextCTRL1.filmback}
+ addUserKnob {26 ""}
+ addUserKnob {41 fontsize l "overlay font size" T TextCTRL1.fontsize}
+ addUserKnob {26 ""}
+ addUserKnob {41 Render l "Render EXR" t "this renders the exr with the distortion channels\nsave script before exporting" T Write2.Render}
+ addUserKnob {26 ""}
+ addUserKnob {41 file +INVISIBLE T Write2.file}
+ addUserKnob {26 info l "" +STARTLINE T "The results of this Toolset are to be used\nwith the NFTS_LdMap_Group\nNFTS_LdMap_EXR_Toolset\nv1.0 - 14 September 2019"}
+}
+ BackdropNode {
+  inputs 0
+  name BackdropNode4
+  tile_color 0x2d3947ff
+  label Overlays
+  note_font_size 92
+  xpos 464
+  ypos -100
+  bdwidth 1400
+  bdheight 1572
+  z_order -50
+ }
+ BackdropNode {
+  inputs 0
+  name BackdropNode1
+  tile_color 0x383147ff
+  label "lens data"
+  note_font_size 92
+  xpos 731
+  ypos 429
+  bdwidth 434
+  bdheight 309
+ }
+ BackdropNode {
+  inputs 0
+  name BackdropNode2
+  tile_color 0x383147ff
+  label "overscan and \nsernsor"
+  note_font_size 92
+  xpos 1230
+  ypos 435
+  bdwidth 434
+  bdheight 309
+ }
+ BackdropNode {
+  inputs 0
+  name BackdropNode3
+  tile_color 0x2d3947ff
+  label CTRL
+  note_font_size 92
+  xpos 2007
+  ypos -100
+  bdwidth 480
+  bdheight 527
+ }
+ Input {
+  inputs 0
+  name LensDistortion_Node
+  xpos 143
+  ypos -141
+ }
+ Dot {
+  name Dot10
+  xpos 177
+  ypos 150
+ }
+set Nb4903c00 [stack 0]
+ Dot {
+  name Dot9
+  xpos 698
+  ypos 150
+ }
+set Nb4903880 [stack 0]
+ Dot {
+  name Dot4
+  xpos 861
+  ypos 150
+ }
+set Nb4903500 [stack 0]
+ Dot {
+  name Dot5
+  xpos 2241
+  ypos 150
+ }
+ NoOp {
+  name TextCTRL1
+  xpos 2207
+  ypos 209
+  addUserKnob {20 User}
+  addUserKnob {1 lensbrand l "lens brand"}
+  addUserKnob {1 lensmodel l "lens model"}
+  addUserKnob {3 focallenght l "focal length"}
+  focallenght 18
+  addUserKnob {1 serialnumber l "lens serial number"}
+  addUserKnob {1 cameramodel l "camera model"}
+  addUserKnob {1 resolution}
+  addUserKnob {14 filmback l "sensor size" R 0 100}
+  filmback {0 0}
+  addUserKnob {7 fontsize l "font size" R 0.01 10}
+  fontsize 1
+  addUserKnob {1 filename l "file name build"}
+  filename "\[value lensbrand]_\[value lensmodel]_\[value focallenght]mm_\[value serialnumber]_LdMap_\[value cameramodel]_\[value resolution]"
+  addUserKnob {3 undistortedresolutionW l "undistorted resolution"}
+  undistortedresolutionW {{bbox.r-bbox.x>width?bbox.r-bbox.x:width}}
+  addUserKnob {3 undistortedresolutionH l "" -STARTLINE}
+  undistortedresolutionH {{bbox.t-bbox.y>height?bbox.t-bbox.y:height}}
+  addUserKnob {14 newfilmback l "new sensor size operation" R 0 100}
+  newfilmback {{(filmback.w*undistortedresolutionW)/width} {(filmback.h*undistortedresolutionH)/height}}
+  addUserKnob {14 filmback2 l "new film back" R 0 100}
+  filmback2 {{"\[format \"%.2f\" \[value newfilmback.w]]"} {"\[format \"%.2f\" \[value newfilmback.h]]"}}
+ }
+push $Nb4903500
+ Remove {
+  name Remove2
+  xpos 827
+  ypos 229
+ }
+ Dot {
+  name Dot11
+  xpos 861
+  ypos 334
+ }
+set Nb4902700 [stack 0]
+ Rectangle {
+  area {{width/3.5} {height/2.5} {width-width/3.5} {height-height/5}}
+  name Text_Background1
+  xpos 827
+  ypos 683
+ }
+set Nb4902380 [stack 0]
+push $Nb4902700
+ Dot {
+  name Dot1
+  xpos 1076
+  ypos 334
+ }
+set Nb4902000 [stack 0]
+ Dot {
+  name Dot6
+  xpos 1367
+  ypos 334
+ }
+set Nc3bf1c00 [stack 0]
+ Dot {
+  name Dot7
+  xpos 1582
+  ypos 334
+ }
+ Text2 {
+  font_size_toolbar 50
+  font_width_toolbar 100
+  font_height_toolbar 100
+  message "Undist Res: \[value TextCTRL1.undistortedresolutionW]x\[value TextCTRL1.undistortedresolutionH]\nNew Sensor Size: \[value TextCTRL1.filmback2.w]x\[value TextCTRL1.filmback2.h]"
+  old_message {{85 110 100 105 115 116 32 82 101 115 58 32 49 57 50 48 120 49 48 56 48 10 78 101 119 32 83 101 110 115 111 114 32 83 105 122 101 58 32 48 120 48}
+    }
+  old_expression_markers {{12 15 17 20 39 39 41 41}
+    }
+  box {{parent.Text_Background2.area} {parent.Text_Background2.area} {parent.Text_Background2.area} {parent.Text_Background2.area}}
+  xjustify center
+  yjustify center
+  transforms {{0 2}
+    }
+  font_size_values {{0 50 1 50 2 50 3 50 4 50 5 50 6 50 7 50 8 50 9 50 10 50 11 50 12 50 13 50 14 50 15 50 16 50 17 50 18 50 19 50 20 50 21 50 22 50 23 50 24 50 25 50 26 50 27 50 28 50 29 50 30 50 31 50 32 50 33 50 34 50 35 50 36 50 37 50 38 50 39 50 40 50 41 50 12 80 14 80 16 80 17 80 18 80 19 80}
+    }
+  cursor_position 170
+  font {{ Arial : Bold : arialbd.ttf : 0 }}
+  global_font_scale {{parent.Text_Overlays1.global_font_scale}}
+  font_size 50
+  center {960 540}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {{0 1080}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 960 540 0 0 1 1 0 0 0 0}
+    }
+  name Texr_Overlays2
+  xpos 1548
+  ypos 683
+ }
+ Dot {
+  name Dot13
+  xpos 1582
+  ypos 1064
+ }
+push $Nc3bf1c00
+ Rectangle {
+  area {{width/3.5} {height/5} {width-width/3.5} {height-height/1.5}}
+  name Text_Background2
+  xpos 1333
+  ypos 683
+ }
+ Dot {
+  name Dot14
+  xpos 1367
+  ypos 995
+ }
+push $Nb4902000
+ Text2 {
+  font_size_toolbar 80
+  font_width_toolbar 100
+  font_height_toolbar 100
+  message "\[value TextCTRL1.lensbrand] \[value TextCTRL1.lensmodel]\n\[value TextCTRL1.focallenght] mm\nSN \[value TextCTRL1.serialnumber]\n\[value TextCTRL1.cameramodel] \[value TextCTRL1.resolution]"
+  old_message {{32 10 49 56 32 109 109 10 83 78 32 10 32}
+    }
+  old_expression_markers {{0 -1 1 0 2 3 11 10 12 11 13 12}
+    }
+  box {{parent.Text_Background1.area+width/50} {parent.Text_Background1.area+height/50} {parent.Text_Background1.area-width/50} {parent.Text_Background1.area-height/50}}
+  xjustify center
+  yjustify center
+  transforms {{0 2}
+    }
+  font_size_values {{0 80 1 80 2 80 3 80 4 80 5 80 6 80 7 80 8 80 9 80 10 80 11 80 12 80 1 97 2 97 5 97 6 97 11 97 12 97}
+    }
+  cursor_position 88
+  font {{ Arial : Bold : arialbd.ttf : 0 }}
+  global_font_scale {{(width/1920)*TextCTRL1.fontsize x1001 2.4}}
+  font_size 80
+  center {1024 576}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {{0 1152}
+    }
+  group_animations {{0} imported: 0 selected: items: "root transform/"}
+  animation_layers {{1 11 1024 576 0 0 1 1 0 0 0 0}
+    }
+  name Text_Overlays1
+  xpos 1042
+  ypos 683
+ }
+ Dot {
+  name Dot2
+  xpos 1076
+  ypos 924
+ }
+push $Nb4902380
+ Dot {
+  name Dot3
+  xpos 861
+  ypos 853
+ }
+push $Nb4903880
+ Merge2 {
+  inputs 2
+  operation matte
+  mix 0.8
+  name Merge1
+  xpos 664
+  ypos 850
+ }
+ Merge2 {
+  inputs 2
+  operation stencil
+  name Merge2
+  xpos 664
+  ypos 921
+ }
+ Merge2 {
+  inputs 2
+  operation matte
+  mix 0.8
+  name Merge3
+  xpos 664
+  ypos 992
+ }
+ Merge2 {
+  inputs 2
+  operation stencil
+  name Merge4
+  xpos 664
+  ypos 1061
+ }
+ Dot {
+  name Dot8
+  xpos 698
+  ypos 1260
+ }
+push $Nb4903c00
+ Remove {
+  operation keep
+  channels rgba
+  channels2 forward
+  channels3 backward
+  name Remove1
+  xpos 143
+  ypos 373
+ }
+ Expression {
+  expr3 1
+  name Expression1
+  xpos 143
+  ypos 463
+ }
+ ShuffleCopy {
+  inputs 2
+  in rgb
+  red red
+  green green
+  blue blue
+  out rgb
+  name ShuffleCopy1
+  label "\[value in]_\[value out]"
+  xpos 143
+  ypos 1253
+ }
+ Write {
+  channels all
+  file "\[python \{nuke.script_directory()\}]/\[value TextCTRL1.filename].exr"
+  file_type exr
+  datatype "32 bit float"
+  metadata "all metadata"
+  first_part none
+  create_directories true
+  version 39
+  name Write2
+  xpos 143
+  ypos 1534
+  addUserKnob {20 caravr l CaraVR}
+  addUserKnob {4 viewPresets l "View Presets" M {main stereo cams "stereo cams" all}}
+  addUserKnob {22 set l Set -STARTLINE T "w = nuke.thisNode()\nscriptViews = nuke.views()\nviewPreset = w\['viewPresets'].getValue()\nselectedViews = None\nif viewPreset == 0:\n  selectedViews = \['main']\nif viewPreset == 1:\n  stereoViews = \['left', 'right']\n  if set(stereoViews).issubset(set(scriptViews)):\n    selectedViews = stereoViews\n  else:\n    selectedViews = None\nelif viewPreset == 2:\n  selectedViews = \[v for v in scriptViews if 'cam' in v and not ('_left' in v or '_right' in v)]\nelif viewPreset == 3:\n  selectedViews = \[v for v in scriptViews if 'cam' in v and ('_left' in v or '_right' in v)]\nelif viewPreset == 4:\n  selectedViews = scriptViews\nif selectedViews:\n  w\['views'].fromScript(' '.join(selectedViews))\n"}
+ }
+ Output {
+  name Output1
+  xpos 143
+  ypos 1675
+ }
+ Viewer {
+  inputs 2
+  frame_range 1001-1100
+  fps 25
+  colour_sample_bbox {0.2531250119 -0.04583333433 0.2541666627 -0.04479166493}
+  name Viewer1
+  xpos 1265
+  ypos 1676
+ }
+end_group

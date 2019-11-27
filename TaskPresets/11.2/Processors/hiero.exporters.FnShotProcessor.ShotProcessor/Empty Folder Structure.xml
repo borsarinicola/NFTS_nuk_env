@@ -1,0 +1,155 @@
+<root presetname="Empty Folder Structure" tasktype="hiero.exporters.FnShotProcessor.ShotProcessor">
+    <startFrameIndex valuetype="int">1001</startFrameIndex>
+    <exportRoot valuetype="str">{projectroot}/shots</exportRoot>
+    <versionIndex valuetype="int">1</versionIndex>
+    <cutUseHandles valuetype="bool">False</cutUseHandles>
+    <versionPadding valuetype="int">3</versionPadding>
+    <exportTemplate valuetype="list">
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/to_client/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/renders/previews/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/renders/precomps/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/mocap/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/In/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/data/3D/zBrush/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/data/3D/pfTrack/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/data/3D/Maya/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/data/3D/mari/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/data/3D/houdini/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/data/3D/3dsmax/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/data/3D/3de/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/data/3D/Substance/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/data/2D/photoshop/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/data/2D/nuke/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/data/2D/aftereffects/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/audio/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/assets/cam/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/assets/dmp/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/assets/mattes/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/assets/geo/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/assets/references/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/assets/smartVectors/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root presetname="folder" tasktype="hiero.core.FnExporterBase.FolderTask" />
+            </SequenceItem>
+        </SequenceItem>
+    </exportTemplate>
+    <excludeTags valuetype="list" />
+    <includeTags valuetype="list">
+        <SequenceItem valuetype="str">Nuke</SequenceItem>
+    </includeTags>
+    <includeRetimes valuetype="bool">False</includeRetimes>
+    <startFrameSource valuetype="str">Source</startFrameSource>
+    <cutLength valuetype="bool">True</cutLength>
+    <cutHandles valuetype="int">10</cutHandles>
+</root>
