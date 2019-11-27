@@ -75,7 +75,7 @@ Data is stored on <code>%NUKE_PATH%/SharedToolSets</code>. Permissions for this 
         <li>Read from Write       Shift+R</li>
         <li>Reveal file in Browser      Alt+Shift+R</li>
         <li>Lable Shortcut       Shift+L</li>
-        <li>Cycle Between Operations       Alt+X and Alt+Shift+X</li>
+        <li>Cycle Operations       Alt+X and Alt+Shift+X</li>
         <li>Sumbit to Deadline      Alt+R</li>
       </ul>
     </td>
