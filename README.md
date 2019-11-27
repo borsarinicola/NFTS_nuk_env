@@ -101,8 +101,8 @@ The Environment safely stores some important scripts and executables to quickly 
 
 <h4>HOUDINI</h4>
 
-In the <code>scripts/houdini</code> folder, a the script <code>set_houdini_renderers.bat</code> is stored. When executed the script created a houdini17.0 folder in the user's Documents and populates it with a precompile <code>houdini.env</code> file. This contains the necessary text to allow Houdini 17 to run Redshift and Arnold. Note that if the file already exists, it will be replaced. 
+In the <code>scripts/houdini</code> folder, the script <code>set_houdini_renderers.bat</code> is stored. When executed the script creates a houdini17.0 folder in the user's Documents and populates it with a pre-prepared <code>houdini.env</code> file. This contains the necessary instructions that allow Houdini 17 to run Redshift and Arnold. Note that if the file already exists, it will be replaced. 
 
-To install the Deadline submission tool for Houdini please run the <code>Houdini-submitter-windows-installer.exe</code> contained in the same folder. This will add extra lines to the <code>houdini.env</code> so make sure to run the Arnold and Redshift script first.
+To install the Deadline submission tool for Houdini run the <code>Houdini-submitter-windows-installer.exe</code> contained in the same location. This will add extra lines to the <code>houdini.env</code> so make sure to install the renderers before this.
 
 <h4>DEADLINE</h4>
