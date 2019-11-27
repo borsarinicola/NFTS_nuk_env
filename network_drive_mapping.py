@@ -3,7 +3,7 @@
 
 '''
 NFTS - National Film and Television School.
-latest update: 2019-08-07
+latest update: 2019-11-07
 '''
 
 ####################################
@@ -30,8 +30,6 @@ def myFilenameFilter(filename):
         filename = filename.replace( '//digitalfxserver/CompEnvironment/','/Volumes/CompEnvironment/' ) # comp env
 
 
-        #filename = filename.replace( '//animserver/AnimGradStorage/','/Volumes/AnimGradStorage/' ) # anim grad storage
-        #filename = filename.replace( '//editserver/EditingStorage/','/Volumes/EditingStorage/' ) # editing storage
 
     #conversions form macos to win
 
@@ -48,8 +46,6 @@ def myFilenameFilter(filename):
         filename = filename.replace( '/Volumes/GraAnim19-Daniel/','//AvidISIS/GraAnim19-Daniel/' ) # gran anim
         filename = filename.replace( '/Volumes/GraFic19-Voce/','//AvidISIS/GraFic19-Voce/' ) # gran fic
 
-        #filename = filename.replace( '/Volumes/AnimGradStorage/','//animserver/AnimGradStorage/' ) # anim grad storage
-        #filename = filename.replace( '/Volumes/EditingStorage/','//editserver/EditingStorage/' ) # editing storage
         
 
 
