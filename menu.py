@@ -315,6 +315,18 @@ except:
     pass
 
 
+# add button to open the deadline guidelines
+
+def dealineHelp():
+    webbrowser.open("file://digitalfxserver/CompEnvironment/documentation/deadline10_guidelines.pdf")
+
+nuke.menu( 'Nuke' ).addCommand('Environment Help', 'gitHubEnvHelp()')
+
+tbmenu.addCommand("Deadline Guidelines", 'dealineHelp()')
+
+
+
+
 
 ####################################
 
