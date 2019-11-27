@@ -117,18 +117,12 @@ if nuke.env['MACOS']:
     Path = '/Volumes/CompEnvironment/NFTS_CopyPaste_Data.nk'
 
 
-#env variable based path     
-
-#nuk_env_path = os.environ["NUKE_PATH"]
-#SharedPath = str(nuk_env_path) + 'NFTS_CopyPaste_Data.nk'
-
-   
 def nftsCopy():
-    nuke.nodeCopy(SharedPath)
+    nuke.nodeCopy(Path)
     return
 
 def nftsPaste():
-    nuke.nodePaste(SharedPath)
+    nuke.nodePaste(Path)
     return
 
 #add functions to menu

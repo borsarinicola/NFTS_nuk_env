@@ -1,0 +1,1 @@
+setx HIERO_PLUGIN_PATH \\digitalfxserver\CompEnvironment\
