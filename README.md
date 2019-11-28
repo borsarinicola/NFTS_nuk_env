@@ -98,7 +98,7 @@ Documentation is often available. The Deadline guidelines for priorities and sub
 
 <h2>EXTRA NON-NUKE CONFIGURATIONS</h2>
 
-The Environment safely stores some important scripts and executables to quickly set up other bits of software. Most of the department's machine run Windows so most of the following informations (specifically Houdini's and Deadline's) are Windoes specific.
+The Environment safely stores some important scripts and executables to quickly set up other bits of software. Most of the department's machine run Windows so most of the following informations (specifically Houdini's and Deadline's) are Windows specific.
 
 <h4>HOUDINI</h4>
 
