@@ -111,6 +111,7 @@ cryptomatte_utilities.setup_cryptomatte_ui()
 
 
 #add NFTS CopyPaste
+#thanks Lars for the idea of this tool
 
 
 if nuke.env['WIN32']:
