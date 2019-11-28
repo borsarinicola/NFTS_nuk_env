@@ -60,23 +60,23 @@ Data is stored on <code>%NUKE_PATH%/SharedToolSets</code>. Permissions for this 
   <tr>
     <td width="50%">
       <ul>
-        <li>Keymix          V</li>
-        <li>Expression      E</li>
-        <li>Invert          Alt+Ctrl+I</li>
-        <li>Premult         Alt+Shift+P</li>
-        <li>Unpremult       Alt+Shift+U</li>
-        <li>ChannelMerge    Shift+M</li>
-        <li>TransformMasked  Shift+T</li>
+        <li>Keymix         <i>V</i</li>
+          <li>Expression      <i>E</i></li>
+  <li>Invert          <i>Alt+Ctrl+I</i></li>
+  <li>Premult         <i>Alt+Shift+P</i></li>
+  <li>Unpremult       <i>Alt+Shift+U</i></li>
+  <li>ChannelMerge    <i>Shift+M</i></li>
+  <li>TransformMasked  <i>Shift+T</i></li>
       </ul>
     </td>
     <td width="50%">
       <ul>
-        <li>Backdrops       Alt+B</li>
-        <li>Read from Write       Shift+R</li>
-        <li>Reveal file in Browser      Alt+Shift+R</li>
-        <li>Lable Shortcut       Shift+L</li>
-        <li>Cycle Operations       Alt+X and Alt+Shift+X</li>
-        <li>Submit to Deadline      Alt+R</li>
+        <li>Backdrops       <i>Alt+B</i></li>
+        <li>Read from Write       <i>Shift+R</i></li>
+        <li>Reveal file in Browser      <i>Alt+Shift+R</i></li>
+        <li>Lable Shortcut       <i>Shift+L</i></li>
+        <li>Cycle Operations       <i>Alt+X</i> and <i>Alt+Shift+X</i></li>
+        <li>Submit to Deadline      <i>Alt+R</i></li>
       </ul>
     </td>
   </tr>
