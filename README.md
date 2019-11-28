@@ -89,7 +89,7 @@ To allow fast setup of direcories and Environment Variables, bat and bash script
 <h4>ENVIRONMENT VARIABLES</h4>
 
 There are two scripts available, one for Windows and one for MacOS.
-<code>set_hiero_env_win.bat</code> (WIN) creates the permanent user variable <code>HIERO_PLUGIN_PATH</code> and directs it to the environment while <code>set_nuke_hiero_env_mac.command</code> (MAC) creates temporary <code>HIERO_PLUGIN_PATH</code> and <code>NUKE_PATH</code> variables. The MAC script needs to be runned at startup to ensure a working setup or otherwise variables need to be defined in the <code>.plist<\code> file. At the NFTS the variable <code>NUKE_PATH</code> should be already set by default on Windows machines.
+<code>set_hiero_env_win.bat</code> (WIN) creates the permanent user variable <code>HIERO_PLUGIN_PATH</code> and directs it to the environment while <code>set_nuke_hiero_env_mac.command</code> (MAC) creates temporary <code>HIERO_PLUGIN_PATH</code> and <code>NUKE_PATH</code> variables. The MAC script needs to be runned at startup to ensure a working setup or otherwise variables need to be defined in the <code>.plist</code> file. At the NFTS the variable <code>NUKE_PATH</code> should be already set by default on Windows machines.
 
 <h4>DOCUMENTATION</h4>
 
