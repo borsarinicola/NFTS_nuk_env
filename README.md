@@ -94,6 +94,7 @@ There are two scripts available, one for Windows and one for MacOS.
 <h4>DOCUMENTATION</h4>
 
 Documentation is often available. The Deadline guidelines for priorities and submission are stored in <code>documentation/deadline10_guidelines</code> and can also be accesed by navigating to the <code>Thinkbox/Documentation</code> within Nuke's interface.
+</br>This GitHub page is also accessable by accessing the <code>Environment Help</code> menu in the Nuke menu bar.
 
 <h2>EXTRA NON-NUKE CONFIGURATIONS</h2>
 
