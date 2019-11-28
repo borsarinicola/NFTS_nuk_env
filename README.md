@@ -107,6 +107,6 @@ In the <code>scripts/houdini</code> folder, the script <code>set_houdini_rendere
 To install the Deadline submission tool for Houdini run the <code>Houdini-submitter-windows-installer.exe</code> contained in the same location. This will add extra lines to the <code>houdini.env</code> so make sure to install the renderers before this.
 
 <h4>DEADLINE</h4>
-The <code>deadline_config</code> folder contains INI files that store the minimisation preferences for the deadline client GUI. The TXT files contain the neccessary code to copy those files on remote machines using the deadline remote control.
+The <code>deadline_config</code> folder contains INI files that store the minimisation preferences for the Deadline Client GUI. The TXT files contain the neccessary code to copy those files on remote machines using the deadline remote control.
 </br>The <code>deadline_no_gui.bat</code> script, permanently hides the Deadline Client form the GUI interface making it run in the background. 
 
