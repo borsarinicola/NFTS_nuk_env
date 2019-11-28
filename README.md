@@ -128,7 +128,8 @@ The <code>deadline_config</code> folder contains INI files that store the minimi
 
 
 <h2>LICENSE AND COPYRIGHT</h2>
-By downloading a file from this page you agree to the general license terms below.
+
+By downloading a file from this repository you agree to the general license terms below.
 
 Copyright (c) 2010 till present
 All rights reserved.
