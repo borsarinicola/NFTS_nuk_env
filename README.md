@@ -47,6 +47,7 @@ The NFTS Copy paste is a quick way to copy data between different scrips on diff
 It is possible to initialize the share the selected nodes by navigating to <b>NFTS Share/Share Selected Nodes</b> (Alt+Shift+C).
 </br>Nodes are then easy to paste by selecting <b>NFTS Share/Paste Shared Nodes</b> (Alt+Shift+V).
 The shared data is stored on a file located at <code>%NUKE_PATH%/NFTS_CopyPaste_Data.nk</code> that gets overwritten every time that a user copies something new.
+This is done through the functions <code>nftsCopy()</code> and <code>nftsCopy()</code>.
 
 <h4>SHARED TOOLS</h4>
 
@@ -93,8 +94,8 @@ There are two scripts available, one for Windows and one for MacOS.
 
 <h4>DOCUMENTATION</h4>
 
-Documentation is often available. The Deadline guidelines for priorities and submission are stored in <code>documentation/deadline10_guidelines</code> and can also be accesed by navigating to the <code>Thinkbox/Documentation</code> within Nuke's interface.
-</br>This GitHub page is also accessable by accessing the <code>Environment Help</code> menu in the Nuke menu bar.
+Documentation is often available. The Deadline guidelines for priorities and submission are stored in <code>documentation/deadline10_guidelines</code> and can also be accesed by navigating to the <code>Help/Deadline Guidelines</code> within Nuke's interface.
+</br>This GitHub page is also accessable by accessing the <code>Help/NFTS Environment Help</code> menu in the Nuke menu bar.
 
 <h2>EXTRA NON-NUKE CONFIGURATIONS</h2>
 

@@ -17,7 +17,7 @@ import webbrowser
 ####################################
 
 '''
-Import Python scripts.
+Import Custom Python scripts.
 '''
 
 import sb_backdrop
@@ -28,6 +28,8 @@ import animatedSnap3D
 import pixelfudger
 import AnimationMaker
 import CycleOperations
+import NFTSCopyPaste
+import NFTShelp
 
 
 ####################################
@@ -37,7 +39,7 @@ Override default backdrop function with sb_backdrop
 '''
 
 nukescripts.autoBackdrop = sb_backdrop
-nuke.toolbar("Nodes").addCommand('Other/Backdrop', 'sb_backdrop.sb_backdrop()','')
+nuke.toolbar("Nodes").addCommand('Other/Backdrop', 'sb_backdrop.sb_backdrop()','alt+b')
 
 ####################################
 
@@ -46,11 +48,13 @@ Add a NFTS Tools toolbar.
 '''
 
 NFTS = nuke.toolbar("Nodes").addMenu( "NFTS", icon="nfts.png" )
-NFTS.addCommand('ReadFromWrite','ReadFromWrite.ReadFromWrite()', 'shift+r')
-NFTS.addCommand("sb RevealInFileBrowser", "sb_revealInFileBrowser.sb_revealInFileBrowser()", "alt+shift+r")
-NFTS.addCommand('nLabelShortcut','nLabelShortcut.nLabelShortcut()', 'shift+l')
-NFTS.addCommand("sb Backdrop", "sb_backdrop.sb_backdrop()", 'alt+b')
-NFTS.addCommand("ShuffleAll", "nuke.createNode('ShuffleAll')")
+NFTS.addCommand('Python/ReadFromWrite','ReadFromWrite.ReadFromWrite()', 'shift+r')
+NFTS.addCommand("Python/sb RevealInFileBrowser", "sb_revealInFileBrowser.sb_revealInFileBrowser()", "alt+shift+r")
+NFTS.addCommand('Python/nLabelShortcut','nLabelShortcut.nLabelShortcut()', 'shift+l')
+NFTS.addCommand('Python/ShuffleAll', 'import shuffleAll\nshuffleAll.shuffleAll()')
+NFTS.addCommand('Python/nDeepAutocrop','import nDeepAutocrop\nnDeepAutocrop.nDeepAutocrop()')
+NFTS.addCommand('Python/Cycle Operations/Cycle Operations Forwards', "CycleOperations.CycleOperations()", "alt+x")
+NFTS.addCommand('Python/Cycle Operations/Cycle Operations Backwards', "CycleOperations.CycleOperations(False)", "alt+shift+x")
 NFTS.addCommand("AlexaNoise", "nuke.createNode('AlexaNoise')" )
 NFTS.addCommand("DespillMadness_v2", "nuke.createNode('DespillMadness_v2')")
 NFTS.addCommand("ColourEdge_v2", "nuke.createNode('ColourEdge_v2')")
@@ -62,12 +66,10 @@ NFTS.addCommand("BumpDisplace", "nuke.createNode('BumpDisplace')" )
 NFTS.addCommand("nFrameRebuild", "nuke.createNode('nFrameRebuild')['foi'].setValue( nuke.frame() )" )
 NFTS.addCommand("DasGrain", "nuke.createNode('DasGrain')" )
 NFTS.addCommand("nChannelViewer", "nuke.createNode('nChannelViewer')" )
-NFTS.addCommand('nDeepAutocrop','nDeepAutocrop.nDeepAutocrop()')
 NFTS.addCommand("despillToColor", "nuke.createNode('despillToColor')" )
 NFTS.addCommand("apChroma", "nuke.createNode('apChroma')" )
 NFTS.addCommand("apChromaMerge", "nuke.createNode('apChromaMerge')" )
-NFTS.addCommand('Cycle Operations/Cycle Operations Forwards', "CycleOperations.CycleOperations()", "alt+x")
-NFTS.addCommand('Cycle Operations/Cycle Operations Backwards', "CycleOperations.CycleOperations(False)", "alt+shift+x")
+
 
 
 
@@ -89,9 +91,9 @@ eq.addCommand("LD_3DE_Classic_LD_Model", "nuke.createNode('LD_3DE_Classic_LD_Mod
 
 
 # V!ctor Tools Toolbar Definitions
+
 toolbar = nuke.menu('Nodes')
 VMenu = toolbar.addMenu('V!ctor', icon='V_Victor.png')
-
 VMenu.addCommand('V_EdgeMatte', 'nuke.createNode("V_EdgeMatte")', icon='V_EdgeMatte.png')
 VMenu.addCommand('V_ColorRenditionChart', 'nuke.createNode("V_ColorRenditionChart")', icon='V_ColorRenditionChart.png')
 VMenu.addCommand('V_SliceTool', 'nuke.createNode("V_SliceTool")',  icon='V_SliceTool.png')
@@ -105,32 +107,6 @@ VMenu.addCommand('V_Multilabeler', 'nuke.createNode("V_Multilabeler")', icon='V_
 
 import cryptomatte_utilities
 cryptomatte_utilities.setup_cryptomatte_ui()
-
-
-####################################
-
-
-#add NFTS CopyPaste
-#thanks Lars for the idea of this tool
-
-
-if nuke.env['WIN32']:
-    Path = '//digitalfxserver/CompEnvironment/NFTS_CopyPaste_Data.nk'
-if nuke.env['MACOS']:
-    Path = '/Volumes/CompEnvironment/NFTS_CopyPaste_Data.nk'
-
-
-def nftsCopy():
-    nuke.nodeCopy(Path)
-    return
-
-def nftsPaste():
-    nuke.nodePaste(Path)
-    return
-
-#add functions to menu
-nuke.menu( 'Nuke' ).addCommand('NFTS Share/Share Selected Nodes', 'nftsCopy()', 'Alt+Shift+C')
-nuke.menu( 'Nuke' ).addCommand('NFTS Share/Paste Shared Nodes', 'nftsPaste()', 'Alt+Shift+V')
 
 
 ####################################
@@ -293,7 +269,6 @@ menubar = nuke.menu("Nuke")
 tbmenu = menubar.addMenu("&Thinkbox")
 
 #advancedSumbission creates the artifact upon script sumbission
-
 def advancedSubmission():
     nuke.scriptSave()
     DeadlineNukeClient.main()
@@ -317,19 +292,6 @@ except:
     pass
 
 
-# add button to open the deadline guidelines
-
-def dealineHelp():
-    webbrowser.open("file://digitalfxserver/CompEnvironment/documentation/deadline10_guidelines.pdf")
-
-nuke.menu( 'Nuke' ).addCommand('Environment Help', 'gitHubEnvHelp()')
-
-tbmenu.addCommand("Deadline Guidelines", 'dealineHelp()')
-
-
-
-
-
 ####################################
 
 # add extra main menu functions
@@ -341,7 +303,7 @@ nuke.menu("Nuke").addCommand('File/Package Script', 'import Gizmo2Group\nGizmo2G
 nuke.menu("Nuke").addCommand('File/Save New Comp Version', 'incrementalSave()') #override save new comp version funtionalities
 
 if nuke.env['nukex'] == False: # Check Nuke or Nuke X and add menu only if cheep nuke is running
-    switchX = nuke.menu("Nuke").addCommand('File/Switch to NukeX ', 'import nukeSwitch\nnukeSwitch.versionSwitch()')
+    nuke.menu("Nuke").addCommand('File/Switch to NukeX ', 'import nukeSwitch\nnukeSwitch.versionSwitch()')
 
 
 
@@ -400,7 +362,6 @@ nuke.addFormat(DCP_2K_Full)
 DCP_2K_Scope = '2048 858 DCP_2K_Scope'
 nuke.addFormat(DCP_2K_Scope)
 
-
 DCP_2K_Flat = '1998 1080 DCP_2K_Flat'
 nuke.addFormat(DCP_2K_Flat)
 
@@ -413,19 +374,13 @@ nuke.addFormat(DCP_2K_Flat)
 
 toolbar = nuke.menu('Nodes')
 toolbar.addCommand('Merge/KeyMix', 'nuke.createNode("Keymix")', 'v')
+toolbar.addCommand('Color/Math/Expression', 'nuke.createNode("Expression")', 'e')
 toolbar.addCommand('Color/Invert', 'nuke.createNode("Invert")', 'alt+ctrl+i')
 toolbar.addCommand('Merge/Premult', 'nuke.createNode("Premult")', 'alt+shift+p')
 toolbar.addCommand('Merge/Unpremult', 'nuke.createNode("Unpremult")', 'alt+shift+u')
 toolbar.addCommand('Channel/ChannelMerge', 'nuke.createNode("ChannelMerge")', 'shift+m')
-toolbar.addCommand('Color/Math/Expression', 'nuke.createNode("Expression")', 'e')
 toolbar.addCommand('Transform/TransformMasked', 'nuke.createNode("TransformMasked")', 'shift+t')
 
 
 ####################################
 
-# add environment help buton 
-
-def gitHubEnvHelp():
-  webbrowser.open("https://github.com/borsarinicola/nfts_nuk_env")
-
-nuke.menu( 'Nuke' ).addCommand('Environment Help', 'gitHubEnvHelp()')

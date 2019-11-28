@@ -58,16 +58,9 @@ import cryptomatte_utilities
 cryptomatte_utilities.setup_cryptomatte()
 
 
-
-
 ####################################
 
-# NFTS CUSTOM PIPELINE FUNCTIONS AND OVERRIDES
-
-
-
-
-
+# NFTS CUSTOM PIPELINE, FUNCTIONS AND OVERRIDES
 
 
 #check the existence of versioning in the file name
