@@ -74,7 +74,7 @@ Data is stored on <code>%NUKE_PATH%/SharedToolSets</code>. Permissions for this 
         <li>Backdrops       <i>Alt+B</i></li>
         <li>Read from Write       <i>Shift+R</i></li>
         <li>Reveal file in Browser      <i>Alt+Shift+R</i></li>
-        <li>Lable Shortcut       <i>Shift+L</i></li>
+        <li>Label Shortcut       <i>Shift+L</i></li>
         <li>Cycle Operations       <i>Alt+X</i> and <i>Alt+Shift+X</i></li>
         <li>Submit to Deadline      <i>Alt+R</i></li>
       </ul>
