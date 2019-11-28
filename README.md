@@ -39,7 +39,7 @@ Deadline renders run in the non-GUI version of Nuke. Therfore artifacts must be 
 This is achieved with the <code>advencedSubmission()</code> function. This will first run a script save <code>nuke.scriptsave()</code>, folowed by the standard Deadline Submission function <code>DealineNukeClient.main()</code> and upon succes of the last step the <code>createArtifact()</code>. 
 This also ensures that artifacts are generated only once and not evey time that a Deadline render task is initialized.
 
-<h2>Custom Tools</h2>
+<h2>Custom Tools and Shortcuts</h2>
 
 <h4>NFTS COPY PASTE</h4>
 
@@ -54,7 +54,7 @@ User do not have permissions to modify the data on the Environment. Therfore to 
 This allows users to select some nodes or groups from the nodegraph and publish them for everyone to use, modify and eventualy delete; using the relative options in the SharedTools Menu.
 Data is stored on <code>%NUKE_PATH%/SharedToolSets</code>. Permissions for this folder have been modified to allow users read and write access. All data contained in here is editable, exeption made for the preloaded lens distortion toolsets. This nodes are crucial for efficient lens distortion workflows and users should not atempt to remove or modify them.
 
-<h4>CUSTOM SHORTCUTS</h4>
+<h4>SHORTCUTS</h4>
 
 <table>
   <tr>
