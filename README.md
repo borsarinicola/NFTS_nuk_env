@@ -60,7 +60,7 @@ Data is stored on <code>%NUKE_PATH%/SharedToolSets</code>. Permissions for this 
   <tr>
     <td width="50%">
       <ul>
-        <li>Keymix         <i>V</i</li>
+        <li>Keymix         <i>V</i></li>
           <li>Expression      <i>E</i></li>
   <li>Invert          <i>Alt+Ctrl+I</i></li>
   <li>Premult         <i>Alt+Shift+P</i></li>
