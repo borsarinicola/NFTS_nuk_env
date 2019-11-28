@@ -24,13 +24,13 @@ The default behaviour of the Incremental Save has been overwritten by the new fu
 <h4>WRITE NODES</h4>
 
 To ensure that scripts are not overwritten after a render, Nuke will also ask whether to save an incremental of the script after the render has been executed. Artifacts will also be created upon render.
-These extra functionalities are implemented by changing the default values of the Python Knobs <b>Before Render</b><code>writeBeforePipeline()</code> and <b>After Render</b> <code>writeAfterPipeline()</code>.
+These extra functionalities are implemented by changing the default values of the Python Knobs adding <code>writeBeforePipeline()</code> to <b>Before Render</b>and <code>writeAfterPipeline()</code> to <b>After Render</b>.
 
 <h4>ARTIFACTS</h4>
 
 When rendering form this customized version of Nuke the software automatically creates a copy of the script in the location where it's saved, adding <i>_artifact</i> at the end of the file name. This ensures that it's always possible to restore the script that rendered a specific output. Aritifacts are created only during GUI sessions. This is done using the <code>nuke.GUI</code> variable.
 
-<h4>EXTERNAL WRITE NODES ISSUE</h4>
+<h4>EXTERNAL WRITE NODES CONVERSION</h4>
 When Write nodes have been generated either with NukeStudio or in a Nuke setup where the pipeline is not available, the Before and After Render behaviours will not be in place.
 To ensure that "standard rite nodes" are converted in "pipeline write nodes", the function <code>incrementalSave()</code> has also been implemented to change the necessary python knobs on script save. 
 
@@ -38,6 +38,9 @@ To ensure that "standard rite nodes" are converted in "pipeline write nodes", th
 Deadline renders run in the non-GUI version of Nuke. Therefore artifacts must be created at submission time.
 This is achieved with the <code>advencedSubmission()</code> function. This will first run a script save <code>nuke.scriptsave()</code>, folowed by the standard Deadline Submission function <code>DealineNukeClient.main()</code> and upon succes of the last step the <code>createArtifact()</code>. 
 This also ensures that artifacts are generated only once and not every time that a Deadline render task is initialized.
+
+<h4>NETWORK DRIVE REMAPPING</h4>
+Often it is necessary to access nuke scritps form a diffrerent OS. To nesure that all the schoold servers and ISIS volumes are available indipendently form the OS file paths can be handled from the file <code>network_drive_remapping.py</code>.
 
 <h2>Custom Tools and Shortcuts</h2>
 
@@ -62,7 +65,7 @@ Switch to NukeX (originally NukeSwitch) is avaiable in <code>File/Switch to Nuke
 Convert gizmos to groups simply converts all the gizmos in the nodegraph into groups, allowing better portability.
 
 <h4>PACKAGE SCRIPT*</h4>
-Under <code>File/Package Script</code> WrapItUp, a third party tool to archive scripts with reltive dependecies is available. For further documention please refer to the author's <a href="https://maxvanleeuwen.com/project/collect-nuke-scripts-wrapitup/">official documentation</a>
+Under <code>File/Package Script</code> WrapItUp, a third party tool to archive scripts with reltive dependecies, is available. For further documention please refer to the author's <a href="https://maxvanleeuwen.com/project/collect-nuke-scripts-wrapitup/">official documentation</a>
 The functions has also be implemented to run convert all gizmos to groups berfore WrapItUp GUI is initialized. 
 
 <h4>SHORTCUTS</h4>
@@ -102,10 +105,12 @@ To allow the fast setup of directories and Environment Variables, bat and bash s
 There are two scripts available, one for Windows and one for MacOS.
 <code>set_hiero_env_win.bat</code> (WIN) creates the permanent user variable <code>HIERO_PLUGIN_PATH</code> and directs it to the environment while <code>set_nuke_hiero_env_mac.command</code> (MAC) creates temporary <code>HIERO_PLUGIN_PATH</code> and <code>NUKE_PATH</code> variables. The MAC script needs to be runned at startup to ensure a working setup or otherwise variables need to be defined in the <code>.plist</code> file. At the NFTS the variable <code>NUKE_PATH</code> should be already set by default on Windows machines.
 
-<h4>DOCUMENTATION</h4>
+<h2>HELP AND DOCUMENTATION</h2>
 
-Documentation is often available. The Deadline guidelines for priorities and submission are stored in <code>documentation/deadline10_guidelines</code> and can also be accesed by navigating to the <code>Help/Deadline Guidelines</code> within Nuke's interface.
+Documentation is often available. The Deadline guidelines for priorities and submission are stored in <code>%NUKE_PATH%/documentation/deadline10_guidelines</code> and can also be accesed by navigating to the <code>Help/Deadline Guidelines</code> within Nuke's interface.
 </br>This GitHub page is also accessable by accessing the <code>Help/NFTS Environment Help</code> menu in the Nuke menu bar.
+All the Nuke customizations are imported form <code>NFTShelp.py</code> and furhter instructions should be handled through that file.
+
 
 <h2>EXTRA NON-NUKE CONFIGURATIONS</h2>
 
