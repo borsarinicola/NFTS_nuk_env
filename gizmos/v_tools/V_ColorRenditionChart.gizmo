@@ -5,8 +5,6 @@ Group {
  tile_color 0xccccccff
  label "\[value primary_out]"
  selected true
- xpos -31
- ypos -30
  postage_stamp true
  addUserKnob {20 V_ColorRenditionChart}
  addUserKnob {41 format l "output format" T OutputFormat.format}

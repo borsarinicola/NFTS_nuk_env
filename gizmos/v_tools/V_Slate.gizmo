@@ -3,8 +3,6 @@ Group {
  help "V!ctor Tools 2.0v1\nV_Slate\n©2016 Victor Perez. All rights reserved\nwww.victorperez.co.uk"
  tile_color 0xccccccff
  selected true
- xpos -236
- ypos 278
  addUserKnob {20 V_Slate t "V!ctor Slate 1.0"}
  addUserKnob {41 plate_shotname l "Shot Name" t "Shot reference name" T TextFields.plate_shotname}
  addUserKnob {3 plate_version l Version t "Version number" -STARTLINE}

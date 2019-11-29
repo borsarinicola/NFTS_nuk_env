@@ -3,8 +3,6 @@ Group {
  name V_Multilabeler1
  help "V!ctor Tools 2.0v1\nV_Multilabeler\n©2016 Victor Perez. All rights reserved\nwww.victorperez.co.uk"
  selected true
- xpos -288
- ypos 345
  addUserKnob {20 V_Multilabeler}
  addUserKnob {18 target_tile_color l "tile color" t "Select a color for the tile"}
  target_tile_color {0.8 0.8 0.8}

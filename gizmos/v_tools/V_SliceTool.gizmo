@@ -1,8 +1,6 @@
 Group {
  name V_SliceTool1
  selected true
- xpos -432
- ypos 328
  addUserKnob {20 SliceTool}
  addUserKnob {4 output M {Over Right Left Top Bottom}}
  output Right

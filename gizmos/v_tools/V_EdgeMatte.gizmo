@@ -4,8 +4,6 @@ Group {
  knobChanged "\ntk = nuke.thisKnob()\ntn = nuke.thisNode()\ng = nuke.thisNode().knob('gang').value()\neE = tn.knob('extEdge')\niE = tn.knob('intEdge')\nmC = nuke.toNode('maskCheckerInput').knob('inputChecker')\nmaskOn = nuke.toNode('maskChannel').knob('from0')\n\n#mask status on load\nif tn.knob('from0').value() == 'none':\n    pass\nelse:\n    lastMask = tn.knob('from0').value()\n\ntry:\n    dif\nexcept:\n    dif = 0\n\nif tk.name() == 'gang':\n    dif = eE.getValue()-iE.getValue()\n\nif g == True:\n    if tk.name() == 'extEdge':\n        iE.setValue(eE.getValue()-dif)\n    if tk.name() == 'intEdge':\n        eE.setValue(iE.getValue()+dif)\n\n# mask input on load default option\nif mC.getValue() == False:\n    try:\n        maskPresent\n    except:\n        maskPresent = 0\nif mC.getValue() == True:\n    try:\n        maskPresent\n    except:\n        lastMask = maskOn.value()\n        maskPresent = 1\n\n# mask auto set\nif mC.getValue() == True:\n    if maskPresent == 0:\n        try:\n            maskOn.setValue(lastMask)\n        except:\n            maskOn.setValue('rgba.alpha')\n        maskPresent = 1\n    else:\n        pass\nif mC.getValue() == False:\n    if maskPresent == 1:\n        lastMask = maskOn.value()\n        maskOn.setValue('none')\n        maskPresent = 0\n\n"
  tile_color 0xcc804eff
  selected true
- xpos 82
- ypos 353
  addUserKnob {20 V_EdgeMatte}
  addUserKnob {41 from0_1 l "source channel" t "matte channel to find the edge" T sourceMatte.from0}
  addUserKnob {4 edgeMode l mode t "part of the edge you want to work with, external, internal or both" M {"both sides" inner outter ""}}
