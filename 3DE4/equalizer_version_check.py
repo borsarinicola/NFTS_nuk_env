@@ -37,7 +37,7 @@ if nuke.env['LINUX']:
 else:
 
     #behaviour for nuke 11
-    if nMajor == 11 and nMinor == 2 or nMinor == 3:
+    if nMajor == 11 and ( nMinor == 2 or nMinor == 3 ):
         if nMinor == 2:
             if nuke.env['WIN32']:
                 nuke.pluginAddPath("./3DE4/win/11.2")
