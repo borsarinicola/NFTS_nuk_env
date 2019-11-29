@@ -52,11 +52,11 @@ It is possible to initialize the share the selected nodes by navigating to <b>NF
 The shared data is stored on a file located at <code>%NUKE_PATH%/NFTS_CopyPaste_Data.nk</code> that gets overwritten every time that a user copies something new.
 This is done through the functions <code>nftsCopy()</code> and <code>nftsCopy()</code>.
 
-<h4>SHARED TOOLS*</h4>
+<h4>SHARED TOOLSETS*</h4>
 
-User do not have permissions to modify the data on the Environment. Therefore to allow for easy publication of simple toolsets and gizmos "Shared Tools" can be used. 
-This allows users to select some nodes or groups from the nodegraph and publish them for everyone to use, modify and eventually delete; using the relative options in the SharedTools Menu.
-Data is stored on <code>%NUKE_PATH%/SharedToolSets</code>. Permissions for this folder have been modified to allow users read and write access. All data contained in here is editable, exception made for the preloaded lens distortion toolsets. These nodes are crucial for efficient lens distortion workflows and users should not attempt to remove or modify them. Only groups should be published, Gizmos are not supported.
+User do not have permissions to modify the data on the Environment. Therefore to allow for easy publication of simple toolsets and gizmos "Shared Toolsets" can be used. 
+This allows users to select some nodes or groups from the nodegraph and publish them for everyone to use, modify and eventually delete; using the relative options in the SharedToolsets Menu.
+Data is stored in <code>%NUKE_PATH%/SharedToolSets</code>. Permissions for this folder have been modified to allow users read and write access. All data contained in here is editable, exception made for the preloaded lens distortion toolsets. These nodes are crucial for efficient lens distortion workflows and users should not attempt to remove or modify them. Only groups should be published, Gizmos are not supported.
 
 <!--<h4>SWITCH TO NUKEX*</h4>
 Switch to NukeX (originally NukeSwitch) is avaiable in <code>File/Switch to NukeX</code>, it's a third party script that allows to open the current script in a NukeX session. The menu option is only availble when into a Nuke session. For further documention please refer to the author's <a href="https://github.com/franklinvfx/NukeSwitch-Script-for-Nuke">official documentation</a>. --!>
