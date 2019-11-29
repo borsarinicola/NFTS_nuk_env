@@ -31,6 +31,7 @@ nuke.pluginAddPath('./gizmos/legacy')
 nuke.pluginAddPath('./KeenTools')
 nuke.pluginAddPath('./python')
 nuke.pluginAddPath('./icons')
+nuke.pluginAddPath('./3DE4')
 
 #add 3DEqualizer
 from equalizer_version_check import *
