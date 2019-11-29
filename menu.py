@@ -2,7 +2,7 @@
 
 '''
 NFTS - National Film and Television School.
-latest update: 2019-11-27
+latest update by Nicola Borsari: 2019-11-08
 '''
 
 ####################################
@@ -77,13 +77,14 @@ NFTS.addCommand("apChromaMerge", "nuke.createNode('apChromaMerge')" )
 
 #3DE4 lens distortion 
 
-toolbar = nuke.menu('Nodes')
-eq = toolbar.addMenu('3DEqualizer', icon='3DE.png')
-eq.addCommand("LD_3DE4_Anamorphic_Standard_Degree_4", "nuke.createNode('LD_3DE4_Anamorphic_Standard_Degree_4')")
-eq.addCommand("LD_3DE4_Anamorphic_Degree_6", "nuke.createNode('LD_3DE4_Anamorphic_Degree_6')")
-eq.addCommand("LD_3DE4_Radial_Standard_Degree_4", "nuke.createNode('LD_3DE4_Radial_Standard_Degree_4')")
-eq.addCommand("LD_3DE4_Radial_Fisheye_Degree_8", "nuke.createNode('LD_3DE4_Radial_Fisheye_Degree_8')")
-eq.addCommand("LD_3DE_Classic_LD_Model", "nuke.createNode('LD_3DE_Classic_LD_Model')")
+if Equalizer == True:
+    toolbar = nuke.menu('Nodes')
+    eq = toolbar.addMenu('3DEqualizer', icon='3DE.png')
+    eq.addCommand("LD_3DE4_Anamorphic_Standard_Degree_4", "nuke.createNode('LD_3DE4_Anamorphic_Standard_Degree_4')")
+    eq.addCommand("LD_3DE4_Anamorphic_Degree_6", "nuke.createNode('LD_3DE4_Anamorphic_Degree_6')")
+    eq.addCommand("LD_3DE4_Radial_Standard_Degree_4", "nuke.createNode('LD_3DE4_Radial_Standard_Degree_4')")
+    eq.addCommand("LD_3DE4_Radial_Fisheye_Degree_8", "nuke.createNode('LD_3DE4_Radial_Fisheye_Degree_8')")
+    eq.addCommand("LD_3DE_Classic_LD_Model", "nuke.createNode('LD_3DE_Classic_LD_Model')")
 
 
 ####################################

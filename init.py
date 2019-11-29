@@ -2,7 +2,7 @@
 
 '''
 NFTS - National Film and Television School.
-latest update: 2019-11-27
+latest update by Nicola Borsari: 2019-11-08
 '''
 
 ####################################
@@ -32,12 +32,8 @@ nuke.pluginAddPath('./KeenTools')
 nuke.pluginAddPath('./python')
 nuke.pluginAddPath('./icons')
 
-
-# if statement to load 3DE based on the OS
-if nuke.env['WIN32']:
-    nuke.pluginAddPath("./3DE4/win")
-if nuke.env['MACOS']:
-    nuke.pluginAddPath("./3DE4/mac")
+#add 3DEqualizer
+from equalizer_version_check import *
 
 ####################################
 
