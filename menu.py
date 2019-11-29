@@ -12,7 +12,6 @@ Import standard Python modules.
 '''
 
 import os, sys, nuke
-import webbrowser
 
 ####################################
 
@@ -53,6 +52,7 @@ NFTS.addCommand("Python/sb RevealInFileBrowser", "sb_revealInFileBrowser.sb_reve
 NFTS.addCommand('Python/nLabelShortcut','nLabelShortcut.nLabelShortcut()', 'shift+l')
 NFTS.addCommand('Python/ShuffleAll', 'import shuffleAll\nshuffleAll.shuffleAll()')
 NFTS.addCommand('Python/nDeepAutocrop','import nDeepAutocrop\nnDeepAutocrop.nDeepAutocrop()')
+NFTS.addCommand('Python/nDollarGUI','import nDollargui\nnDollargui.nDollargui()', 'alt+d')
 NFTS.addCommand('Python/Cycle Operations/Cycle Operations Forwards', "CycleOperations.CycleOperations()", "alt+x")
 NFTS.addCommand('Python/Cycle Operations/Cycle Operations Backwards', "CycleOperations.CycleOperations(False)", "alt+shift+x")
 NFTS.addCommand("AlexaNoise", "nuke.createNode('AlexaNoise')" )
