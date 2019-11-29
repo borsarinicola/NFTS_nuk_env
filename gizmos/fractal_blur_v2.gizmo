@@ -2,8 +2,6 @@ Group {
  name fractal_blur_v2_1
  tile_color 0xff7523ff
  selected true
- xpos 302
- ypos 263
  addUserKnob {20 User}
  addUserKnob {7 FractalBlur_UserDilate l Spread R 0 200}
  FractalBlur_UserDilate 6

@@ -5,8 +5,6 @@ Group {
  knobChanged "n = nuke.thisNode()\nk = nuke.thisKnob()\n\nif k.name() == 'box':\n    this_frame = nuke.frame()\n    n\['sample_frame'].setValue(this_frame)"
  tile_color 0x7f7f7fff
  selected true
- xpos -107
- ypos -330
  addUserKnob {20 Analyse_tab l Analyse}
  addUserKnob {41 output t "<strong>regrained comp</strong> it is what it sais\n\n<strong>original grain</strong> plate minus degrained plate\n<strong>normalised grain</strong> check if the normalisation worked. It should be as even as possible. This is what you want to output if you want to prerender a grain plate. Later you can plug it into the <i>external grain</i> input of another DasGrain\n<strong>adapted grain</strong> check if the adaptation worked. Output this if you want to further manipulate the grain (who knows what the sup is gonna come up with...). After simply plus it to your comp.\n<strong>grain QC</strong> check if voronoi seams are visible (-> edgeblend), or the scattered grain looks different to the original plate grain (-> maybe bad sample area or wrong luminance degrain amount)" T Output.output}
  addUserKnob {26 spacer01_1 l " " T " "}

@@ -3,8 +3,6 @@ Group {
  tile_color 0x7aa9ffff
  label "\[value this.ar]:1"
  selected true
- xpos -479
- ypos -22
  addUserKnob {20 aspectguides l "Aspect Ratio Guide"}
  addUserKnob {41 os l Os t "Select you os" T os_select.os}
  addUserKnob {26 ""}

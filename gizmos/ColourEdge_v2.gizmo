@@ -1,11 +1,6 @@
-set cut_paste_input [stack 0]
-version 11.2 v5
-push $cut_paste_input
 Group {
  name ColourEdge_v2_1
  selected true
- xpos 1
- ypos 31
  addUserKnob {20 User l ColourEdge}
  addUserKnob {14 blurGrain l "Blur Grain" t "Preblur the image to smooth out grain if necessary" R 0 100}
  addUserKnob {14 growTexture l "Grow Texture" t "Expands the texture out from pure white pixels in the matte.  Values can go above 100." R 0 100}

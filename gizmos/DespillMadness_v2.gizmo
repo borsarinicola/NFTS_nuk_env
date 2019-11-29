@@ -1,8 +1,6 @@
 Group {
  name DespillMadness_v2_1
  selected true
- xpos -43
- ypos -175
  addUserKnob {20 DespillMadness l "Despill Settings"}
  addUserKnob {26 text l "" +STARTLINE T "DespillMadness by Andreas Frickinger"}
  addUserKnob {26 ""}

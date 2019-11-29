@@ -3,8 +3,6 @@ Group {
  tile_color 0x9e3c63ff
  label "\[value ColorspaceV.colorspace_out]"
  selected true
- xpos 3357
- ypos -3884
  addUserKnob {20 User}
  addUserKnob {41 colorspace_out l "output channels" T ColorspaceV.colorspace_out}
  addUserKnob {41 doi l "display original image" -STARTLINE T Switch1.doi}

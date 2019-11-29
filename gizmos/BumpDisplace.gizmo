@@ -1,8 +1,6 @@
 Group {
  name BumpDisplace1
  selected true
- xpos -221
- ypos 20
  addUserKnob {20 User}
  addUserKnob {4 normalsChan l "Bump Channel" M {alpha luminance "" ""}}
  normalsChan luminance

@@ -4,8 +4,6 @@ help "Advanced chromatic drift gizmo, that works through a sub-frame blend of di
 knobChanged "n = nuke.thisNode()\nk = nuke.thisKnob()\nkn = k.name()\nif kn == \"monochrome\":\n    k.setValue(min(1,max(0,k.value())))\nelif kn == \"output_dist_matte\":\n    n.knob(\"output_matte_channel\").setEnabled(k.value())"
 tile_color 0x736efdff
 selected true
-xpos 362
-ypos 8602
 addUserKnob {20 apChroma}
 addUserKnob {26 text l "<b> Transform"}
 addUserKnob {41 translate T Transform17.translate}

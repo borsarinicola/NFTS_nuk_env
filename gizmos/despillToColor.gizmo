@@ -1,11 +1,6 @@
-set cut_paste_input [stack 0]
-version 10.5 v7
-push $cut_paste_input
 Group {
  name despillToColor
  selected true
- xpos -139
- ypos 43
  addUserKnob {20 User l main}
  addUserKnob {68 sto l "screen type" t "- auto - The screen type will be controlled by \n  the screen color:\n\n   g>b : green despill\n   b>g : blue despill\n\n- 'blue' and  'green' act as an override so you can pick a blue-ish screen color but still despill green tones and vice versa.\n" M {auto green blue "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" ""}}
  addUserKnob {18 sc l "screen color"}
