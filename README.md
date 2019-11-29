@@ -58,15 +58,15 @@ User do not have permissions to modify the data on the Environment. Therefore to
 This allows users to select some nodes or groups from the nodegraph and publish them for everyone to use, modify and eventually delete; using the relative options in the SharedTools Menu.
 Data is stored on <code>%NUKE_PATH%/SharedToolSets</code>. Permissions for this folder have been modified to allow users read and write access. All data contained in here is editable, exception made for the preloaded lens distortion toolsets. These nodes are crucial for efficient lens distortion workflows and users should not attempt to remove or modify them. Only groups should be published, Gizmos are not supported.
 
-<h4>SWITCH TO NUKEX*</h4>
-Switch to NukeX (originally NukeSwitch) is avaiable in <code>File/Switch to NukeX</code>, it's a third party script that allows to open the current script in a NukeX session. The menu option is only availble when into a Nuke session. For further documention please refer to the author's <a href="https://github.com/franklinvfx/NukeSwitch-Script-for-Nuke">official documentation</a>.
+<!--<h4>SWITCH TO NUKEX*</h4>
+Switch to NukeX (originally NukeSwitch) is avaiable in <code>File/Switch to NukeX</code>, it's a third party script that allows to open the current script in a NukeX session. The menu option is only availble when into a Nuke session. For further documention please refer to the author's <a href="https://github.com/franklinvfx/NukeSwitch-Script-for-Nuke">official documentation</a>. --!>
 
-<h4>CONVERT GIZMOS TO GROUPS*</h4>
-Convert gizmos to groups simply converts all the gizmos in the nodegraph into groups, allowing better portability.
+<!--<h4>CONVERT GIZMOS TO GROUPS*</h4>
+Convert gizmos to groups simply converts all the gizmos in the nodegraph into groups, allowing better portability. --!>
 
-<h4>PACKAGE SCRIPT*</h4>
+<!--<h4>PACKAGE SCRIPT*</h4>
 Under <code>File/Package Script</code> WrapItUp, a third party tool to archive scripts with reltive dependecies, is available. For further documention please refer to the author's <a href="https://maxvanleeuwen.com/project/collect-nuke-scripts-wrapitup/">official documentation</a>
-The functions has also be implemented to run convert all gizmos to groups berfore WrapItUp GUI is initialized. 
+The functions has also be implemented to run convert all gizmos to groups berfore WrapItUp GUI is initialized.  --!>
 
 <h4>SHORTCUTS</h4>
 
