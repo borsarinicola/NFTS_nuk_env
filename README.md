@@ -8,7 +8,7 @@ This repo can be copied to a network shared drive and all machines that need acc
 
 Locally the NFTS Envirnoment can be reached at <code>//digitalfxserver/CompEnvironment/</code> on Windows Machines and mounted <code>/Volumes/CompEnvironment</code> on MacOS. Paths in third party code is often implemented explicitely.
 
-OS sensitive plugins such as 3DEqualizer and KeenTools are loaded using conditional statements and attention should be paid to run the same versions on every OS.
+OS sensitive plugins such as 3DEqualizer and KeenTools are loaded using conditional statements and attention should be paid to run the same versions on every OS. Loading conditions are included in <code>3DE4/equalizer_version_check.py</code>, <code>init.py</code> and <code>menu.py</code> files.
 
 <h4>BEST PRACTISES</h4>
 Due to the nature of the work Gizmos should not be installed as groups. This allows being able to easily move nuke scripts to outside the school. This also means that any update to the available plugin will not affect old scripts, ensuring that backwards compatibility is always retained.
