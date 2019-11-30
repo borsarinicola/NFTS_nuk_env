@@ -50,7 +50,7 @@ The NFTS Copy paste is a quick way to copy data between different scrips on diff
 It is possible to initialize the share the selected nodes by navigating to <b>NFTS Share/Share Selected Nodes</b> (Alt+Shift+C).
 </br>Nodes are then easy to paste by selecting <b>NFTS Share/Paste Shared Nodes</b> (Alt+Shift+V).
 The shared data is stored on a file located at <code>%NUKE_PATH%/NFTS_CopyPaste_Data.nk</code> that gets overwritten every time that a user copies something new.
-This is done through the functions <code>nftsCopy()</code> and <code>nftsCopy()</code>.
+This is done through the functions <code>nftsCopy()</code> and <code>nftsPaste()</code>.
 
 <h4>SHARED TOOLSETS*</h4>
 
