@@ -36,7 +36,7 @@ To ensure that "standard rite nodes" are converted in "pipeline write nodes", th
 
 <h4>CUSTOM PIPELINE WITH DEADLINE</h4>
 Deadline renders run in the non-GUI version of Nuke. Therefore artifacts must be created at submission time.
-This is achieved with the <code>advencedSubmission()</code> function. This will first run a script save <code>nuke.scriptsave()</code>, followed by the standard Deadline Submission function <code>DealineNukeClient.main()</code> and upon succes of the last step the <code>createArtifact()</code>. 
+This is achieved with the <code>advencedSubmission()</code> function. This will first run a script save <code>nuke.scriptsave()</code>, followed by the standard Deadline Submission function <code>DealineNukeClient.main()</code> and upon success of the last step the <code>createArtifact()</code>. 
 This also ensures that artifacts are generated only once and not every time that a Deadline render task is initialized.
 
 <h4>NETWORK DRIVE REMAPPING</h4>
@@ -94,12 +94,12 @@ To allow the fast setup of directories and Environment Variables, bat and bash s
 <h4>ENVIRONMENT VARIABLES</h4>
 
 There are two scripts available, one for Windows and one for MacOS.
-<code>set_hiero_env_win.bat</code> (WIN) creates the permanent user variable <code>HIERO_PLUGIN_PATH</code> and directs it to the environment while <code>set_nuke_hiero_env_mac.command</code> (MAC) creates temporary <code>HIERO_PLUGIN_PATH</code> and <code>NUKE_PATH</code> variables. The MAC script needs to be runned at startup to ensure a working setup or otherwise variables need to be defined in the <code>.plist</code> file. At the NFTS the variable <code>NUKE_PATH</code> should be already set by default on Windows machines.
+<code>set_hiero_env_win.bat</code> (WIN) creates the permanent user variable <code>HIERO_PLUGIN_PATH</code> and directs it to the environment while <code>set_nuke_hiero_env_mac.command</code> (MAC) creates temporary <code>HIERO_PLUGIN_PATH</code> and <code>NUKE_PATH</code> variables. The MAC script needs to be executed at startup to ensure a working setup or otherwise variables need to be defined in the <code>.plist</code> file. At the NFTS the variable <code>NUKE_PATH</code> should be already set by default on Windows machines.
 
 <h2>HELP AND DOCUMENTATION</h2>
 
 Documentation is often available. The Deadline guidelines for priorities and submission are stored in <code>%NUKE_PATH%/documentation/deadline10_guidelines</code> and can also be accessed by navigating to the <code>Help/Deadline Guidelines</code> within Nuke's interface.
-</br>This GitHub page is also accessable by accessing the <code>Help/NFTS Environment Help</code> menu in the Nuke menu bar.
+</br>This GitHub page is also accessible by accessing the <code>Help/NFTS Environment Help</code> menu in the Nuke menu bar.
 All the Nuke customizations are imported form <code>NFTShelp.py</code> and further instructions should be handled through that file.
 
 <h2>THIRD PARTY SCRIPTS AND PLUGINS</h2>
