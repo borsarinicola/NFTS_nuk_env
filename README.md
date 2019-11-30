@@ -58,39 +58,30 @@ User do not have permissions to modify the data on the Environment. Therefore to
 This allows users to select some nodes or groups from the nodegraph and publish them for everyone to use, modify and eventually delete; using the relative options in the SharedToolsets Menu.
 Data is stored in <code>%NUKE_PATH%/SharedToolSets</code>. Permissions for this folder have been modified to allow users read and write access. All data contained in here is editable, exception made for the preloaded lens distortion toolsets. These nodes are crucial for efficient lens distortion workflows and users should not attempt to remove or modify them. Only groups should be published, Gizmos are not supported.
 
-<!--
-<h4>SWITCH TO NUKEX*</h4>
-Switch to NukeX (originally NukeSwitch) is avaiable in <code>File/Switch to NukeX</code>, it's a third party script that allows to open the current script in a NukeX session. The menu option is only availble when into a Nuke session. For further documention please refer to the author's <a href="https://github.com/franklinvfx/NukeSwitch-Script-for-Nuke">official documentation</a>.
-<h4>CONVERT GIZMOS TO GROUPS*</h4>
-Convert gizmos to groups simply converts all the gizmos in the nodegraph into groups, allowing better portability.
-<h4>PACKAGE SCRIPT*</h4>
-Under <code>File/Package Script</code> WrapItUp, a third party tool to archive scripts with reltive dependecies, is available. For further documention please refer to the author's <a href="https://maxvanleeuwen.com/project/collect-nuke-scripts-wrapitup/">official documentation</a>
-The functions has also be implemented to run convert all gizmos to groups berfore WrapItUp GUI is initialized.  
--->
-
 <h4>SHORTCUTS</h4>
 
 <table>
   <tr>
     <td width="50%">
       <ul>
-        <li>Keymix         <i>V</i></li>
-          <li>Expression      <i>E</i></li>
-  <li>Invert          <i>Alt+Ctrl+I</i></li>
-  <li>Premult         <i>Alt+Shift+P</i></li>
-  <li>Unpremult       <i>Alt+Shift+U</i></li>
-  <li>ChannelMerge    <i>Shift+M</i></li>
-  <li>TransformMasked  <i>Shift+T</i></li>
+        <li>Keymix<i>V</i></li>
+          <li>Expression <i>E</i></li>
+  <li>Invert <i>Alt+Ctrl+I</i></li>
+  <li>Premult <i>Alt+Shift+P</i></li>
+  <li>Unpremult <i>Alt+Shift+U</i></li>
+  <li>ChannelMerge <i>Shift+M</i></li>
+  <li>TransformMasked <i>Shift+T</i></li>
       </ul>
     </td>
     <td width="50%">
       <ul>
-        <li>Backdrops       <i>Alt+B</i></li>
-        <li>Read from Write       <i>Shift+R</i></li>
-        <li>Reveal file in Browser      <i>Alt+Shift+R</i></li>
-        <li>Label Shortcut       <i>Shift+L</i></li>
-        <li>Cycle Operations       <i>Alt+X</i> and <i>Alt+Shift+X</i></li>
-        <li>Submit to Deadline      <i>Alt+R</i></li>
+        <li>Backdrops <i>Alt+B</i></li>
+        <li>Read from Write <i>Shift+R</i></li>
+        <li>Reveal file in Browser <i>Alt+Shift+R</i></li>
+        <li>Label Shortcut <i>Shift+L</i></li>
+        <li>Cycle Operations <i>Alt+X</i> and <i>Alt+Shift+X</i></li>
+        <li>Submit to Deadline <i>Alt+R</i></li>
+        <li>Toggle $Gui in the Disable Knob <i>Alt+D</i></li>
       </ul>
     </td>
   </tr>
@@ -111,6 +102,16 @@ Documentation is often available. The Deadline guidelines for priorities and sub
 </br>This GitHub page is also accessable by accessing the <code>Help/NFTS Environment Help</code> menu in the Nuke menu bar.
 All the Nuke customizations are imported form <code>NFTShelp.py</code> and furhter instructions should be handled through that file.
 
+<h2>THIRD PARTY SCRIPTS AND PLUGINS</h2>
+
+In this repository third party scritps have been implemented, this is a list of them with links to the relative documentation.
+
+<ul>
+  <li>WrapItUp <a href="https://maxvanleeuwen.com/project/collect-nuke-scripts-wrapitup/">official page</a></li>
+  <li>Switch to NukeX <a href="https://github.com/franklinvfx/NukeSwitch-Script-for-Nuke">official page</a></li>
+  <li>Give me Python Selection for Hiero <a href="http://www.nukepedia.com/hiero/give-me-python-selection">official page</a></li>
+  <li>Thumbnail Exporter <a href="http://www.nukepedia.com/hiero/python/thumbnail-exporter">official page</a></li>
+</ul>
 
 <h2>EXTRA NON-NUKE CONFIGURATIONS</h2>
 
