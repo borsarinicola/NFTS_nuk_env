@@ -1,12 +1,12 @@
 # NFTS NUKE ENVIRONMENT
 
-<h2>General Infromations</h2>
+<h2>General Informations</h2>
 
-This repository contains the custom tools, pipelines and default gizmos for Nuke, Nuke Studio and Hiero at the National Film and TV School, DFX Department. It contains both oringal and third party scripts that have been implemented to suite the school needs. (These are marked with a * in the description's title).
+This repository contains the custom tools, pipelines and default gizmos for Nuke, Nuke Studio and Hiero at the National Film and TV School, DFX Department. It contains both original and third party scripts that have been implemented to suite the school needs. (These are marked with a * in the description's title).
 
 This repo can be copied to a network shared drive and all machines that need access to it must have the environment variables <code>NUKE_PATH</code> and <code>HIERO_PLUGIN_PATH</code> pointing to the shared volume.
 
-Locally the NFTS Envirnoment can be reached at <code>//digitalfxserver/CompEnvironment/</code> on Windows Machines and mounted <code>/Volumes/CompEnvironment</code> on MacOS. Paths in third party code is often implemented explicitely.
+Locally the NFTS Envirnoment can be reached at <code>//digitalfxserver/CompEnvironment/</code> on Windows Machines and mounted <code>/Volumes/CompEnvironment</code> on MacOS. Paths in third party code is often implemented explicitly.
 
 OS sensitive plugins such as 3DEqualizer and KeenTools are loaded using conditional statements and attention should be paid to run the same versions on every OS. Loading conditions are included in <code>3DE4/equalizer_version_check.py</code>, <code>init.py</code> and <code>menu.py</code> files.
 
@@ -19,28 +19,28 @@ All the definitions that I'm about to mention will act only if both the nuke scr
 
 <h4>INCREMENTAL SAVE</h4>
 
-The default behaviour of the Incremental Save has been overwritten by the new function called <code>incrementalSave()</code>. This not only increases the version of the script, but also increments every Write and DeepWrite node in the script, ensuring that the render versions always match the script versions.
+The default behavior of the Incremental Save has been overwritten by the new function called <code>incrementalSave()</code>. This not only increases the version of the script, but also increments every Write and DeepWrite node in the script, ensuring that the render versions always match the script versions.
 
 <h4>WRITE NODES</h4>
 
 To ensure that scripts are not overwritten after a render, Nuke will also ask whether to save an incremental of the script after the render has been executed. Artifacts will also be created upon render.
-These extra functionalities are implemented by changing the default values of the Python Knobs adding <code>writeBeforePipeline()</code> to <b>Before Render</b>and <code>writeAfterPipeline()</code> to <b>After Render</b>.
+These extra functionalities are implemented by changing the default values of the Python Knobs adding <code>writeBeforePipeline()</code> to <b>Before Render</b> and <code>writeAfterPipeline()</code> to <b>After Render</b>.
 
 <h4>ARTIFACTS</h4>
 
 When rendering form this customized version of Nuke the software automatically creates a copy of the script in the location where it's saved, adding <i>_artifact</i> at the end of the file name. This ensures that it's always possible to restore the script that rendered a specific output. Aritifacts are created only during GUI sessions. This is done using the <code>nuke.GUI</code> variable.
 
 <h4>EXTERNAL WRITE NODES CONVERSION</h4>
-When Write nodes have been generated either with NukeStudio or in a Nuke setup where the pipeline is not available, the Before and After Render behaviours will not be in place.
+When Write nodes have been generated either with NukeStudio or in a Nuke setup where the pipeline is not available, the Before and After Render behaviors will not be in place.
 To ensure that "standard rite nodes" are converted in "pipeline write nodes", the function <code>incrementalSave()</code> has also been implemented to change the necessary python knobs on script save. 
 
 <h4>CUSTOM PIPELINE WITH DEADLINE</h4>
 Deadline renders run in the non-GUI version of Nuke. Therefore artifacts must be created at submission time.
-This is achieved with the <code>advencedSubmission()</code> function. This will first run a script save <code>nuke.scriptsave()</code>, folowed by the standard Deadline Submission function <code>DealineNukeClient.main()</code> and upon succes of the last step the <code>createArtifact()</code>. 
+This is achieved with the <code>advencedSubmission()</code> function. This will first run a script save <code>nuke.scriptsave()</code>, followed by the standard Deadline Submission function <code>DealineNukeClient.main()</code> and upon succes of the last step the <code>createArtifact()</code>. 
 This also ensures that artifacts are generated only once and not every time that a Deadline render task is initialized.
 
 <h4>NETWORK DRIVE REMAPPING</h4>
-Often it is necessary to access nuke scritps form a diffrerent OS. To nesure that all the schoold servers and ISIS volumes are available indipendently form the OS file paths can be handled from the file <code>network_drive_remapping.py</code>.
+Often it is necessary to access nuke scritps form a different OS. To ensure that all the school servers and ISIS volumes are available independently from the OS file paths can be handled from the file <code>network_drive_remapping.py</code>.
 
 <h2>Custom Tools and Shortcuts</h2>
 
@@ -98,9 +98,9 @@ There are two scripts available, one for Windows and one for MacOS.
 
 <h2>HELP AND DOCUMENTATION</h2>
 
-Documentation is often available. The Deadline guidelines for priorities and submission are stored in <code>%NUKE_PATH%/documentation/deadline10_guidelines</code> and can also be accesed by navigating to the <code>Help/Deadline Guidelines</code> within Nuke's interface.
+Documentation is often available. The Deadline guidelines for priorities and submission are stored in <code>%NUKE_PATH%/documentation/deadline10_guidelines</code> and can also be accessed by navigating to the <code>Help/Deadline Guidelines</code> within Nuke's interface.
 </br>This GitHub page is also accessable by accessing the <code>Help/NFTS Environment Help</code> menu in the Nuke menu bar.
-All the Nuke customizations are imported form <code>NFTShelp.py</code> and furhter instructions should be handled through that file.
+All the Nuke customizations are imported form <code>NFTShelp.py</code> and further instructions should be handled through that file.
 
 <h2>THIRD PARTY SCRIPTS AND PLUGINS</h2>
 
@@ -124,7 +124,7 @@ In the script <code>%NUKE_PATH%/scripts/houdini/set_houdini_renderers.bat</code>
 To install the Deadline submission tool for Houdini run the <code>Houdini-submitter-windows-installer.exe</code> contained in the same location. This will add extra lines to the <code>houdini.env</code> so make sure to install the renderers before this.
 
 <h4>DEADLINE</h4>
-The <code>deadline_config</code> folder contains INI files that store the minimisation preferences for the Deadline Client GUI. The TXT files contain the necessary code to copy those files on remote machines using the deadline remote control.
+The <code>deadline_config</code> folder contains INI files that store the minimization preferences for the Deadline Client GUI. The TXT files contain the necessary code to copy those files on remote machines using the deadline remote control.
 </br>The <code>deadline_no_gui.bat</code> script, permanently hides the Deadline Client form the GUI interface making it run in the background. 
 
 
