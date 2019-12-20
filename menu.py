@@ -29,6 +29,7 @@ import AnimationMaker
 import CycleOperations
 import NFTSCopyPaste
 import NFTShelp
+import hieroFPS
 
 
 ####################################

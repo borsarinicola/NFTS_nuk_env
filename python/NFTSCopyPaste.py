@@ -31,5 +31,5 @@ def nftsPaste():
     return
 
 #add functions to menu
-nuke.menu( 'Nuke' ).addCommand('NFTS Share/Share Selected Nodes', 'NFTSCopyPaste.nftsCopy()', 'Alt+Shift+C')
-nuke.menu( 'Nuke' ).addCommand('NFTS Share/Paste Shared Nodes', 'NFTSCopyPaste.nftsPaste()', 'Alt+Shift+V')
+nuke.menu( 'Nuke' ).addCommand('NFTS/NFTS Share/Share Selected Nodes', 'NFTSCopyPaste.nftsCopy()', 'Alt+Shift+C')
+nuke.menu( 'Nuke' ).addCommand('NFTS/NFTS Share/Paste Shared Nodes', 'NFTSCopyPaste.nftsPaste()', 'Alt+Shift+V')
