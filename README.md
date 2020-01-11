@@ -98,8 +98,8 @@ There are two scripts available, one for Windows and one for MacOS.
 
 <h2>HELP AND DOCUMENTATION</h2>
 
-Documentation is often available. The Deadline guidelines for priorities and submission are stored in <code>%NUKE_PATH%/documentation/deadline10_guidelines</code> and can also be accessed by navigating to the <code>Help/Deadline Guidelines</code> within Nuke's interface.
-</br>This GitHub page is also accessible by accessing the <code>Help/NFTS Environment Help</code> menu in the Nuke menu bar.
+Documentation is often available. The Deadline guidelines for priorities and submission are stored in <code>%NUKE_PATH%/documentation/deadline10_guidelines</code> and can also be accessed by navigating to the <code>NFTS/Help/Deadline Guidelines</code> within Nuke's interface.
+</br>This GitHub page is also accessible by accessing the <code>NFTS/Help/NFTS Environment Help</code> menu in the Nuke menu bar.
 All the Nuke customizations are imported form <code>NFTShelp.py</code> and further instructions should be handled through that file.
 
 <h2>THIRD PARTY SCRIPTS AND PLUGINS</h2>
