@@ -1,0 +1,1 @@
+cmd /C xcopy /y "\\digitalfxserver\CompEnvironment\deadline_config\deadlinepulse.lnk" "%USERPROFILE%\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\"
