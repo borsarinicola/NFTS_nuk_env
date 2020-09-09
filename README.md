@@ -107,6 +107,7 @@ All the Nuke customizations are imported form <code>NFTShelp.py</code> and furth
 In this repository third party scritps have been implemented, this is a list of them with links to the relative documentation.
 
 <ul>
+  <li>SharedToolsets <a href="http://www.nukepedia.com/python/ui/sharedtoolsets">official page</a></li>
   <li>WrapItUp <a href="https://maxvanleeuwen.com/project/collect-nuke-scripts-wrapitup/">official page</a></li>
   <li>Switch to NukeX <a href="https://github.com/franklinvfx/NukeSwitch-Script-for-Nuke">official page</a></li>
   <li>Give me Python Selection for Hiero <a href="http://www.nukepedia.com/hiero/give-me-python-selection">official page</a></li>
