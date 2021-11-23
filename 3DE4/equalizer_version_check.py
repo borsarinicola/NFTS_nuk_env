@@ -31,33 +31,16 @@ nMinor = nuke.NUKE_VERSION_MINOR
 Equalizer = False #initialize the variable that will be used to load the GUI menus if True
 
 
-
 if nuke.env['LINUX']:
     Equalizer = False #remove support for LINUX
 else:
+    version = "{}.{}".format(nMajor, nMinor)
 
-    #behaviour for nuke 11
-    if nMajor == 11 and ( nMinor == 2 or nMinor == 3 ):
-        if nMinor == 2:
-            if nuke.env['WIN32']:
-                nuke.pluginAddPath("./3DE4/win/11.2")
-            else:
-                nuke.pluginAddPath("./3DE4/mac/11.2")
-            Equalizer = True
-        else:
-            if nuke.env['WIN32']:
-                nuke.pluginAddPath("./3DE4/win/11.3")
-            else:
-                nuke.pluginAddPath("./3DE4/mac/11.3")
-            Equalizer = True
-
-    #behavious for nuke 12
-    if nMajor == 12 and nMinor == 0:
+    if nuke.env['WIN32']:
+        platform = 'win'
+    else:
+        platform = 'mac'
+        
+    if os.path.isdir(os.path.join(os.path.dirname(__file__), platform, version)):
+        nuke.pluginAddPath('./3DE4/{}/{}'.format(platform, version))
         Equalizer = True
-        if nuke.env['WIN32']:
-            nuke.pluginAddPath("./3DE4/win/12.0")
-        else:
-            nuke.pluginAddPath("./3DE4/mac/12.0")
-
-
-
