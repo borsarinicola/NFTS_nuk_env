@@ -1,5 +1,5 @@
 ####################################
-#Nicola Borsari nLabelShortcut - 29 November 2019 - v1.0
+#Nicola Borsari nLabelShortcut - 23 November 2021 - v1.1
 
 
 '''
@@ -14,23 +14,13 @@ import nuke
 
 
 
-
 def nDollargui():
     selection = nuke.selectedNodes() #store selection into list
-    x = 0 #counter for loop
    
-    for each in selection:
-        processing = selection[x]
-   
-        if x <= len(selection):
-   
-            x = x+1 
+    for node in selection:
+        if node.knob('disable').isAnimated() == False:
+            node.knob('disable').setExpression('$gui')
 
-            if processing.knob('disable').isAnimated() == False:
-                processing.knob('disable').setExpression('$gui')
-
-            else:
-                processing.knob('disable').clearAnimated()
-                processing.knob('disable').setValue(0)
-
-    return
+        else:
+            node.knob('disable').clearAnimated()
+            node.knob('disable').setValue(0)
