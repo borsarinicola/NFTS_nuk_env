@@ -2,7 +2,7 @@
 
 '''
 NFTS - National Film and Television School.
-latest update by Nicola Borsari: 2019-11-08
+latest update by Pietro Abati: 2020-10-26
 '''
 
 ####################################
@@ -25,12 +25,15 @@ import ReadFromWrite
 import nLabelShortcut
 import animatedSnap3D
 import pixelfudger
-import AnimationMaker
 import CycleOperations
 import NFTSCopyPaste
 import NFTShelp
 import hieroFPS
 
+try:
+  import AnimationMaker
+except:
+  pass
 
 ####################################
 
@@ -71,7 +74,13 @@ NFTS.addCommand("despillToColor", "nuke.createNode('despillToColor')" )
 NFTS.addCommand("apChroma", "nuke.createNode('apChroma')" )
 NFTS.addCommand("apChromaMerge", "nuke.createNode('apChromaMerge')" )
 
-
+####2020 adding
+NFTS.addCommand('chromaticAberration', "nuke.createNode('chromaticAberration')", icon='chromaticAberration.png')
+NFTS.addCommand('AutoFlare2', "nuke.createNode('AutoFlare2')", icon='AutoFlare2.png')
+NFTS.addCommand('Exponential_Glow', "nuke.createNode('Exponential_Glow')", icon='Exponential_Glow.png')
+NFTS.addCommand('rebuild_frames', "nuke.createNode('rebuild_frames')", icon='rebuild_frames.png')
+NFTS.addCommand('HeatWave', "nuke.createNode('HeatWave')", icon='HeatWave.png')
+NFTS.addCommand('Bokeh_shapes', "nuke.createNode('Bokeh_shapes')", icon='Bokeh_shapes.tif')
 
 
 ####################################
@@ -116,149 +125,30 @@ cryptomatte_utilities.setup_cryptomatte_ui()
 
 # shared_toolsets
 
-if nuke.GUI:
+import shared_toolsets
 
-  import shared_toolsets
-  
-  sharedToolSetsPaths = {
-    "win32"  : "//digitalfxserver/CompEnvironment/SharedToolSets",     #WINDOWS
-    "darwin" : "/Volumes/CompEnvironment/SharedToolSets" #MACOS
-  }
+sharedToolSetsPaths = {
+"win32"  : "//digitalfxserver/CompEnvironment/SharedToolSets",     #WINDOWS
+"darwin" : "/Volumes/CompEnvironment/SharedToolSets" #MACOS
+}
 
-  def toolSetsFilenameFilter(filename):
-      if nuke.env['MACOS']:
-          # lowercase
-          filename = filename.replace( '//digitalfxserver/CompEnvironment/', '/Volumes/CompEnvironment/' )
-      elif nuke.env['WIN32']:
-          # lowercase
-          filename = filename.replace( '/Volumes/CompEnvironment/', '//digitalfxserver/CompEnvironment/' )
-      return filename
+def toolSetsFilenameFilter(filename):
+  if nuke.env['MACOS']:
+      # lowercase
+      filename = filename.replace( '//digitalfxserver/CompEnvironment/', '/Volumes/CompEnvironment/' )
+  elif nuke.env['WIN32']:
+      # lowercase
+      filename = filename.replace( '/Volumes/CompEnvironment/', '//digitalfxserver/CompEnvironment/' )
+  return filename
 
-  platform = sys.platform
+platform = sys.platform
 
-  sharedToolSetsPath = sharedToolSetsPaths[platform]
-  shared_toolsets.setSharedToolSetsPath(sharedToolSetsPath)
-  shared_toolsets.addFileFilter(toolSetsFilenameFilter)
+sharedToolSetsPath = sharedToolSetsPaths[platform]
+shared_toolsets.setSharedToolSetsPath(sharedToolSetsPath)
+shared_toolsets.addFileFilter(toolSetsFilenameFilter)
 
-  toolbar = nuke.menu("Nodes")
-  shared_toolsets.createToolsetsMenu(toolbar)
-
-
-####################################
-
-from version_check import *
-import nuke
-import os
-
-
-if nuke.env['WIN32']:
-
-
-    if 'available_keentools_versions' not in globals():
-        available_keentools_versions = []
-        proper_keentools_version_found = False
-
-    current_keentools_version = (os.path.dirname(os.path.realpath(__file__)),
-                                 '11.2', 'WIN')
-    available_keentools_versions.append(current_keentools_version)
-
-
-    toolbar = nuke.menu('Nodes')
-    if check_nuke_version_and_os(current_keentools_version[1], current_keentools_version[2]):
-        proper_keentools_version_found = True
-
-        # add KeenTools menu to Nodes toolbar
-        toolbar.removeItem('KeenTools')
-        kt_menu = toolbar.addMenu('KeenTools', tooltip="""
-            KeenTools v1.4.7
-            loaded from "{0}"
-            """.format(current_keentools_version[0]),
-            icon='KeenTools.png')
-        kt_menu.addCommand('GeoTracker', lambda: nuke.createNode('GeoTracker'), icon='GeoTracker.png')
-        kt_menu.addCommand('PinTool', lambda: nuke.createNode('PinTool'), icon='PinTool.png')
-        kt_menu.addCommand('ReadRiggedGeo', lambda: nuke.createNode('ReadRiggedGeo'), icon='ReadRiggedGeo.png')
-        if 'ON' == 'ON':
-            kt_menu.addCommand('FaceBuilder', lambda: nuke.createNode('FaceBuilder'), icon='FaceBuilder.png')
-        if 'ON' == 'ON':
-            kt_menu.addCommand('FaceTracker (beta)', lambda: nuke.createNode('FaceTracker'), icon='FaceTracker.png')
-        if 'OFF' == 'ON':
-            kt_menu.addCommand('FlowEvaluationTool', lambda: nuke.createNode('FlowEvaluationTool'), icon='KeenTools.png')
-        if 'ON' == 'ON':
-            kt_menu.addCommand('TextureBuilder (beta)', lambda: nuke.createNode('TextureBuilder'), icon='TextureBuilder.png')
-
-
-    if not proper_keentools_version_found:
-        # add a warning to menu
-
-        def keentools_version_to_str(keentools_version):
-            path, nuke_v, os = keentools_version
-            return '  - Nuke{0} {1} at \n    "{2}"'.format(nuke_v, os, path)
-
-        available_keentools_versions_str = '\n'.join(
-            [keentools_version_to_str(x) for x in available_keentools_versions])
-        warning_text = ("You are using Nuke{0} on {1}\n"
-                        "There is no KeenTools for that configuration installed\n"
-                        "\n"
-                        "Available KeenTools installations:\n"
-                        "{2}").format(
-                            current_nuke_version(), current_platform(),
-                            available_keentools_versions_str)
-        toolbar.removeItem('KeenTools')
-        toolbar.addCommand('KeenTools', lambda: nuke.message(warning_text), icon='KeenTools.png')
-
-if nuke.env['MACOS']:
-
-    if 'available_keentools_versions' not in globals():
-        available_keentools_versions = []
-        proper_keentools_version_found = False
-
-    current_keentools_version = (os.path.dirname(os.path.realpath(__file__)),
-                                 '11.2', 'OSX')
-    available_keentools_versions.append(current_keentools_version)
-
-
-    toolbar = nuke.menu('Nodes')
-    if check_nuke_version_and_os(current_keentools_version[1], current_keentools_version[2]):
-        proper_keentools_version_found = True
-
-        # add KeenTools menu to Nodes toolbar
-        toolbar.removeItem('KeenTools')
-        kt_menu = toolbar.addMenu('KeenTools', tooltip="""
-            KeenTools v1.4.7
-            loaded from "{0}"
-            """.format(current_keentools_version[0]),
-            icon='KeenTools.png')
-        kt_menu.addCommand('GeoTracker', lambda: nuke.createNode('GeoTracker'), icon='GeoTracker.png')
-        kt_menu.addCommand('PinTool', lambda: nuke.createNode('PinTool'), icon='PinTool.png')
-        kt_menu.addCommand('ReadRiggedGeo', lambda: nuke.createNode('ReadRiggedGeo'), icon='ReadRiggedGeo.png')
-        if 'ON' == 'ON':
-            kt_menu.addCommand('FaceBuilder', lambda: nuke.createNode('FaceBuilder'), icon='FaceBuilder.png')
-        if 'ON' == 'ON':
-            kt_menu.addCommand('FaceTracker (beta)', lambda: nuke.createNode('FaceTracker'), icon='FaceTracker.png')
-        if 'OFF' == 'ON':
-            kt_menu.addCommand('FlowEvaluationTool', lambda: nuke.createNode('FlowEvaluationTool'), icon='KeenTools.png')
-        if 'ON' == 'ON':
-            kt_menu.addCommand('TextureBuilder (beta)', lambda: nuke.createNode('TextureBuilder'), icon='TextureBuilder.png')
-
-
-    if not proper_keentools_version_found:
-        # add a warning to menu
-
-        def keentools_version_to_str(keentools_version):
-            path, nuke_v, os = keentools_version
-            return '  - Nuke{0} {1} at \n    "{2}"'.format(nuke_v, os, path)
-
-        available_keentools_versions_str = '\n'.join(
-            [keentools_version_to_str(x) for x in available_keentools_versions])
-        warning_text = ("You are using Nuke{0} on {1}\n"
-                        "There is no KeenTools for that configuration installed\n"
-                        "\n"
-                        "Available KeenTools installations:\n"
-                        "{2}").format(
-                            current_nuke_version(), current_platform(),
-                            available_keentools_versions_str)
-        toolbar.removeItem('KeenTools')
-        toolbar.addCommand('KeenTools', lambda: nuke.message(warning_text), icon='KeenTools.png')
+toolbar = nuke.menu("Nodes")
+shared_toolsets.createToolsetsMenu(toolbar)
 
 
 ####################################
@@ -274,10 +164,8 @@ tbmenu = menubar.addMenu("&Thinkbox")
 def advancedSubmission():
     nuke.scriptSave()
     DeadlineNukeClient.main()
-    createArtifact()
-    if nuke.ask('Do you want to version up your script?'):
-        incrementalSave()
-    return
+    beforeWrite_cb()
+    afterWrite_cb()
 
 tbmenu.addCommand("Submit Nuke To Deadline", 'advancedSubmission()', 'Alt+R')
 
@@ -304,7 +192,7 @@ nuke.menu('Nuke').addCommand('Edit/Autocrop Selected Nodes','nukescripts.autocro
 nuke.menu("Nuke").addCommand('File/Package Script', 'import Gizmo2Group\nGizmo2Group.Gizmo2Group()\nimport WrapItUp\nWrapItUp.WrapItUp()')  # add packages script - importing it when used - runs also gizmo to group
 nuke.menu("Nuke").addCommand('File/Save New Comp Version', 'incrementalSave()') #override save new comp version funtionalities
 
-if nuke.env['nukex'] == False: # Check Nuke or Nuke X and add menu only if cheep nuke is running
+if nuke.env['nukex'] == False: # Check Nuke or Nuke X and add menu only if cheap nuke is running
     nuke.menu("Nuke").addCommand('File/Switch to NukeX ', 'import nukeSwitch\nnukeSwitch.versionSwitch()')
 
 
@@ -342,14 +230,17 @@ nuke.knobDefault('AppendClip.firstFrame','1001')
 nuke.knobDefault('Write.create_directories', 'True')
 nuke.knobDefault("Write.exr.compression","4")   #RLE as default EXR compression
 nuke.knobDefault("EXPTool.mode", "0")   #Stops as default Exposure Parameter
+nuke.knobDefault('Merge.bbox', 'B')  #sets the bbox to 'B' for your merge nodes
+nuke.knobDefault('Viewer.full_frame_processing', 'True') #make full frame processing autoamtically on
+nuke.knobDefault('TimeOffset.time_offset','1001') #sets Timeoffset value to 1001
+nuke.knobDefault('ChannelMerge.operation','8') #sets the default operation of ChannelMerge to Multiply
 nuke.menu('Nodes').addCommand( "Time/FrameHold", "nuke.createNode('FrameHold')['first_frame'].setValue( nuke.frame() )", icon='FrameHold.png')
 
 
 
 #create keep function add it to the channel menu
 def createkeep():
-    nuke.createNode('Remove')
-    rem = nuke.selectedNode()
+    rem = nuke.createNode('Remove')
     rem.knob('operation').setValue('keep')
     rem.knob('channels').setValue('rgba')
     return
@@ -359,14 +250,14 @@ nuke.menu('Nodes').addCommand( "Filter/Dilate", "nuke.createNode('Dilate')", ico
 
 #add custom resolutions to format list
 
-DCP_2K_Full = '2048 1152 DCP_2K_Full'
-nuke.addFormat(DCP_2K_Full)
+#DCP_2K_Full = '2048 1152 DCP_2K_Full'
+#nuke.addFormat(DCP_2K_Full)
 
-DCP_2K_Scope = '2048 858 DCP_2K_Scope'
-nuke.addFormat(DCP_2K_Scope)
+#DCP_2K_Scope = '2048 858 DCP_2K_Scope'
+#nuke.addFormat(DCP_2K_Scope)
 
-DCP_2K_Flat = '1998 1080 DCP_2K_Flat'
-nuke.addFormat(DCP_2K_Flat)
+#DCP_2K_Flat = '1998 1080 DCP_2K_Flat'
+#nuke.addFormat(DCP_2K_Flat)
 
 
 
@@ -387,3 +278,28 @@ toolbar.addCommand('Transform/TransformMasked', 'nuke.createNode("TransformMaske
 
 ####################################
 
+
+# Pipeline functions necessary only in GUI mode
+
+
+def createArtifact():
+
+    nuke.scriptSave()
+    script = nuke.value("root.name")
+    filename, file_extension = os.path.splitext(script)
+    artef = '{}_artifact.{}'.format(filename, file_extension)
+    shutil.copyfile(script, artef)
+
+def beforeWrite_cb():
+    if script_has_version():
+        createArtifact()
+
+def afterWrite_cb():
+    if script_has_version() and nuke.ask('Do you want to version up your script?'):
+        incrementalSave()
+
+nuke.addBeforeRender(beforeWrite_cb)
+nuke.addAfterRender(afterWrite_cb)
+
+
+####################################
