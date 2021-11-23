@@ -298,8 +298,13 @@ def afterWrite_cb():
     if script_has_version() and nuke.ask('Do you want to version up your script?'):
         incrementalSave()
 
+
+# for some off reason these callbacks are added tiwce
 nuke.addBeforeRender(beforeWrite_cb)
 nuke.addAfterRender(afterWrite_cb)
+
+# setting callback to remove the second one on script load - odd stuff
+nuke.addOnScriptLoad(lambda: nuke.removeAfterRender(afterWrite_cb))
 
 
 ####################################
