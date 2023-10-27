@@ -16,18 +16,17 @@ import os, sys, nuke
 #thanks Lars for the idea of this tool
 
 
-if nuke.env['WIN32']:
-    Path = '//digitalfxserver/CompEnvironment/NFTS_CopyPaste_Data.nk'
-if nuke.env['MACOS']:
-    Path = '/Volumes/CompEnvironment/NFTS_CopyPaste_Data.nk'
 
+Path = os.path.join(os.getenv("NFTS_COMP_ENV_ROOT"), "NFTS_CopyPaste_Data.nk")
 
 def nftsCopy():
     nuke.nodeCopy(Path)
+    print(Path)
     return
 
 def nftsPaste():
     nuke.nodePaste(Path)
+    print(Path)
     return
 
 #add functions to menu

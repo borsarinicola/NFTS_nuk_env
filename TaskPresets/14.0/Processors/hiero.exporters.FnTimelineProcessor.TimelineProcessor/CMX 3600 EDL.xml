@@ -1,0 +1,21 @@
+<root tasktype="hiero.exporters.FnTimelineProcessor.TimelineProcessor" presetname="CMX 3600 EDL">
+    <versionIndex valuetype="int">1</versionIndex>
+    <versionPadding valuetype="int">2</versionPadding>
+    <exportTemplate valuetype="tuple">
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{sequence}/{track}.edl</SequenceItem>
+            <SequenceItem valuetype="hiero.exporters.FnEDLExportTask.EDLExportPreset">
+                <root tasktype="hiero.exporters.FnEDLExportTask.EDLExportTask" presetname="">
+                    <abspath valuetype="bool">False</abspath>
+                    <truncate valuetype="bool">False</truncate>
+                    <fromClip valuetype="str">{filename}</fromClip>
+                    <reelName valuetype="str" />
+                </root>
+            </SequenceItem>
+        </SequenceItem>
+    </exportTemplate>
+    <exportRoot valuetype="str">{projectroot}</exportRoot>
+    <inOutTrim valuetype="bool">False</inOutTrim>
+    <startFrameIndex valuetype="int">1</startFrameIndex>
+    <startFrameSource valuetype="str">Sequence</startFrameSource>
+</root>

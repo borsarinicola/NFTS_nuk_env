@@ -1,1 +1,0 @@
-cmd /C xcopy /y "\\digitalfxserver\CompEnvironment\deadline_config\Deadline Slave 10.ini" "%USERPROFILE%\AppData\Roaming\Thinkbox\"

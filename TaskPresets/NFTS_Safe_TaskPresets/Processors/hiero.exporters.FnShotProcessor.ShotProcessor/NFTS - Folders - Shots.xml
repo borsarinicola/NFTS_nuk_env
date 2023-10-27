@@ -1,0 +1,226 @@
+<root tasktype="hiero.exporters.FnShotProcessor.ShotProcessor" presetname="NFTS - Folders - Shots">
+    <excludeTags valuetype="list" />
+    <includeTags valuetype="list" />
+    <versionIndex valuetype="int">1</versionIndex>
+    <versionPadding valuetype="int">3</versionPadding>
+    <exportTemplate valuetype="list">
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">shots/{shot}/assets/cam/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root tasktype="hiero.core.FnExporterBase.FolderTask" presetname="folder" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">shots/{shot}/assets/dmp/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root tasktype="hiero.core.FnExporterBase.FolderTask" presetname="folder" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">shots/{shot}/assets/geo/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root tasktype="hiero.core.FnExporterBase.FolderTask" presetname="folder" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">shots/{shot}/assets/mattes/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root tasktype="hiero.core.FnExporterBase.FolderTask" presetname="folder" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">shots/{shot}/assets/references/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root tasktype="hiero.core.FnExporterBase.FolderTask" presetname="folder" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">shots/{shot}/plates/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root tasktype="hiero.core.FnExporterBase.FolderTask" presetname="folder" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">shots/{shot}/in/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root tasktype="hiero.core.FnExporterBase.FolderTask" presetname="folder" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">shots/{shot}/audio/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root tasktype="hiero.core.FnExporterBase.FolderTask" presetname="folder" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">shots/{shot}/renders/{project_code}_{shot}_main_comp/{project_code}_{shot}_main_comp_{version}/{project_code}_{shot}_main_comp_{version}.%04d.{ext}</SequenceItem>
+            <SequenceItem valuetype="hiero.exporters.FnExternalRender.NukeRenderPreset">
+                <root tasktype="hiero.exporters.FnExternalRender.NukeRenderTask" presetname="hiero.exporters.FnExternalRender.NukeRenderTask">
+                    <file_type valuetype="str">exr</file_type>
+                    <reformat valuetype="dict">
+                        <filter valuetype="str">Cubic</filter>
+                        <to_type valuetype="str">None</to_type>
+                        <scale valuetype="float">1.0</scale>
+                        <center valuetype="bool">True</center>
+                        <resize valuetype="str">width</resize>
+                    </reformat>
+                    <channels valuetype="str">rgba</channels>
+                    <views valuetype="list">
+                        <SequenceItem valuetype="str">all</SequenceItem>
+                    </views>
+                    <colourspace valuetype="str">linear</colourspace>
+                    <create_directories valuetype="bool">True</create_directories>
+                    <burninDataEnabled valuetype="bool">False</burninDataEnabled>
+                    <dpx valuetype="dict">
+                        <datatype valuetype="str">8 bit</datatype>
+                        <transfer valuetype="str">(auto detect)</transfer>
+                        <bigEndian valuetype="bool">True</bigEndian>
+                        <fill valuetype="bool">False</fill>
+                    </dpx>
+                    <burninData valuetype="dict">
+                        <burnIn_bottomRight valuetype="NoneType">None</burnIn_bottomRight>
+                        <burnIn_topLeft valuetype="NoneType">None</burnIn_topLeft>
+                        <burnIn_topMiddle valuetype="NoneType">None</burnIn_topMiddle>
+                        <burnIn_padding valuetype="NoneType">None</burnIn_padding>
+                        <burnIn_topRight valuetype="NoneType">None</burnIn_topRight>
+                        <burnIn_textSize valuetype="NoneType">None</burnIn_textSize>
+                        <burnIn_bottomLeft valuetype="NoneType">None</burnIn_bottomLeft>
+                        <burnIn_bottomMiddle valuetype="NoneType">None</burnIn_bottomMiddle>
+                        <burnIn_font valuetype="NoneType">None</burnIn_font>
+                    </burninData>
+                    <exr valuetype="dict">
+                        <compression valuetype="str">RLE</compression>
+                        <datatype valuetype="str">16 bit half</datatype>
+                        <noprefix valuetype="bool">False</noprefix>
+                        <write_full_layer_names valuetype="bool">False</write_full_layer_names>
+                        <standard_layer_name_format valuetype="bool">False</standard_layer_name_format>
+                        <interleave valuetype="str">channels, layers and views</interleave>
+                        <dw_compression_level valuetype="float">45.0</dw_compression_level>
+                        <truncateChannelNames valuetype="bool">False</truncateChannelNames>
+                        <write_ACES_compliant_EXR valuetype="bool">False</write_ACES_compliant_EXR>
+                        <metadata valuetype="str">default metadata</metadata>
+                    </exr>
+                    <writeNodeName valuetype="str">Write_{ext}</writeNodeName>
+                </root>
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">shots/{shot}/data/2d/nuke/{project_code}_{shot}_main_comp/{project_code}_{shot}_main_comp_{version}.nk</SequenceItem>
+            <SequenceItem valuetype="hiero.exporters.FnNukeShotExporter.NukeShotPreset">
+                <root tasktype="hiero.exporters.FnNukeShotExporter.NukeShotExporter" presetname="hiero.exporters.FnNukeShotExporter.NukeShotExporter">
+                    <enable valuetype="bool">True</enable>
+                    <readPaths valuetype="list" />
+                    <writePaths valuetype="list">
+                        <SequenceItem valuetype="str">shots/{shot}/renders/{project_code}_{shot}_main_comp/{project_code}_{shot}_main_comp_{version}/{project_code}_{shot}_main_comp_{version}.%04d.{ext}</SequenceItem>
+                    </writePaths>
+                    <timelineWriteNode valuetype="str" />
+                    <collateTracks valuetype="bool">True</collateTracks>
+                    <collateShotNames valuetype="bool">True</collateShotNames>
+                    <annotationsPreCompPaths valuetype="list" />
+                    <includeAnnotations valuetype="bool">False</includeAnnotations>
+                    <showAnnotations valuetype="bool">True</showAnnotations>
+                    <includeEffects valuetype="bool">True</includeEffects>
+                    <connectTracks valuetype="bool">True</connectTracks>
+                    <collateSequence valuetype="bool">False</collateSequence>
+                    <collateCustomStart valuetype="bool">True</collateCustomStart>
+                    <additionalNodesEnabled valuetype="bool">True</additionalNodesEnabled>
+                    <additionalNodesData valuetype="list">
+                        <SequenceItem valuetype="tuple">
+                            <SequenceItem valuetype="str">Shot</SequenceItem>
+                            <SequenceItem valuetype="list" />
+                            <SequenceItem valuetype="str">NFTS_Slate {&#x0A; name NFTS_Slate&#x0A; plate_shotname &quot;\[metadata hiero/shot]&quot;&#x0A; plate_version {{&quot;\[python nukescripts.version_get(nuke.root()\\\[&apos;name&apos;\\].value(),\\ &apos;v&apos;)\\\[-1\\]]&quot;}}&#x0A; plate_jobname &quot;\[metadata hiero/project]&quot;&#x0A; plate_task comp&#x0A; plate_artist &quot;&quot;&#x0A; CustomStatus &quot;&quot;&#x0A; plate_description1 &quot;&quot;&#x0A; plate_description2 &quot;&quot;&#x0A; plate_description3 &quot;&quot;&#x0A; plate_description4 &quot;&quot;&#x0A; advance 1&#x0A; handlesOUT {{handlesIN}}&#x0A; ver &quot;&quot;&#x0A; focalmm &quot;&quot;&#x0A; CompanyName &quot;&quot;&#x0A; slate_frame {{first_frame-1}}&#x0A; Fonts 1&#x0A; regfont &quot;\[getenv NFTS_COMP_ENV_ROOT]/resources/fonts/Arial.ttf&quot;&#x0A; boldfont &quot;\[getenv NFTS_COMP_ENV_ROOT]/resources/fonts/Arial Bold.ttf&quot;&#x0A; frame 0&#x0A; first_frame {{&quot;\[exists parent.input]==1?\[value parent.input.first_frame]:0&quot;}}&#x0A; last_frame {{&quot;\[exists parent.input]==1?\[value parent.input.last_frame]:0&quot;}}&#x0A; Overlays 1&#x0A; UITLOpacity {{parent.OverlaysOpacity}}&#x0A; LogoOverlayOpacity {{OverlaysOpacity}}&#x0A; MaskOverlay 0&#x0A; Testers 0&#x0A; Slate 0&#x0A; filelogo &quot;\[getenv NFTS_COMP_ENV_ROOT]/resources/NFTS-Logo.png&quot;&#x0A; file &quot;&quot;&#x0A; StatusSettings 0&#x0A;}</SequenceItem>
+                        </SequenceItem>
+                    </additionalNodesData>
+                    <method valuetype="str">Blend</method>
+                    <reformat valuetype="dict">
+                        <filter valuetype="str">Cubic</filter>
+                        <to_type valuetype="str">Plate Resolution</to_type>
+                        <center valuetype="bool">True</center>
+                        <resize valuetype="str">width</resize>
+                    </reformat>
+                    <postProcessScript valuetype="bool">True</postProcessScript>
+                    <useRelativePaths valuetype="bool">False</useRelativePaths>
+                </root>
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">shots/{shot}/data/2d/photoshop/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root tasktype="hiero.core.FnExporterBase.FolderTask" presetname="folder" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">shots/{shot}/data/2d/ae/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root tasktype="hiero.core.FnExporterBase.FolderTask" presetname="folder" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">shots/{shot}/data/3d/3dequalizer/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root tasktype="hiero.core.FnExporterBase.FolderTask" presetname="folder" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">shots/{shot}/data/3d/designer/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root tasktype="hiero.core.FnExporterBase.FolderTask" presetname="folder" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">shots/{shot}/data/3d/painter/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root tasktype="hiero.core.FnExporterBase.FolderTask" presetname="folder" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">shots/{shot}/data/3d/houdini/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root tasktype="hiero.core.FnExporterBase.FolderTask" presetname="folder" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">shots/{shot}/data/3d/mari/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root tasktype="hiero.core.FnExporterBase.FolderTask" presetname="folder" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">shots/{shot}/data/3d/mudbox/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root tasktype="hiero.core.FnExporterBase.FolderTask" presetname="folder" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">shots/{shot}/data/3d/pftrack/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root tasktype="hiero.core.FnExporterBase.FolderTask" presetname="folder" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">shots/{shot}/data/3d/photoshop/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root tasktype="hiero.core.FnExporterBase.FolderTask" presetname="folder" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">shots/{shot}/data/3d/zbrush/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root tasktype="hiero.core.FnExporterBase.FolderTask" presetname="folder" />
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">shots/{shot}/data/3d/maya/</SequenceItem>
+            <SequenceItem valuetype="hiero.core.FnExporterBase.FolderTaskPreset">
+                <root tasktype="hiero.core.FnExporterBase.FolderTask" presetname="folder" />
+            </SequenceItem>
+        </SequenceItem>
+    </exportTemplate>
+    <exportRoot valuetype="str">{projectroot}</exportRoot>
+    <cutHandles valuetype="int">12</cutHandles>
+    <cutUseHandles valuetype="bool">False</cutUseHandles>
+    <cutLength valuetype="bool">False</cutLength>
+    <includeRetimes valuetype="bool">False</includeRetimes>
+    <startFrameIndex valuetype="int">1001</startFrameIndex>
+    <startFrameSource valuetype="str">Custom</startFrameSource>
+</root>

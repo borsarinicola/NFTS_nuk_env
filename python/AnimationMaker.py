@@ -1,7 +1,7 @@
 ##################################################################################
 #                                                                                #
-#                             ANIMATION MAKER 1.3                                #
-#                               David Emeny 2017                                 #
+#                             ANIMATION MAKER 1.4                                #
+#                               David Emeny 2021                                 #
 #                                                                                #
 # This is a python/pyside extension to Nuke giving you prebuilt ease and wave    #
 # expressions on any animatable knob. Just right click the knob and choose       #
@@ -16,7 +16,7 @@
 # it back to the original value/curve. User presets are stored in an xml file    #
 # alongside this script.                                                         #
 #                                                                                #
-# Now works in Nuke 11, and is backwards compatible with Nuke 10 and below.      #
+# Now works in Nuke 13 and below.                                                #
 ##################################################################################
 
 
@@ -43,60 +43,53 @@ except:
 import random
 import time
 import math
-import thread
+import threading
 import os
 import xml.etree.ElementTree as xml
 from xml.dom import minidom
-import ast #for handling lists in presets
+import ast 
 
-#on importing this module, add an item in the Animation menu
-nuke.menu('Animation').addCommand( 'Animation Maker...', 'AnimationMaker.showWindow()','',icon='ParticleBounce.png')
+# on importing this module, add an item in the Animation menu
+nuke.menu('Animation').addCommand("Animation Maker...", "AnimationMaker.showWindow()", "", icon="ParticleBounce.png")
 
-
-def showWindow(knobName = None, knobIndex = None):
-    
-    #if no knobname is sent, this is called from the right click menu not a button
+def showWindow(knobName=None, knobIndex=None):
+    # if no knobname is sent, this is called from the right click menu not a button
     if knobName == None:
         k = nuke.thisKnob()
     else:
         k = nuke.thisNode()[knobName]
-    
-    
-    #see if there's more than one value (eg: x,y)
+
+    # see if there's more than one value (eg: x,y)
     if knobIndex == -1 or knobIndex == None:
         try:
             knobNames = []
             for i in range(0,len(k.value())):
-                knobNames.append(k.name() + '.' + k.names(i))
+                knobNames.append("{}.{}".format(k.name(), k.names(i)))
 
-            #ask user to choose one
+            # ask user to choose one
             p = nuke.Panel("Which value?")
-            p.addEnumerationPulldown("Knob value:", ' '.join(knobNames))
-            
+            p.addEnumerationPulldown("Knob value:", " ".join(knobNames))
             p.addButton("Cancel")
             p.addButton("OK")
             pResult = p.show()
             
             if pResult == 1:
-                #if OK was pressed, do stuff
+                # if OK was pressed, do stuff
                 knobIndex = knobNames.index(p.value("Knob value:"))
-                animationWindow(k.name(),knobIndex)
-
+                AnimationWindow(k.name(), knobIndex)
         except:
-            #no sub knobs found, so open as normal
-            animationWindow(k.name())
+            # no sub knobs found, so open as normal
+            AnimationWindow(k.name())
     else:
-            animationWindow(k.name(),knobIndex)
+        AnimationWindow(k.name(), knobIndex)
 
-    
 
-class animationWindow(QtGuiWidgets.QWidget):
+class AnimationWindow(QtGuiWidgets.QWidget):
     
-    def __init__(self, knobName, knobIndex = -1, parent=None):
-        
-        super(animationWindow, self).__init__()
+    def __init__(self, knobName, knobIndex=-1, parent=None):
+        super(AnimationWindow, self).__init__()
         self.setWindowFlags(QtCore.Qt.Window)
-        #make sure the widget is deleted when closed, so nuke doesn't crash on exit
+        # make sure the widget is deleted when closed, so nuke doesn't crash on exit
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         
         self.theNode = nuke.thisNode()
@@ -104,7 +97,7 @@ class animationWindow(QtGuiWidgets.QWidget):
         self.origKnobName = knobName
         self.theKnobName = knobName
 
-        #see if it's a multiple value knob
+        # see if it's a multiple value knob
         try:
             self.knobAmount = len(self.theKnob.value())
         except:
@@ -112,49 +105,55 @@ class animationWindow(QtGuiWidgets.QWidget):
             
         self.updateCreateButtonPressed = False
         
-        #save the original value/keyframes/expression on that knob
-        #so we can put it back again if they cancel
+        # save the original value/keyframes/expression on that knob
+        # so we can put it back again if they cancel
         self.originalValue = self.theKnob.toScript()
         
         self.knobIndex = knobIndex
         if self.knobIndex > -1:
-            #there is more than one knob
-            self.theKnobName += '.' + self.theKnob.names(self.knobIndex)
+            # there is more than one knob
+            self.theKnobName = "{}.{}".format(
+                self.theKnobName,
+                self.theKnob.names(self.knobIndex)
+            )
             self.originalValues = toScriptMultiple(self.originalValue)
         else:
             self.originalValues = None
         
-        
-        #check if called from a knob that already has an associated tab
+        # check if called from a knob that already has an associated tab
         theKnobs = self.theNode.knobs()
-        if ("anim_tab_" + self.theKnobName) in theKnobs:
+        if "anim_tab_{}".format(self.theKnobName) in theKnobs:
             self.editMode = True
         else:
             self.editMode = False
     
         if self.editMode:
-            #check which kind of animation it is
+            # check which kind of animation it is
             try:
-                self.animType = self.theNode['a_animType_' + self.theKnobName].value()
+                self.animType = self.theNode["a_animType_{}".format(self.theKnobName)].value()
             except:
                 self.animType = "ease"
         else:
             self.animType = "ease"
 
-        #set up colour scheme
+        # set up colour scheme
         self.main_colour = (48,138,165)
         self.alt_colour = (255,100,100)
         self.main_colour_style = '1f5884'
         self.bg_colour_style = '354450'
 
-        #set up window
+        # set up window
         self.width = 600
         self.height = 700
         self.setGeometry(800, 200, self.width, self.height)
-        self.setWindowTitle('Animation Maker - %s.%s' %(self.theNode.name(),self.theKnobName))
+        self.setWindowTitle("Animation Maker - {}.{}".format(
+                self.theNode.name(),
+                self.theKnobName,
+            )
+        )
         self.setStyleSheet('QWidget { background-color: #%s }' % self.bg_colour_style)
         
-        #make close button
+        # make close button
         if self.editMode:
             self.closeButton = QtGuiWidgets.QPushButton('UPDATE', self)
         else:
@@ -164,7 +163,7 @@ class animationWindow(QtGuiWidgets.QWidget):
         self.closeButton.setStyleSheet('QWidget { background-color: #%s }' % self.main_colour_style)
         self.closeButton.clicked.connect(self.closeButtonPressed)
 
-        #make choice buttons
+        # make choice buttons
         buttonFont = QtGui.QFont("Verdana", 15, QtGui.QFont.Bold)
  
         self.waveButton = QtGuiWidgets.QPushButton('Wave', self)
@@ -177,26 +176,25 @@ class animationWindow(QtGuiWidgets.QWidget):
         self.easeButton.setFont(buttonFont)
         self.easeButton.clicked.connect(self.easeButtonPressed)
 
-        #highlight relevant button
+        # highlight relevant button
         if self.animType == "ease":
             self.easeButton.setStyleSheet('QWidget { background-color: #%s }' % self.main_colour_style)
         elif self.animType == "wave" or self.animType == "waveEase":
             self.waveButton.setStyleSheet('QWidget { background-color: #%s }' % self.main_colour_style)
 
-        #make copyright text
+        # make copyright text
         self.copyrightLabel = QtGuiWidgets.QLabel(self)
-        self.copyrightLabel.setText('<p style="font-family:arial;color:gray;font-size:10px;">AnimationMaker 1.3 - David Emeny 2017</p>')
-        self.copyrightLabel.move(6, self.height-388)
+        self.copyrightLabel.setText('<p style="font-family:arial;color:gray;font-size:10px;">AnimationMaker 1.4 - David Emeny 2021</p>')
+        self.copyrightLabel.move(6, self.height - 388)
     
         self.easeBoxes = []
         self.waveBoxes = []
 
         self.setUpEaseBoxes()
     
-        #set up different boxes if editing from wave or waveEase
+        # set up different boxes if editing from wave or waveEase
         if self.editMode:
             if self.animType == "wave" or self.animType == "waveEase":
-
                 if len(self.waveBoxes) > 0:
                     self.showWaveBoxes()
                 else:
@@ -206,11 +204,11 @@ class animationWindow(QtGuiWidgets.QWidget):
                 self.hideEaseBoxes()
                 
 
-        #PRESET PULLDOWN
-        #get list of presets
+        # PRESET PULLDOWN
+        # get list of presets
         preset_list = read_preset_list()
         if preset_list:
-            preset_list.insert(0,"--- new ---")
+            preset_list.insert(0, "--- new ---")
         else:
             preset_list = ["--- new ---"]
             
@@ -219,11 +217,14 @@ class animationWindow(QtGuiWidgets.QWidget):
         self.presetLabel.move(self.width/2+2, 60)
         self.presetBox = MyComboBox(self) 
         self.presetBox.addItems(preset_list)
-        self.presetBox.setGeometry(self.width/2, self.presetLabel.y()+15,278,20)
+        self.presetBox.setGeometry(self.width/2, self.presetLabel.y()+15, 278, 20)
         
         if self.editMode:
             try:
-                theIndex = self.presetBox.findText(self.theNode['a_preset_'+self.theKnobName].value(),QtCore.Qt.MatchExactly)
+                theIndex = self.presetBox.findText(
+                    self.theNode['a_preset_{}'.format(self.theKnobName)].value(),
+                    QtCore.Qt.MatchExactly,
+                )
                 self.presetBox.setCurrentIndex(theIndex)
             except:
                 pass
@@ -233,94 +234,93 @@ class animationWindow(QtGuiWidgets.QWidget):
         self.presetBox.activated.connect(self.presetChanged)
         self.presetBoxOld = self.presetBox.currentText()
 
-        #PRESET BUTTONS
+        # PRESET BUTTONS
         self.presetReloadButton = QtGuiWidgets.QPushButton('reload preset', self)
-        self.presetReloadButton.setGeometry(self.width/2, self.presetBox.y()+25, 89, 20)
+        self.presetReloadButton.setGeometry(self.width / 2, self.presetBox.y() + 25, 89, 20)
         self.presetReloadButton.clicked.connect(self.reloadPreset)
 
         self.presetUpdateButton = QtGuiWidgets.QPushButton('save preset', self)
-        self.presetUpdateButton.setGeometry(self.width/2+97, self.presetBox.y()+25, 85, 20)
+        self.presetUpdateButton.setGeometry(self.width / 2 + 97, self.presetBox.y() + 25, 85, 20)
         self.presetUpdateButton.clicked.connect(self.save_preset_to_file)
 
         self.presetDeleteButton = QtGuiWidgets.QPushButton('delete preset', self)
-        self.presetDeleteButton.setGeometry(self.width/2+190, self.presetBox.y()+25, 88, 20)
+        self.presetDeleteButton.setGeometry(self.width / 2 + 190, self.presetBox.y() + 25, 88, 20)
         self.presetDeleteButton.clicked.connect(self.delete_preset_from_file)
 
     
-        #make view
+        # make view
         self.view = QtGuiWidgets.QGraphicsView(self)
         self.view.setRenderHint(QtGui.QPainter.Antialiasing)
         self.view.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.view.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        #make view fit the widget size
-        self.viewYoffset = 325 #225
+        # make view fit the widget size
+        self.viewYoffset = 325
         self.view.setGeometry(0, self.viewYoffset, self.width, self.height - self.viewYoffset)
 
-        #make scene 
+        # make scene 
         self.scene = QtGuiWidgets.QGraphicsScene(self)
-        #make scene fit the view size
+        # make scene fit the view size
         self.scene.setSceneRect(QtCore.QRect(0, 0, self.view.width(), self.view.height()))
-        #set scene background colour
-        self.scene.setBackgroundBrush(QtGui.QColor(0,0,0))
-        #add scene to the view
+        # set scene background colour
+        self.scene.setBackgroundBrush(QtGui.QColor(0, 0, 0))
+        # add scene to the view
         self.view.setScene(self.scene)
     
-        #add lines
-        self.viewTop = 0 #115
+        # add lines
+        self.viewTop = 0
         self.boxheight = self.view.height() / 2
         self.boxwidth = self.width / 3
-        self.line1 = lineGraphic(self, 0.0,self.boxheight,self.width,self.boxheight, QtGui.QColor(100,100,100))
+        self.line1 = lineGraphic(self, 0.0, self.boxheight, self.width, self.boxheight, QtGui.QColor(100, 100, 100))
         self.scene.addItem(self.line1)
-        self.line2 = lineGraphic(self, self.boxwidth,self.viewTop,self.boxwidth,self.boxheight, QtGui.QColor(100,100,100))
+        self.line2 = lineGraphic(self, self.boxwidth, self.viewTop, self.boxwidth, self.boxheight, QtGui.QColor(100, 100, 100))
         self.scene.addItem(self.line2)
-        self.line3 = lineGraphic(self, self.boxwidth*2,self.viewTop,self.boxwidth*2,self.boxheight, QtGui.QColor(100,100,100))
+        self.line3 = lineGraphic(self, self.boxwidth*2, self.viewTop, self.boxwidth*2, self.boxheight, QtGui.QColor(100, 100, 100))
         self.scene.addItem(self.line3)
         
-        self.plot_yMax = self.boxheight+30.0
-        self.plot_yMin = self.view.height()-33.0 #450.0
+        self.plot_yMax = self.boxheight + 30.0
+        self.plot_yMin = self.view.height()-33.0
         self.plot_xMin = 30
         self.plot_xMax = int(self.width - 30)
         
-        #add start end and middle plot lines
-        self.plotline1 = lineGraphic(self, self.plot_xMin,self.plot_yMin,self.plot_xMin,self.plot_yMax, QtGui.QColor(*self.alt_colour))
+        # add start end and middle plot lines
+        self.plotline1 = lineGraphic(self, self.plot_xMin, self.plot_yMin, self.plot_xMin, self.plot_yMax, QtGui.QColor(*self.alt_colour))
         self.scene.addItem(self.plotline1)
-        self.plotline2 = lineGraphic(self, self.plot_xMax,self.plot_yMin,self.plot_xMax,self.plot_yMax, QtGui.QColor(*self.alt_colour))
+        self.plotline2 = lineGraphic(self, self.plot_xMax, self.plot_yMin, self.plot_xMax, self.plot_yMax, QtGui.QColor(*self.alt_colour))
         self.scene.addItem(self.plotline2)
-        self.plotline3 = lineGraphic(self, self.plot_xMax,self.plot_yMin,self.plot_xMax,self.plot_yMax, QtGui.QColor(*self.alt_colour))
+        self.plotline3 = lineGraphic(self, self.plot_xMax, self.plot_yMin, self.plot_xMax, self.plot_yMax, QtGui.QColor(*self.alt_colour))
         self.scene.addItem(self.plotline3)
         self.plotline3.setVisible(False)
-        
         
         self.dots = []
         self.lines = []
         
-        self.startDot = Particle(self,3,[0,0])
-        self.startDot.move([self.plot_xMin,self.plot_yMin])
+        self.startDot = Particle(self, 3, [0, 0])
+        self.startDot.move([self.plot_xMin, self.plot_yMin])
         self.startDot.setParticleColour(*self.alt_colour)
         
-        self.endDot = Particle(self,3,[0,0])
-        self.endDot.move([self.plot_xMax,self.plot_yMax])
+        self.endDot = Particle(self, 3, [0, 0])
+        self.endDot.move([self.plot_xMax, self.plot_yMax])
         self.endDot.setParticleColour(*self.alt_colour)
                     
         self.curveValue = 0.0
         
         self.setFocus()
 
-        #set up timer
+        # set up timer
 
         self.timer = QtCore.QBasicTimer()
         self.frameCounter = 0
         
         self.GRAPHICS_RATE = 1000 / nuke.root()['fps'].value()
 
-        #set up animating balls
+        # set up animating balls
 
         self.slidingBall_xMin = self.boxwidth + 30.0
-        self.slidingBall_xMax = (self.boxwidth*2) - 30.0
+        self.slidingBall_xMax = (self.boxwidth * 2) - 30.0
         self.slidingBall_yMin = self.viewTop + 20.0
         self.slidingBall_yMax = self.boxheight - 30.0
         
-        self.slidingBall = Particle(self,8,[self.slidingBall_xMin,self.slidingBall_yMin])
+        self.slidingBall = Particle(self, 8, [self.slidingBall_xMin, self.slidingBall_yMin])
         self.slidingBall.setParticleColour(*self.main_colour)
     
         self.growingBall_rMin = 0.05
@@ -335,7 +335,7 @@ class animationWindow(QtGuiWidgets.QWidget):
         self.flashingBall.setParticleColour(0.0,0.0,0.0)
         self.flashingBall.move([(self.width/6)*5,self.viewTop + ((self.boxheight-self.viewTop)/2)])
 
-        #set up graphics text
+        # set up graphics text
 
         self.durationText = QtGuiWidgets.QGraphicsSimpleTextItem()
         if self.editMode:
@@ -352,7 +352,7 @@ class animationWindow(QtGuiWidgets.QWidget):
         
         self.fpsText = QtGuiWidgets.QGraphicsSimpleTextItem()
         self.fpsText.setText('FPS: ' + '%g' % nuke.root()['fps'].value())
-        self.fpsText.setPos(527,self.view.height() - 25.0)
+        self.fpsText.setPos(527, self.view.height() - 25.0)
         self.fpsText.setBrush(brush)
         self.scene.addItem(self.fpsText)
         
@@ -383,25 +383,24 @@ class animationWindow(QtGuiWidgets.QWidget):
         self.scene.addItem(self.midLabelText)
         self.midLabelText.setVisible(False)
     
-        #create an expression from current settings and put it in the knob
+        # create an expression from current settings and put it in the knob
         self.setTempExpressionOnKnob()
-    
-    
+
         if self.editMode and self.animType == "wave":
-            #skip the animation head and go straight to main
+            # skip the animation head and go straight to main
             self.timerState = "main"
             self.slidingBall.setParticleColour(*self.main_colour)
             self.growingBall.setParticleColour(*self.main_colour)
             self.flashingBall.setParticleColour(0.0,0.0,0.0)
             self.beginAnimations()
         else:
-            #start animation head
+            # start animation head
             self.startHead()
 
-        #plot the curve in the graphics view
+        # plot the curve in the graphics view
         self.plotCurve()
     
-        #switch to Wave view at startup by default
+        # switch to Wave view at startup by default
         if not self.editMode:
             self.waveButtonPressed()
     
@@ -409,7 +408,6 @@ class animationWindow(QtGuiWidgets.QWidget):
 
         
     def timerEvent(self, e):
-
         if self.timerState == "head":
             self.timer.stop()
             self.timerState = "main"
@@ -419,24 +417,20 @@ class animationWindow(QtGuiWidgets.QWidget):
             self.beginAnimations()
         
         elif self.timerState == "main":
-        
-            #check if finished (for ease anims only)
+            # check if finished (for ease anims only)
             if (self.frameCounter >= int(self.endFrame.text())) and (self.animType == "ease"):
                 self.timer.stop()
                 self.startTail()
-            
             else:
-                
-                #get the value between 0 and 1 on the temp nuke curve
-                #at this time
+                # get the value between 0 and 1 on the temp nuke curve
+                # at this time
                 try:
                     curveValue = self.getCurveValueAtTime()
                 except:
                     curveValue = 0
                 
-                
                 try:
-                    #animate sliding ball
+                    # animate sliding ball
                     c = float(self.slidingBall_xMax - self.slidingBall_xMin)
                     b = float(self.slidingBall_xMin)
                     x = (curveValue * c ) + b
@@ -445,38 +439,32 @@ class animationWindow(QtGuiWidgets.QWidget):
                     y = (curveValue * c ) + b
                     self.slidingBall.move([x,y])
                 
-                    #animate growing ball
+                    # animate growing ball
                     c = float(self.growingBall_rMax - self.growingBall_rMin)
                     b = float(self.growingBall_rMin)
                     r = (curveValue * c ) + b
                     self.growingBall.scale(r)
                     
-                    #animate flashing ball
+                    # animate flashing ball
                     c = float(self.flashingBall_aMax - self.flashingBall_aMin)
                     b = float(self.flashingBall_aMin)
                     a = (curveValue * c ) + b
-                    a = min(max(a,self.flashingBall_aMin),self.flashingBall_aMax) #clamp
+                    a = min(max(a,self.flashingBall_aMin),self.flashingBall_aMax) # clamp
                     self.flashingBall.fade(a)
-                        
                 except:
                     pass
         
-    
             self.frameCounter += 1
-    
 
         elif self.timerState == "tail":
-            
             self.startHead()
-    
     
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key_Escape:
             self.close()
 
-
     def startHead(self):
-        #start animation head
+        # start animation head
         self.timerState = "head"
         self.slidingBall.setParticleColour(*self.alt_colour)
         self.slidingBall.move([self.slidingBall_xMin,self.slidingBall_yMin])
@@ -484,16 +472,14 @@ class animationWindow(QtGuiWidgets.QWidget):
         self.growingBall.scale(self.growingBall_rMin)
         self.flashingBall.setParticleColour(0.0,0.0,0.0)
         self.flashingBall.fade(self.flashingBall_aMin)
-        
         self.timer.start(500, self)
                 
     def startTail(self):
-        #start animation tail
+        # start animation tail
         self.timerState = "tail"
         self.slidingBall.move([self.slidingBall_xMax,self.slidingBall_yMax])
         self.growingBall.scale(self.growingBall_rMax)
         self.flashingBall.fade(self.flashingBall_aMax)
-        
         self.timer.start(500, self)
     
     def beginAnimations(self):
@@ -501,18 +487,15 @@ class animationWindow(QtGuiWidgets.QWidget):
             self.timer.stop()
         
         self.frameCounter = int(self.startFrameOld)
-        self.duration = 1 + int(self.endFrameOld) - int(self.startFrameOld) #in fps
+        self.duration = 1 + int(self.endFrameOld) - int(self.startFrameOld) # in fps
         self.timer.start(self.GRAPHICS_RATE, self)
 
-
-
     def createControlsForKnob(self):
-        
-        #create a new tab for this knob with all the knobs on the node in question
+        # create a new tab for this knob with all the knobs on the node in question
         theTab = nuke.Tab_Knob("anim_tab_" + self.theKnobName, self.theKnobName + " anim")
         self.theNode.addKnob(theTab)
         
-        #make ease controls
+        # make ease controls
         
         easeType = nuke.Text_Knob('a_easeType_display_' + self.theKnobName,'Animation type:')
         easeType.setValue('Linear')
@@ -539,7 +522,7 @@ class animationWindow(QtGuiWidgets.QWidget):
         easeTypeHidden.setVisible(False)
         self.theNode.addKnob(easeTypeHidden)
         
-        #make wave controls
+        # make wave controls
         
         waveType = nuke.Text_Knob('a_waveType_display_' + self.theKnobName,'Animation type:')
         waveType.setValue('Sine')
@@ -601,7 +584,7 @@ class animationWindow(QtGuiWidgets.QWidget):
         knobIndexHidden.setVisible(False)
         self.theNode.addKnob(knobIndexHidden)
         
-        #put its name in the code to get value
+        # put its name in the code to get value
         
         code = '''
 n = nuke.thisNode()
@@ -696,29 +679,29 @@ if tab_knob:
         
         self.theNode.addKnob(nuke.Text_Knob('a_divider2_' + self.theKnobName,''))
         
-        #add edit button, hard coded to load settings for this tab's related knob
+        # add edit button, hard coded to load settings for this tab's related knob
         editButton = nuke.PyScript_Knob('a_edit_' + self.theKnobName,'EDIT')
         editButton.setValue("AnimationMaker.showWindow('%s',%s)" %(self.origKnobName,self.knobIndex))
         editButton.setTooltip("Open the interface again to edit the wave type and other options.")
         self.theNode.addKnob(editButton)
         
-        #add remove button, hard coded to remove this tab and its knobs
-        #'bake' expression first
+        # add remove button, hard coded to remove this tab and its knobs
+        # 'bake' expression first
         removeButton = nuke.PyScript_Knob('a_remove_' + self.theKnobName,'REMOVE')
         removeButton.setValue("AnimationMaker.remove_tab('%s','%s','%s',%s)" %(self.theNode.name(),theTab.name(),self.origKnobName,self.knobIndex))
         removeButton.setTooltip("Remove this tab and all its knobs, and create an expression using the current values.")
         removeButton.clearFlag(nuke.STARTLINE)
         self.theNode.addKnob(removeButton)
 
-        #add restore button, hard coded to remove this tab and its knobs
-        #restore original value/keyframes/expression
+        # add restore button, hard coded to remove this tab and its knobs
+        # restore original value/keyframes/expression
         restoreButton = nuke.PyScript_Knob('a_restore_' + self.theKnobName,'RESTORE')
         restoreButton.setValue("AnimationMaker.remove_tab('%s','%s','%s',%s,'%s')" %(self.theNode.name(),theTab.name(),self.origKnobName,self.knobIndex,self.originalValue))
         restoreButton.setTooltip("Remove this tab and all its knobs and restore the original value/curve.")
         restoreButton.clearFlag(nuke.STARTLINE)
         self.theNode.addKnob(restoreButton)
         
-        #remove original animation from the knob
+        # remove original animation from the knob
         try:
             if self.theKnob.isAnimated():
                 if self.knobIndex > -1:
@@ -732,8 +715,8 @@ if tab_knob:
         
         theNodeKnobs = self.theNode.knobs()
         
-        #check if this particular node already has an animation maker tab
-        #create tab and control knobs if not
+        # check if this particular node already has an animation maker tab
+        # create tab and control knobs if not
         if not ("anim_tab_%s" % (self.theKnobName) in theNodeKnobs):
             self.createControlsForKnob()
         
@@ -741,7 +724,7 @@ if tab_knob:
             
             self.showEaseKnobs()
             
-            #hide wave knobs if exist (for ease only)
+            # hide wave knobs if exist (for ease only)
             if self.animType == "ease":
                 self.hideWaveKnobs()
             
@@ -749,7 +732,7 @@ if tab_knob:
             endValueFloat = float(self.endValue.text())
             rangeFloat = endValueFloat-startValueFloat
             
-            #update the existing ease knobs on the node
+            # update the existing ease knobs on the node
             self.theNode['a_startFrame_' + self.theKnobName].setValue(int(self.startFrame.text()))
             self.theNode['a_endFrame_' + self.theKnobName].setValue(int(self.endFrame.text()))
             self.theNode['a_startValue_' + self.theKnobName].setValue(startValueFloat)
@@ -766,10 +749,10 @@ if tab_knob:
                 self.theNode['a_startValue_' + self.theKnobName].setVisible(True)
                 self.theNode['a_endValue_' + self.theKnobName].setVisible(True)
                 
-            #update the baseline value
+            # update the baseline value
             self.theNode['a_baseline_' + self.theKnobName].setValue(((endValueFloat - startValueFloat) / 2)+startValueFloat)
             
-            #update the basechoice dropdown
+            # update the basechoice dropdown
             self.theNode['a_basechoice_' + self.theKnobName].setValues(['Equilibrium','Start value', 'End value','Orig value/curve'])
 
                 
@@ -777,7 +760,7 @@ if tab_knob:
             
             self.showWaveKnobs()
             
-            #hide the ease controls if exist (for wave only)
+            # hide the ease controls if exist (for wave only)
             if self.animType == "wave":
                 self.hideEaseKnobs()
                     
@@ -789,7 +772,7 @@ if tab_knob:
             rangeFloat = maxValueFloat-minValueFloat
             
                 
-            #update the existing wave knobs on the node
+            # update the existing wave knobs on the node
             self.theNode['a_minValue_' + self.theKnobName].setValue(minValueFloat)
             self.theNode['a_minValue_' + self.theKnobName].setRange(minValueFloat-(rangeFloat/4),maxValueFloat)
             self.theNode['a_maxValue_' + self.theKnobName].setValue(maxValueFloat)
@@ -815,13 +798,13 @@ if tab_knob:
             else:
                 self.theNode['a_waveType_display_' + self.theKnobName].setValue("<h3><font color='yellow'>WAVE </font><font color='white'>" + str(self.waveType.currentText()) + "</font></h3>")
             
-            #update the baseline value
+            # update the baseline value
             self.theNode['a_baseline_' + self.theKnobName].setValue(((maxValueFloat - minValueFloat) / 2)+minValueFloat)
             
-            #update the basechoice dropdown
+            # update the basechoice dropdown
             self.theNode['a_basechoice_' + self.theKnobName].setValues(['Equilibrium','Min value', 'Max value','Orig value/curve'])
 
-        #make or set the hidden animType knob
+        # make or set the hidden animType knob
         if "a_animType_%s" % (self.theKnobName) in theNodeKnobs:
             self.theNode['a_animType_' + self.theKnobName].setValue(self.animType)
         else:
@@ -832,17 +815,17 @@ if tab_knob:
 
 
         if self.animType == "ease":
-            #generate the tcl version of the expression
+            # generate the tcl version of the expression
             self.theExpression = self.getEaseExpression(False)
         elif self.animType == "wave":
-            #generate the tcl version of the expression linking to the node user knobs
+            # generate the tcl version of the expression linking to the node user knobs
             self.theExpression = self.getWaveExpression(False)
         elif self.animType == "waveEase":
-            #generate the tcl version of the expression
+            # generate the tcl version of the expression
             self.theExpression = self.getWaveEaseExpression(False)
 
 
-        #make or set the hidden expressionText knobs
+        # make or set the hidden expressionText knobs
         if "a_exprTextAdd_%s" % (self.theKnobName) in theNodeKnobs:
             self.theNode['a_exprTextAdd_' + self.theKnobName].setValue(self.theExpression[1])
         else:
@@ -859,8 +842,8 @@ if tab_knob:
             expMultHidden.setVisible(False)
             self.theNode.addKnob(expMultHidden)                    
                     
-        #add the tcl expression to the relevant knob
-        #default to the 'mult' expression
+        # add the tcl expression to the relevant knob
+        # default to the 'mult' expression
                     
         if self.knobIndex > -1:
             self.theKnob.setExpression(self.theExpression[2],self.knobIndex)
@@ -877,7 +860,7 @@ if tab_knob:
             self.timer.stop()
         
         if not self.updateCreateButtonPressed:
-            #copy the original value, keyframes or expression back
+            # copy the original value, keyframes or expression back
             try:
                 if self.theKnob.isAnimated():
                     if self.knobIndex > -1:
@@ -928,7 +911,7 @@ if tab_knob:
 
         self.setTempExpressionOnKnob()
         
-        #plot the new curve
+        # plot the new curve
         self.plotCurve()
                 
         self.timer.stop()
@@ -944,7 +927,7 @@ if tab_knob:
         rowSpacing = 30
         inputsLeft = 20
 
-        #EASETYPE
+        # EASETYPE
         self.easeTypeLabel = QtGuiWidgets.QLabel(self)
         self.easeTypeLabel.setText('Ease Type')
         self.easeTypeLabel.move(inputsLeft, 60)
@@ -962,7 +945,7 @@ if tab_knob:
         self.easeBoxes.append(self.easeTypeLabel)
         self.easeBoxes.append(self.easeType)
         
-        #STARTFRAME
+        # STARTFRAME
         self.startFrameLabel = QtGuiWidgets.QLabel(self)
         self.startFrameLabel.setText('Start Frame')
         self.startFrameLabel.move(inputsLeft, self.easeType.y()+rowSpacing)
@@ -980,7 +963,7 @@ if tab_knob:
         self.easeBoxes.append(self.startFrameLabel)
         self.easeBoxes.append(self.startFrame)
         
-        #ENDFRAME
+        # ENDFRAME
         self.endFrameLabel = QtGuiWidgets.QLabel(self)
         self.endFrameLabel.setText('End Frame')
         self.endFrameLabel.move(inputsLeft, self.startFrame.y()+rowSpacing)
@@ -999,7 +982,7 @@ if tab_knob:
         self.easeBoxes.append(self.endFrame)
 
 
-        #STARTVALUE
+        # STARTVALUE
         self.startValueLabel = QtGuiWidgets.QLabel(self)
         self.startValueLabel.setText('Start Value')
         self.startValueLabel.move(inputsLeft, self.endFrame.y()+rowSpacing+20)
@@ -1017,7 +1000,7 @@ if tab_knob:
         self.easeBoxes.append(self.startValueLabel)
         self.easeBoxes.append(self.startValue)
         
-        #ENDVALUE
+        # ENDVALUE
         self.endValueLabel = QtGuiWidgets.QLabel(self)
         self.endValueLabel.setText('End Value')
         self.endValueLabel.move(inputsLeft, self.startValue.y()+rowSpacing)
@@ -1066,7 +1049,7 @@ if tab_knob:
         rowSpacing = 30
         inputsLeft = 20
 
-        #WAVETYPE 
+        # WAVETYPE 
         self.waveTypeLabel = QtGuiWidgets.QLabel(self)
         self.waveTypeLabel.setText('Wave Type')
         self.waveTypeLabel.move(inputsLeft, 60)
@@ -1085,7 +1068,7 @@ if tab_knob:
         self.waveBoxes.append(self.waveTypeLabel)
         self.waveBoxes.append(self.waveType)
 
-        #WAVELENGTH
+        # WAVELENGTH
         self.wavelengthLabel = QtGuiWidgets.QLabel(self)
         self.wavelengthLabel.setText('Wavelength')
         self.wavelengthLabel.move(inputsLeft, self.waveType.y()+rowSpacing)
@@ -1104,7 +1087,7 @@ if tab_knob:
         self.waveBoxes.append(self.wavelengthLabel)
         self.waveBoxes.append(self.wavelength)
         
-        #OFFSET
+        # OFFSET
         self.offsetLabel = QtGuiWidgets.QLabel(self)
         self.offsetLabel.setText('Offset')
         self.offsetLabel.move(inputsLeft, self.wavelength.y()+rowSpacing)
@@ -1123,7 +1106,7 @@ if tab_knob:
         self.waveBoxes.append(self.offsetLabel)
         self.waveBoxes.append(self.offset)
         
-        #MIN VALUE
+        # MIN VALUE
         self.minValueLabel = QtGuiWidgets.QLabel(self)
         self.minValueLabel.setText('Min value')
         self.minValueLabel.move(inputsLeft, self.offset.y()+rowSpacing+20)
@@ -1144,7 +1127,7 @@ if tab_knob:
         self.waveBoxes.append(self.minValueLabel)
         self.waveBoxes.append(self.minValue)
         
-        #MAX VALUE
+        # MAX VALUE
         self.maxValueLabel = QtGuiWidgets.QLabel(self)
         self.maxValueLabel.setText('Max value')
         self.maxValueLabel.move(inputsLeft, self.minValue.y()+rowSpacing)
@@ -1164,7 +1147,7 @@ if tab_knob:
         self.waveBoxes.append(self.maxValue)
         
 
-        #RADIO BUTTONS
+        # RADIO BUTTONS
         self.radioGroup = QtGuiWidgets.QGroupBox(self)
         self.radioGroup.setGeometry(255, 175,200,134)
         self.waveBoxes.append(self.radioGroup)
@@ -1313,7 +1296,7 @@ if tab_knob:
             self.setTempExpressionOnKnob()
             
             if self.animType == "ease" or self.animType == "waveEase":
-                #start animation head
+                # start animation head
                 self.startHead()
             elif self.animType == "wave":
                 self.timer.stop()
@@ -1323,7 +1306,7 @@ if tab_knob:
                 self.flashingBall.setParticleColour(0.0,0.0,0.0)
                 self.beginAnimations()
     
-            #plot the new curve
+            # plot the new curve
             self.plotCurve()
 
 
@@ -1417,7 +1400,7 @@ if tab_knob:
 
     def setTempExpressionOnKnob(self):
         
-        #generate the tcl version of the expression
+        # generate the tcl version of the expression
         if self.animType == "ease":
             self.theExpression = self.getEaseExpression(True)
         
@@ -1428,14 +1411,12 @@ if tab_knob:
             self.theExpression = self.getWaveEaseExpression(True)
                 
         
-        #add the tcl expression to the relevant knob
+        # add the tcl expression to the relevant knob
         if self.knobIndex > -1 and (self.knobAmount > 1) == True:
             self.theKnob.setExpression(self.theExpression,self.knobIndex)
         else:
             self.theKnob.setExpression(self.theExpression)
 
-                
-            
     
     def plotCurve(self):
         
@@ -1475,7 +1456,7 @@ if tab_knob:
                 self.startText.setText('%g' % int(self.startFrame.text()))
                 self.midText.setText('%g' % (int(self.endFrame.text())))
                 
-                end += (end-start) #show more at the end of the ease
+                end += (end-start) # show more at the end of the ease
                 self.endText.setText('%g' % int(end))
                 
             elif self.animType == "ease":
@@ -1484,14 +1465,9 @@ if tab_knob:
                 self.startText.setText('%g' % int(self.startFrame.text()))
                 self.endText.setText('%g' % (int(self.endFrame.text())))
             
-            
             curveDuration = end-start
-            
-            
-
             plotWidth = float(self.plot_xMax - self.plot_xMin)
             incAmount = curveDuration / plotWidth
-            
             
             for xVal in floatRange(start,end,incAmount):
                 
@@ -1514,13 +1490,12 @@ if tab_knob:
                 self.dots[index].move([plotX,plotY])
                 
                 if self.animType == "waveEase":
-                    #colour ease part differently
+                    # colour ease part differently
                     if xVal <= (curveDuration/2)+0.5:
                         self.dots[index].setParticleColour(*self.alt_colour)
                 
-                
-                #add line joining this one to the last dot
-                if index>0:
+                # add line joining this one to the last dot
+                if index > 0:
                     if not dotsExist:
                         theLine = lineGraphic(self,plotX,plotY,self.dots[index-1].pos[0],self.dots[index-1].pos[1],QtGui.QColor(*self.main_colour))
                         self.lines.append(theLine)
@@ -1552,11 +1527,10 @@ if tab_knob:
                 if not dotsExist:
                     self.dots.append(Particle(self,0.5,[0,0]))
 
-
                 self.dots[index].setParticleColour(*self.main_colour)
                 self.dots[index].move([plotX,plotY])
 
-                #add line joining this one to the last dot
+                # add line joining this one to the last dot
                 if index>0:
                     if not dotsExist:
                         theLine = lineGraphic(self,plotX,plotY,self.dots[index-1].pos[0],self.dots[index-1].pos[1],QtGui.QColor(*self.main_colour))
@@ -1575,7 +1549,7 @@ if tab_knob:
         else:
             t = self.frameCounter
             
-        #get the value at current time from the expression on the node itself
+        # get the value at current time from the expression on the node itself
         try:
             curveValue = self.theNode[self.theKnobName].getValueAt(t)
         except:
@@ -1589,16 +1563,14 @@ if tab_knob:
 
         return curveValue
         
-        
-
 
     def getEaseExpression(self,forPanel = False):
         
         theEaseType = str(self.easeType.currentText())
         
         if forPanel == True:
-            #generate a normalized nuke expression from which to read the curve values
-            #when animating things in the panel
+            # generate a normalized nuke expression from which to read the curve values
+            # when animating things in the panel
             
             c = "1"
             b = "0"
@@ -1615,7 +1587,7 @@ if tab_knob:
                 
         else:
         
-            #generate nuke expression based on the values chosen
+            # generate nuke expression based on the values chosen
             
             if self.animType == "waveEase":
                 c = "1"
@@ -1636,55 +1608,55 @@ if tab_knob:
                 
                 
         if theEaseType == "Linear":
-            #c * t / d + b
+            # c * t / d + b
             theExpression = easePrefix + "%s * %s / %s + %s" %(c,t,d,b)
         
         elif theEaseType == "Quad Ease IN":
-            #c * td * td + b
+            # c * td * td + b
             theExpression = easePrefix + "%s * %s * %s + %s" %(c,td,td,b)
         
         elif theEaseType == "Quad Ease OUT":
-            #-c * td * (td-2) + b
+            # -c * td * (td-2) + b
             theExpression = easePrefix + "-%s * %s * (%s-2) + %s" %(c,td,td,b)
         
         elif theEaseType == "Quad Ease IN & OUT":
-            #(td2 < 1 ? c/2*td2*td2 + b : -c/2 * ((td2-1)*((td2-1)-2) - 1) + b)
+            # (td2 < 1 ? c/2*td2*td2 + b : -c/2 * ((td2-1)*((td2-1)-2) - 1) + b)
             theExpression = easePrefix + "(%s < 1 ? %s/2 * %s * %s + %s : -%s/2 * ((%s-1)*((%s-1)-2) - 1) + %s)" %(td2,c,td2,td2,b,c,td2,td2,b)
 
         elif theEaseType == "Expo Ease IN":
-            #c * (2 ** (10 * (td - 1)) ) + b
+            # c * (2 ** (10 * (td - 1)) ) + b
             theExpression = easePrefix + "%s * (2 ** (10 * (%s - 1)) ) + %s" %(c,td,b)
 
         elif theEaseType == "Expo Ease OUT":
-            #c * ( -( 2**(-10 * t/d) ) + 1 ) + b
+            # c * ( -( 2**(-10 * t/d) ) + 1 ) + b
             theExpression = easePrefix + "%s * ( -( 2**(-10 * %s) ) + 1 ) + %s" %(c,td,b)
 
         elif theEaseType == "Expo Ease IN & OUT":
-            #td2 < 1 ? c / 2 * (2 ** (10 * (td2 - 1)) ) + b : c / 2 * (-(2 ** (-10 * (td2-1))) + 2) + b
+            # td2 < 1 ? c / 2 * (2 ** (10 * (td2 - 1)) ) + b : c / 2 * (-(2 ** (-10 * (td2-1))) + 2) + b
             theExpression = easePrefix + "%s < 1 ? %s / 2 * (2 ** (10 * (%s - 1)) ) + %s : %s / 2 * (-(2 ** (-10 * (%s-1))) + 2) + %s" %(td2,c,td2,b,c,td2,b)
 
         elif theEaseType == "Ease OUT & BACK":
-            #s = 1.70158
-            #c * ((t/d-1)*(t/d-1)*((s+1)*(t/d-1) + s) + 1) + b
+            # s = 1.70158
+            # c * ((t/d-1)*(t/d-1)*((s+1)*(t/d-1) + s) + 1) + b
             theExpression = easePrefix + "%s * ((%s/%s-1)*(%s/%s-1)*((%s+1)*(%s/%s-1) + %s) + 1) + %s" %(c,t,d,t,d,1.70158,t,d,1.70158,b)
 
         elif theEaseType == "Ease OUT Bounce":
-            #td < (1/2.75) ? c * (7.5625 * td * td) + b : td < (2/2.75) ? c * (7.5625 * (td - (1.5/2.75)) * (td - (1.5/2.75)) + 0.75) + b :        td < (2.5/2.75) ? c * (7.5625 * (td - (2.25/2.75)) * (td - (2.25/2.75)) + 0.9375) + b : c * (7.5625 * (td - (2.625/2.75)) * (td - (2.625/2.75)) + 0.984375) + b
+            # td < (1/2.75) ? c * (7.5625 * td * td) + b : td < (2/2.75) ? c * (7.5625 * (td - (1.5/2.75)) * (td - (1.5/2.75)) + 0.75) + b :        td < (2.5/2.75) ? c * (7.5625 * (td - (2.25/2.75)) * (td - (2.25/2.75)) + 0.9375) + b : c * (7.5625 * (td - (2.625/2.75)) * (td - (2.625/2.75)) + 0.984375) + b
 
             theExpression = easePrefix + "%s < (1/2.75) ? %s * (7.5625 * %s * %s) + %s : %s < (2/2.75) ? %s * (7.5625 * (%s - (1.5/2.75)) * (%s - (1.5/2.75)) + 0.75) + %s :        %s < (2.5/2.75) ? %s * (7.5625 * (%s - (2.25/2.75)) * (%s - (2.25/2.75)) + 0.9375) + %s : %s * (7.5625 * (%s - (2.625/2.75)) * (%s - (2.625/2.75)) + 0.984375) + %s" %(td,c,td,td,b,td,c,td,td,b,td,c,td,td,b,c,td,td,b)
 
 
         elif theEaseType == "Ease OUT Elastic":
             
-            #c * (2**(-10 * td)) * sin( (td * d-((d * 0.3) / 4)) * (3.14159 * 2) / (d * 0.3) ) + c + b
+            # c * (2**(-10 * td)) * sin( (td * d-((d * 0.3) / 4)) * (3.14159 * 2) / (d * 0.3) ) + c + b
             theExpression = easePrefix + "%s * (2**(-10 * %s)) * sin( (%s * %s-((%s * 0.3) / 4)) * (3.14159 * 2) / (%s * 0.3) ) + %s + %s" %(c,td,td,d,d,d,c,b)
 
         if forPanel == False:
-            #add to the original value/curve, by mix amount
+            # add to the original value/curve, by mix amount
             addExpression = "%s + ((%s) * %s)" %(baseline,theExpression,mix)
-            #mix back with baseline value by the mix amount
+            # mix back with baseline value by the mix amount
             multExpression = "(((%s) - %s) * %s) + %s" %(theExpression,baseline,mix,baseline)
-            #combine all into a list (the first may be used in a WaveEase expression)
+            # combine all into a list (the first may be used in a WaveEase expression)
             theExpression = [theExpression,addExpression,multExpression]
 
         return theExpression
@@ -1692,14 +1664,14 @@ if tab_knob:
 
     def getWaveExpression(self, forPanel = False, easeExpression = None):
         
-        #generate nuke expression based on the values chosen
+        # generate nuke expression based on the values chosen
         
         theWaveType = str(self.waveType.currentText())
         theExpression = ""
         
         if forPanel == True:
-            #generate a normalized nuke expression from which to read the curve values
-            #when animating things in the panel
+            # generate a normalized nuke expression from which to read the curve values
+            # when animating things in the panel
             
             c = "1"
             b = "0"
@@ -1720,7 +1692,7 @@ if tab_knob:
                 cutoff = "0.95"
 
         else:
-            #generate the final expression to put into nuke
+            # generate the final expression to put into nuke
             c = "(a_maxValue_%s - a_minValue_%s)" % (self.theKnobName,self.theKnobName)
             b = "a_minValue_%s" % (self.theKnobName)
             w = "a_wavelength_%s" % (self.theKnobName)
@@ -1731,66 +1703,66 @@ if tab_knob:
 
         
         if theWaveType == "Sine":
-            #(((sin(((frame*((pi * 2)/(w/2))/2) + o))+1)/2) * c ) + b
+            # (((sin(((frame*((pi * 2)/(w/2))/2) + o))+1)/2) * c ) + b
             theExpression = "((sin(((frame*((pi * 2)/(%s/2))/2) + %s))+1)/2)" %(w,o)
         
         
         elif theWaveType == "Random":
-            #((random((frame/(waveLength/2))+offset)) * (maxVal-minVal) ) + minVal
+            # ((random((frame/(waveLength/2))+offset)) * (maxVal-minVal) ) + minVal
             theExpression = "(random((frame/(%s/2))+%s))" %(w,o)
 
         elif theWaveType == "Noise":
-            #(((1*(noise((frame/waveLength)+offset))+1 ) /2 ) * (maxVal-minVal) ) + minVal
+            # (((1*(noise((frame/waveLength)+offset))+1 ) /2 ) * (maxVal-minVal) ) + minVal
             theExpression = "((1*(noise((frame/%s)+%s))+1 ) /2 )" %(w,o)
 
         elif theWaveType == "fBm":
-            #min(max(((fBm((frame/50), 0, 0,10,2,0.5)*0.75)+0.5),0),1)
-            #min(max(((fBm((frame/waveLength)+offset, 0, 0,10,2,0.5)*0.75)+0.5),0),1)
-            #(((1*(fBm((frame/waveLength)+offset),10,2,0.5)+1 ) /2 ) * (maxVal-minVal) ) + minVal
+            # min(max(((fBm((frame/50), 0, 0,10,2,0.5)*0.75)+0.5),0),1)
+            # min(max(((fBm((frame/waveLength)+offset, 0, 0,10,2,0.5)*0.75)+0.5),0),1)
+            # (((1*(fBm((frame/waveLength)+offset),10,2,0.5)+1 ) /2 ) * (maxVal-minVal) ) + minVal
             theExpression = "min(max(((fBm((frame/%s)+%s, 0, 0,10,2,0.5)*0.75)+0.5),0),1)" %(w,o)
 
         elif theWaveType == "Turbulence":
-            #(((1*(turbulence((frame/waveLength)+offset),10,2,0.5)+1 ) /2 ) * (maxVal-minVal) ) + minVal
-            #max(min((turbulence((frame/5), 0, 0,10,2,0.5)*(1+1/3)),1),0)
-            #max(min((turbulence((frame/wavelength)+offset, 0, 0,10,2,0.5)*(1+1/3)),1),0)
+            # (((1*(turbulence((frame/waveLength)+offset),10,2,0.5)+1 ) /2 ) * (maxVal-minVal) ) + minVal
+            # max(min((turbulence((frame/5), 0, 0,10,2,0.5)*(1+1/3)),1),0)
+            # max(min((turbulence((frame/wavelength)+offset, 0, 0,10,2,0.5)*(1+1/3)),1),0)
             theExpression = "max(min((turbulence((frame/%s)+%s, 0, 0,10,2,0.5)*(1+1/3)),1),0)" %(w,o)
 
         elif theWaveType == "Triangle":
-            #(((((2*asin(sin(2*pi*(frame/waveLength)+offset)))/pi) / 2)+0.5) * (maxVal-minVal) ) + minVal
+            # (((((2*asin(sin(2*pi*(frame/waveLength)+offset)))/pi) / 2)+0.5) * (maxVal-minVal) ) + minVal
             theExpression = "((((2*asin(sin(2*pi*(frame/%s)+%s)))/pi) / 2)+0.5)" %(w,o)
 
         elif theWaveType == "Sawtooth":
-            #((1/waveLength)*(((frame-1)+offset) % waveLength) * (maxVal-minVal) ) + minVal
+            # ((1/waveLength)*(((frame-1)+offset) % waveLength) * (maxVal-minVal) ) + minVal
             theExpression = "(1/"+w+")*(((frame-1)+"+o+") % "+w+")"
 
         elif theWaveType == "Sawtooth Curved":
-            #((sin((1/(pi/2))*(((frame-1)+offset)/(waveLength/2.46666666)) % (pi/2)))>0.99999? 1 : (sin((1/(pi/2))*(((frame-1)+offset)/(waveLength/2.46666666)) % (pi/2))) * (maxVal-minVal) ) + minVal
+            # ((sin((1/(pi/2))*(((frame-1)+offset)/(waveLength/2.46666666)) % (pi/2)))>0.99999? 1 : (sin((1/(pi/2))*(((frame-1)+offset)/(waveLength/2.46666666)) % (pi/2))) * (maxVal-minVal) ) + minVal
             theExpression = "(sin((1/(pi/2))*(((frame-1)+"+o+")/("+w+"/2.46666666)) % (pi/2)))>0.99999? 1 : (sin((1/(pi/2))*(((frame-1)+"+o+")/("+w+"/2.46666666)) % (pi/2)))"
 
         elif theWaveType == "Sawtooth Curved Reversed":
-            #((cos((1/(pi/2))*(((frame-1)+offset)/(waveLength/2.46666666)) % (pi/2)))>0.99999? 1 : (cos((1/(pi/2))*(((frame-1)+offset)/(waveLength/2.46666666)) % (pi/2))) * (maxVal-minVal) ) + minVal
+            # ((cos((1/(pi/2))*(((frame-1)+offset)/(waveLength/2.46666666)) % (pi/2)))>0.99999? 1 : (cos((1/(pi/2))*(((frame-1)+offset)/(waveLength/2.46666666)) % (pi/2))) * (maxVal-minVal) ) + minVal
             theExpression = "(cos((1/(pi/2))*(((frame-1)+"+o+")/("+w+"/2.46666666)) % (pi/2)))>0.99999? 1 : (cos((1/(pi/2))*(((frame-1)+"+o+")/("+w+"/2.46666666)) % (pi/2)))"
 
         elif theWaveType == "Sawtooth Exponential":
-            #((((((exp((1/(pi/2))*(((frame-1)+offset)/(waveLength/4.934802)) % pi*2)))/534.5)) - 0.00186741)>0.999987? 1 : (((((exp((1/(pi/2))*(((frame-1)+offset)/(waveLength/4.934802)) % pi*2)))/534.5)) - 0.00186741) * (maxVal-minVal) ) + minVal
+            # ((((((exp((1/(pi/2))*(((frame-1)+offset)/(waveLength/4.934802)) % pi*2)))/534.5)) - 0.00186741)>0.999987? 1 : (((((exp((1/(pi/2))*(((frame-1)+offset)/(waveLength/4.934802)) % pi*2)))/534.5)) - 0.00186741) * (maxVal-minVal) ) + minVal
             theExpression = "(((((exp((1/(pi/2))*(((frame-1)+"+o+")/("+w+"/4.934802)) % pi*2)))/534.5)) - 0.00186741)>0.999987? 1 : (((((exp((1/(pi/2))*(((frame-1)+"+o+")/("+w+"/4.934802)) % pi*2)))/534.5)) - 0.00186741)"
         
         elif theWaveType == "Bounce":
-            #((sin(((frame/waveLength)*pi)+offset)>0?sin(((frame/waveLength)*pi)+offset):cos((((frame/waveLength)*pi)+offset)+(pi/2))) * (maxVal-minVal) ) + minVal
+            # ((sin(((frame/waveLength)*pi)+offset)>0?sin(((frame/waveLength)*pi)+offset):cos((((frame/waveLength)*pi)+offset)+(pi/2))) * (maxVal-minVal) ) + minVal
             theExpression = "(sin(((frame/%s)*pi)+%s)>0?sin(((frame/%s)*pi)+%s):cos((((frame/%s)*pi)+%s)+(pi/2)))" %(w,o,w,o,w,o)
 
 
-        #add the ease expression if there is one
+        # add the ease expression if there is one
         if easeExpression:
             if type(easeExpression) is list:
                 easeExpression = easeExpression[0]
             theExpression = "(%s) * (%s)" %(theExpression,easeExpression)
             
-        #then set max and min
+        # then set max and min
         theExpression = "((%s) * %s) + %s" %(theExpression, c, b)
 
 
-        #SQUARIFY
+        # SQUARIFY
         if self.squarifyOld == True:
             if forPanel:
                 c05 = "0.5"
@@ -1804,7 +1776,7 @@ if tab_knob:
             
             theExpression = "(%s) > %s ? %s : %s" %(theExpression,c05,theMax,theMin)
 
-        #BLIPPIFY
+        # BLIPPIFY
         if self.blipOld == True:
             if forPanel:
                 theMax = "1"
@@ -1819,11 +1791,11 @@ if tab_knob:
 
 
         if forPanel == False:
-            #add to the original value/curve, by mix amount
+            # add to the original value/curve, by mix amount
             addExpression = "%s + ((%s) * %s)" %(baseline,theExpression,mix)
-            #mix back with baseline value by the mix amount
+            # mix back with baseline value by the mix amount
             multExpression = "(((%s) - %s) * %s) + %s" %(theExpression,baseline,mix,baseline)
-            #combine both into a tuple
+            # combine both into a tuple
             theExpression = [theExpression,addExpression,multExpression]
 
         return theExpression
@@ -1842,13 +1814,13 @@ if tab_knob:
             self.presetBox.keyPressEvent(QtGui.QKeyEvent(QtCore.QEvent.KeyPress, QtCore.Qt.Key_Enter, QtCore.Qt.NoModifier))    
             self.presetBox.setEditable(0)
         
-        #get preset name from box
+        # get preset name from box
         preset_name = str(self.presetBox.currentText())
         
         if preset_name in ["--- new ---", ""]:
             return None
         
-        #make dictionary from current values
+        # make dictionary from current values
         save_values = {}
         save_values['startFrame'] = str(self.startFrame.text())
         save_values['endFrame'] = str(self.endFrame.text())
@@ -1868,7 +1840,7 @@ if tab_knob:
         save_values['animType'] = self.animType
         
         
-        #save to file
+        # save to file
         success = save_preset(preset_name,save_values)
         if success:
             msgBox = QtGuiWidgets.QMessageBox()
@@ -1879,7 +1851,7 @@ if tab_knob:
 
     def delete_preset_from_file(self):
         
-        #get preset name from box
+        # get preset name from box
         preset_name = str(self.presetBox.currentText())
         
         if preset_name in ["--- new ---", ""]:
@@ -1887,7 +1859,7 @@ if tab_knob:
             
         self.presetBox.removeItem(self.presetBox.currentIndex())
         
-        #save to file, but in delete mode
+        # save to file, but in delete mode
         success = save_preset(preset_name,None,True)
         if success:
             msgBox = QtGuiWidgets.QMessageBox()
@@ -1896,7 +1868,7 @@ if tab_knob:
             msgBox.setText("<h3>'%s' preset deleted</h3>" %preset_name)
             msgBox.exec_()
 
-        #get preset name from box
+        # get preset name from box
         preset_name = str(self.presetBox.currentText())
         
         if preset_name == "":
@@ -1905,11 +1877,11 @@ if tab_knob:
 
 
     def read_preset_from_file(self,preset_name):
-        #read preset from file
+        # read preset from file
         read_values = read_preset(preset_name)
         
         if read_values:
-            #set the values
+            # set the values
             self.startFrame.setText(read_values['startFrame'])
             self.endFrame.setText(read_values['endFrame'])
             self.startValue.setText(read_values['startValue'])
@@ -1927,10 +1899,10 @@ if tab_knob:
             self.blip.setChecked(read_values['blip'])
             
             if read_values['animType']=="ease":
-                #switch to Ease view
+                # switch to Ease view
                 self.easeButtonPressed()
             else:
-                #switch to Wave view
+                # switch to Wave view
                 self.waveButtonPressed()
 
 
@@ -1961,36 +1933,36 @@ class Particle():
         self.updateCount = 0
         
         
-        #-------------------graphics----------------------
-        #get reference to main window
+        # -------------------graphics----------------------
+        # get reference to main window
         self.graphicsWindow = graphicsWindow
         
-        #make small circle shape
+        # make small circle shape
         self.graphic = QtGuiWidgets.QGraphicsEllipseItem(0,0,self.radius*2,self.radius*2)
         
-        #no border
+        # no border
         pen = QtGui.QPen()
         pen.setStyle(QtCore.Qt.NoPen)
         self.graphic.setPen(pen)
         
         self.setParticleColour(0,0,0)
         
-        #set transform origin to centre of ball
+        # set transform origin to centre of ball
         self.graphic.setTransformOriginPoint(QtCore.QPointF(self.radius, self.radius))
         try:
             self.graphic.setAcceptsHoverEvents(False)
         except:
-            #PySide2
+            # PySide2
             self.graphic.setAcceptHoverEvents(False)
-        self.graphic.setZValue(10) #always on top
+        self.graphic.setZValue(10) # always on top
         
-        #add this to the scene
+        # add this to the scene
         self.graphicsWindow.scene.addItem(self.graphic)
     
     
     def move(self,newPos):
         
-        #update position
+        # update position
         self.pos = newPos
         gPosX = self.pos[0] - self.radius
         gPosY = self.pos[1] - self.radius
@@ -1998,7 +1970,7 @@ class Particle():
     
     def scale(self,factor):
         
-        #update scale factor
+        # update scale factor
         self.graphic.setScale(factor)
 
     def fade(self,factor):
@@ -2007,13 +1979,11 @@ class Particle():
     
     def setParticleColour(self,r,g,b):
         
-        #filled with chosen colour
+        # filled with chosen colour
         brush = QtGui.QBrush()
         brush.setColor( QtGui.QColor(r,g,b) )
         brush.setStyle( QtCore.Qt.SolidPattern )
         self.graphic.setBrush(brush)
-
-
 
 
 class lineGraphic(QtGuiWidgets.QGraphicsLineItem):
@@ -2043,8 +2013,8 @@ class lineGraphic(QtGuiWidgets.QGraphicsLineItem):
 
 
 def toScriptMultiple(val_string):
-    #takes a toScript() style string and returns
-    #the separate parts (eg scripts for x,y,z) as a list of strings
+    # takes a toScript() style string and returns
+    # the separate parts (eg scripts for x,y,z) as a list of strings
             
     vals = []
     val = ""
@@ -2084,9 +2054,6 @@ def toScriptMultiple(val_string):
     return vals
 
 
-
-
-
 def remove_tab(node_name,tab_name,knob_name,knob_index,orig_value = None):
     node = nuke.toNode(node_name)
     in_user_tab = False
@@ -2107,8 +2074,8 @@ def remove_tab(node_name,tab_name,knob_name,knob_index,orig_value = None):
     
 
     if orig_value:
-        #copy the original value, keyframes or expression
-        #back to the knob
+        # copy the original value, keyframes or expression
+        # back to the knob
         try:
             if node[knob_name].isAnimated():
                 if knob_index > -1:
@@ -2119,29 +2086,29 @@ def remove_tab(node_name,tab_name,knob_name,knob_index,orig_value = None):
             pass
         
         if knob_index > -1:
-            #more difficult: need to keep the other values the same
+            # more difficult: need to keep the other values the same
         
-            #get script of current values/curve/expressions in the knob
+            # get script of current values/curve/expressions in the knob
             knob_script = node[knob_name].toScript()
-            #split those into separate strings
+            # split those into separate strings
             current_values = toScriptMultiple(knob_script)
-            #split the original stored script separate strings
+            # split the original stored script separate strings
             orig_values = toScriptMultiple(orig_value)
-            #create a new list, starting with the current state of the knob
+            # create a new list, starting with the current state of the knob
             new_values = current_values
-            #replace one of the items with the original (knob index in question)
+            # replace one of the items with the original (knob index in question)
             new_values[knob_index] = orig_values[knob_index]
-            #join them into a space separated string (script)
+            # join them into a space separated string (script)
             new_values_string = " ".join(new_values)
             new_values_string = new_values_string.strip()
-            #replace all values in the knob with the new script
-            #effectively only changing the one in question
+            # replace all values in the knob with the new script
+            # effectively only changing the one in question
             node[knob_name].fromScript(new_values_string)
         else:
             node[knob_name].fromScript(orig_value)
     else:
-        #create a baked version of the expression
-        #and put it in the original knob
+        # create a baked version of the expression
+        # and put it in the original knob
         
         bake_values = []
         has_keyframes = False
@@ -2158,9 +2125,9 @@ def remove_tab(node_name,tab_name,knob_name,knob_index,orig_value = None):
                     bake_values.append( (k.name(),k.value()) )
                     
         if has_keyframes:
-            #can't make an expression as there's keyframes on one of the knobs
-            #(probably baseline) so bake a keyframe on every frame
-            #give them a warning first
+            # can't make an expression as there's keyframes on one of the knobs
+            # (probably baseline) so bake a keyframe on every frame
+            # give them a warning first
             if not nuke.ask("There are keyframes involved in creating this curve, so it must be baked if you want to remove the tab. Continue?"):
                 return None
             
@@ -2181,7 +2148,7 @@ def remove_tab(node_name,tab_name,knob_name,knob_index,orig_value = None):
                 curve.setExpression( 'curve' )
                             
         else:
-            #create a new combined expression using current tab values
+            # create a new combined expression using current tab values
             
             if knob_index > -1:
                 bake_exp = node[knob_name].animation(knob_index).expression()
@@ -2203,7 +2170,8 @@ def remove_tab(node_name,tab_name,knob_name,knob_index,orig_value = None):
     # Select first tab
     node.knob(0).setFlag(0)
     
-    #on linux, fix bug where tab appears twice 
+    # on linux, fix bug where tab appears twice 
+    # by hiding and showing th panel
     fixRemoveKnobs(node)
 
 def _showPanel(node):
@@ -2212,8 +2180,7 @@ def _showPanel(node):
 
 def fixRemoveKnobs(node):
     node.hideControlPanel()
-    thread.start_new_thread(_showPanel, (node,))
-    
+    threading.Thread(target=_showPanel, args=(node,)).start()
     
 class MyLineEdit(QtGuiWidgets.QLineEdit):
     def __init__(self, parent=None):
@@ -2238,7 +2205,7 @@ class MyLineEdit(QtGuiWidgets.QLineEdit):
         QtGuiWidgets.QLineEdit.keyPressEvent(self, event)
     
     def keyReleaseEvent(self, event):
-        #update the animations for certain values, but only if up and down released
+        # update the animations for certain values, but only if up and down released
         if self in [self.parent.wavelength,self.parent.offset,self.parent.startFrame,self.parent.endFrame]:
             if event.key() in [QtCore.Qt.Key_Up,QtCore.Qt.Key_Down]:
                 self.parent.userValuesChanged()
@@ -2259,7 +2226,7 @@ class MyComboBox(QtGuiWidgets.QComboBox):
 
 def get_preset_path():
     try:
-        #put it in the same path as this module
+        # put it in the same path as this module
         filepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), "AnimationMaker_presets.xml")
         return filepath
     except:
@@ -2267,73 +2234,71 @@ def get_preset_path():
 
 
 def save_preset(preset_name, new_settings, delete=False):
-    preset_name = preset_name.replace(" ","_-sp-_") #space
-    preset_name = preset_name.replace("'","_-sq-_") #single quote
-    preset_name = preset_name.replace('"',"_-dq-_") #double quote
+    preset_name = preset_name.replace(" ","_-sp-_") # space
+    preset_name = preset_name.replace("'","_-sq-_") # single quote
+    preset_name = preset_name.replace('"',"_-dq-_") # double quote
 
     filepath = get_preset_path()
 
-    #return None if can't get path
+    # return None if can't get path
     if not filepath:
-        print "AnimationMaker: Couldn't get the preset path"
         return None
     
     root_element = None
     preset_element = None
 
-    #if file exists, get root and preset elements    
+    # if file exists, get root and preset elements    
     if os.path.exists(filepath):
 
-        #read in the whole tree
+        # read in the whole tree
         root_element = parse_file(filepath)
         
-        #Get this preset's element
+        # Get this preset's element
         try:
             preset_element = root_element.find(preset_name)
         except:
             preset_element = None
 
-    #create root element if haven't got it already
+    # create root element if haven't got it already
     if root_element is None:
-        #create root xml element
+        # create root xml element
         root_element = xml.Element('PRESETS')
 
     if delete:
-        #remove the preset element
+        # remove the preset element
         if preset_element is not None:
             root_element.remove(preset_element)
     else:
-        #create preset element if haven't got it already
+        # create preset element if haven't got it already
         if preset_element is None:
             preset_element = xml.Element(preset_name)
             root_element.append(preset_element)
             
-        #get keys from new_settings dict
+        # get keys from new_settings dict
         try:
             settings_keys = new_settings.keys()
         except:
-            #something wrong with the dict passed to this function
-            print "AnimationMaker: Preset dictionary not valid"
+            # something wrong with the dict passed to this function
             return None
             
-        #build the settings tree for this preset
+        # build the settings tree for this preset
         for key in settings_keys:
-            #Get this setting's element
+            # Get this setting's element
             try:
                 setting_element = preset_element.find(key)
             except:
                 setting_element = None
                 
-            #make one if it doesn't exist
+            # make one if it doesn't exist
             if setting_element is None:
                 setting_element = xml.Element(key)
                 preset_element.append(setting_element)
     
-            #set the value of the setting
+            # set the value of the setting
             setting_element.text = str(new_settings[key])
 
-    #instead of writing the normal way
-    #create a formatted string and write that
+    # instead of writing the normal way
+    # create a formatted string and write that
     try:
         rough_string = xml.tostring(root_element, 'utf-8')
         reparsed = minidom.parseString(rough_string)
@@ -2343,54 +2308,53 @@ def save_preset(preset_name, new_settings, delete=False):
         f.write(formatted_string)
         f.close()
         
-        #tell parent function it was successful
+        # tell parent function it was successful
         return True
     
     except:
-        print "AnimationMaker: Failed to write XML tree to presets file"
         return None
 
 
 def read_preset(preset_name):
         
-    preset_name = preset_name.replace(" ","_-sp-_") #space
-    preset_name = preset_name.replace("'","_-sq-_") #single quote
-    preset_name = preset_name.replace('"',"_-dq-_") #double quote
+    preset_name = preset_name.replace(" ","_-sp-_") # space
+    preset_name = preset_name.replace("'","_-sq-_") # single quote
+    preset_name = preset_name.replace('"',"_-dq-_") # double quote
 
     filepath = get_preset_path()
 
-    #return None if can't get path or doesn't exist
+    # return None if can't get path or doesn't exist
     if filepath == None:
         return None
     if not os.path.exists(filepath):
         return None
 
-    #read in the whole tree
+    # read in the whole tree
     root_element = parse_file(filepath)
         
-    #Get this tool's element
+    # Get this tool's element
     try:
         preset_element = root_element.find(preset_name)
     except:
         preset_element = None
 
-    #return if this preset isn't found in the file
+    # return if this preset isn't found in the file
     if preset_element is None:
         return None
 
-    #create dict of settings for this preset and return it
+    # create dict of settings for this preset and return it
     settings_data = {}
 
     for setting_element in preset_element:
         key, value = setting_element.tag, setting_element.text
 
-        #convert boolean values
+        # convert boolean values
         if value == 'True':
             value = True
         elif value == 'False':
             value = False
         elif value[0]=="[" and value[-1]=="]":
-            #this is a list so turn it into one
+            # this is a list so turn it into one
             value = ast.literal_eval(value)
         
         settings_data[key] = value
@@ -2401,13 +2365,13 @@ def read_preset(preset_name):
 def read_preset_list():
     filepath = get_preset_path()
 
-    #return None if can't get path or doesn't exist
+    # return None if can't get path or doesn't exist
     if filepath == None:
         return None
     if not os.path.exists(filepath):
         return None
 
-    #read in the whole tree
+    # read in the whole tree
     root_element = parse_file(filepath)
     preset_list = []
     for child in root_element:
@@ -2418,11 +2382,9 @@ def read_preset_list():
     
     return preset_list
 
-    
-
 def parse_file(filepath):
-    #custom parser to read nicely formatted XML
-    #reads in line by line and strips out tabs/spaces
+    # custom parser to read nicely formatted XML
+    # reads in line by line and strips out tabs/spaces
     try:
         f = open(filepath,'r')
         filestring = ''.join([line.strip() for line in f.readlines()])
@@ -2431,3 +2393,4 @@ def parse_file(filepath):
         return file_tree
     except:
         return None
+

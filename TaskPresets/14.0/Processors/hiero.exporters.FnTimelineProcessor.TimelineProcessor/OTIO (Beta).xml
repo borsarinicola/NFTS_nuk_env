@@ -1,0 +1,16 @@
+<root tasktype="hiero.exporters.FnTimelineProcessor.TimelineProcessor" presetname="OTIO (Beta)">
+    <versionIndex valuetype="int">1</versionIndex>
+    <versionPadding valuetype="int">2</versionPadding>
+    <exportTemplate valuetype="tuple">
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{sequence}/{sequence}.otio</SequenceItem>
+            <SequenceItem valuetype="hiero.exporters.FnOTIOExportTask.OTIOExportPreset">
+                <root tasktype="hiero.exporters.FnOTIOExportTask.OTIOExportTask" presetname="" />
+            </SequenceItem>
+        </SequenceItem>
+    </exportTemplate>
+    <exportRoot valuetype="str">{projectroot}</exportRoot>
+    <inOutTrim valuetype="bool">False</inOutTrim>
+    <startFrameIndex valuetype="int">1</startFrameIndex>
+    <startFrameSource valuetype="str">Sequence</startFrameSource>
+</root>

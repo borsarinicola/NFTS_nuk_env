@@ -1,0 +1,681 @@
+Group {
+ name bm_CameraShake
+ help "Gives more control than Nuke's built-in CameraShake gizmo.\n\nCamera float, shake & sub-frame jitter settings are defined independently, then all 3 curves are added together into a final, new expression so your output curve has plenty of detail (especially in the motion blur) & only filters your image once."
+ tile_color 0x222222ff
+ note_font Verdana
+ selected true
+ xpos -341
+ ypos 123
+ mapsize {0.15 0.15}
+ addUserKnob {20 Options}
+ addUserKnob {26 ""}
+ addUserKnob {6 switchCheckerboard l Test t "Replaces input image with checkerboard so you can see your camera shake uncontaminated." +STARTLINE}
+ addUserKnob {4 noiseType l "       Noise Type " t "Choose between 3 different noise functions to generate different types of camera shake." -STARTLINE M {fBm Turbulence Noise "" "" "" "" ""}}
+ addUserKnob {26 ""}
+ addUserKnob {7 refFrame l "Reference Frame" t "Setting a reference frame is handy for scaling a curve's frequency around a specific point in time.\n\nNote: must be set prior to tweaking any parameters, as changing reference frame will offset your curve." R 1000 1100}
+ refFrame 1001
+ addUserKnob {22 setRef l "Set to current Frame" t "Set the Reference Frame to the current frame in the Viewer." T nuke.thisNode().knob('refFrame').setValue(nuke.frame()) +STARTLINE}
+ addUserKnob {26 ""}
+ addUserKnob {7 globalAmt l "Global Amount" t "Control the overall amount of camera shake in one go." R 0 5}
+ globalAmt 1
+ addUserKnob {26 ""}
+ addUserKnob {20 fineControl l "    C O N T R O L S" n 1}
+ addUserKnob {26 spacer01 l "" +STARTLINE T " "}
+ addUserKnob {6 toggleJitter l Jitter t "Turn Camera Shake Jitter on/off." +STARTLINE}
+ toggleJitter true
+ addUserKnob {7 jitterAmt l "  " t "Adjust the contribution of the Jitter animation curve into the overall camera shake." -STARTLINE R 0 5}
+ jitterAmt 1
+ addUserKnob {6 toggleShake l Shake t "Turn Camera Shake Shake on/off." +STARTLINE}
+ toggleShake true
+ addUserKnob {7 shakeAmt l "" t "Adjust the contribution of the Shake animation curve into the overall camera shake." -STARTLINE R 0 5}
+ shakeAmt 1
+ addUserKnob {6 toggleFloat l Float t "Turn Camera Shake Float on/off." +STARTLINE}
+ toggleFloat true
+ addUserKnob {7 floatAmt l "  " t "Adjust the contribution of the Float animation curve into the overall camera shake." -STARTLINE R 0 5}
+ floatAmt 1
+ addUserKnob {20 endGroup n -1}
+ addUserKnob {26 ""}
+ addUserKnob {20 weightGroup l "    E D G E   C O M P E N S A T I O N    //    G L O B A L   T R A N S F O R M" n 1}
+ weightGroup 0
+ addUserKnob {26 unnames l "" +STARTLINE T " "}
+ addUserKnob {4 edgePulldown l "Edge Type" t "For larger camera shakes, you will see edge encroachment issues.\n\nSpread will \"pixel smear\" the outer-most pixels to the edge of your format.\n\nMirror will flip/flop the input image around it's edges for more detail." M {None Spread Mirror "" "" ""}}
+ addUserKnob {26 edgeSpacer l " "}
+ addUserKnob {12 edgeTranslate l Translate t "Manually translate the image."}
+ addUserKnob {7 edgeRotate l Rotate t "Manually rotate the image." R 0 360}
+ addUserKnob {14 edgeScale l Scale t "Manually scale the image to prevent edge encroachment." R 0 100}
+ edgeScale 1
+ addUserKnob {20 endGroup_2 l endGroup n -1}
+ addUserKnob {26 ""}
+ addUserKnob {20 moblurGroup l "    M O T I O N   B L U R" n 1}
+ moblurGroup 0
+ addUserKnob {26 spacer_02 l "" +STARTLINE T " "}
+ addUserKnob {6 toggleMoblur l "Motion Blur" t "Turn motion blur on/off." +STARTLINE}
+ toggleMoblur true
+ addUserKnob {26 spacer_03 l "" +STARTLINE T " "}
+ addUserKnob {41 filter T jitterCTRL_fBm.filter}
+ addUserKnob {26 spacer_misc l "" +STARTLINE T " "}
+ addUserKnob {7 moblurSamples l INVISIBLE +INVISIBLE}
+ moblurSamples 1
+ addUserKnob {3 GUISamples l "GUI Samples" t "How many motion blur samples to display in the GUI. (keep this low for Nuke Script interactivity.)"}
+ GUISamples 1
+ addUserKnob {3 RenderSamples l "    Render Samples" t "How many motion blur samples to use in the render. (the higher the number, the better your result!)" -STARTLINE}
+ RenderSamples 16
+ addUserKnob {26 spacer_misc2 l "" +STARTLINE T " "}
+ addUserKnob {41 shutter T jitterCTRL_fBm.shutter}
+ addUserKnob {41 shutteroffset l "shutter offset" T jitterCTRL_fBm.shutteroffset}
+ addUserKnob {41 shuttercustomoffset l "" -STARTLINE T jitterCTRL_fBm.shuttercustomoffset}
+ addUserKnob {20 endGroup_1 l endGroup n -1}
+ addUserKnob {26 ""}
+ addUserKnob {26 overallOutput l "" -STARTLINE T "Load these values into the curve editor to view the overall animation curve.\n"}
+ addUserKnob {12 outputOverallValue l " " t "The final animation curve of your camera shake."}
+ outputOverallValue {{(toggleJitter==1?jitterCTRL_fBm.translate.x:0)+(toggleShake==1?shakeCTRL_fBm.translate.x:0)+(toggleFloat==1?floatCTRL_fBm.translate.x:0)} {(toggleJitter==1?jitterCTRL_fBm.translate.y:0)+(toggleShake==1?shakeCTRL_fBm.translate.y:0)+(toggleFloat==1?floatCTRL_fBm.translate.y:0) i}}
+ addUserKnob {26 ""}
+ addUserKnob {26 info_1 l "" +STARTLINE T "<font color='#777'><b>bm_CameraShake v4.0</b></font><font color='#555'> created by </font><b><a href=\"https://github.com/BenMcEwan/nuke_public\" style=\"color:#777;\">Ben McEwan</a></b>.<br>\n<font color='#555'>Thanks to</font> <a href=\"https://github.com/mileslauridsen\" style=\"color:#777;\">Miles Lauridsen</a><font color='#555'> &</font> <a href=\"https://www.linkedin.com/in/lukas-fabian-6a8184147/\" style=\"color:#777;\">Lukas Fabian</a><font color='#555'> for their contributions.<br>\n<b>Last updated:</b> 29th November, 2020.</font>"}
+ addUserKnob {20 jitterTab l Jitter}
+ addUserKnob {26 ""}
+ addUserKnob {14 jitterTranslate l Translate R 0 100}
+ jitterTranslate {4 3}
+ addUserKnob {7 jitterRotate l Rotate R 0 3}
+ addUserKnob {26 ""}
+ addUserKnob {3 jitterOctaves l Octaves}
+ jitterOctaves 3
+ addUserKnob {7 jitterSpeed l Frequency R 0 5}
+ jitterSpeed 3
+ addUserKnob {3 jitterSeed l Seed}
+ jitterSeed 71526
+ addUserKnob {22 jitterSeedRandomBtn l "  Random Seed  " -STARTLINE T "import random\nnuke.thisNode().knob('jitterSeed').setValue(random.randint(1,99999))"}
+ addUserKnob {26 ""}
+ addUserKnob {26 drg l "" +STARTLINE T "Load these values into the curve editor to view the jitter animation curve.\n"}
+ addUserKnob {12 outputJitterValue l " "}
+ outputJitterValue {{(jitterCTRL_fBm.translate.x) i} {(jitterCTRL_fBm.translate.y) i}}
+ addUserKnob {26 ""}
+ addUserKnob {20 shakeTab l Shake}
+ addUserKnob {26 ""}
+ addUserKnob {14 shakeTranslate l Translate R 0 100}
+ shakeTranslate {10 7}
+ addUserKnob {7 shakeRotate l Rotate R 0 3}
+ shakeRotate 0.2
+ addUserKnob {26 ""}
+ addUserKnob {3 shakeOctaves l Octaves}
+ shakeOctaves 2
+ addUserKnob {7 shakeSpeed l Frequency R 0 5}
+ shakeSpeed 1.5
+ addUserKnob {3 shakeSeed l Seed}
+ shakeSeed 16572
+ addUserKnob {22 shakeSeedRandomBtn l "  Random Seed  " -STARTLINE T "import random\nnuke.thisNode().knob('shakeSeed').setValue(random.randint(1,99999))"}
+ addUserKnob {26 ""}
+ addUserKnob {26 ehhkmlkjhg l "" +STARTLINE T "Load these values into the curve editor to view the shake animation curve.\n"}
+ addUserKnob {12 outputShakeValue l " "}
+ outputShakeValue {{(shakeCTRL_fBm.translate.x) i} {(shakeCTRL_fBm.translate.y) i}}
+ addUserKnob {26 ""}
+ addUserKnob {20 floatTab l Float}
+ addUserKnob {26 ""}
+ addUserKnob {14 floatTranslate l Translate R 0 100}
+ floatTranslate {40 32}
+ addUserKnob {7 floatRotate l Rotate R 0 3}
+ floatRotate 7
+ addUserKnob {26 ""}
+ addUserKnob {3 floatOctaves l Octaves}
+ floatOctaves 1
+ addUserKnob {7 floatSpeed l Frequency R 0 5}
+ floatSpeed 0.06
+ addUserKnob {3 floatSeed l Seed}
+ floatSeed 72424
+ addUserKnob {22 floatSeedRandomBtn l "  Random Seed  " -STARTLINE T "import random\nnuke.thisNode().knob('floatSeed').setValue(random.randint(1,99999))"}
+ addUserKnob {26 ""}
+ addUserKnob {26 wd l "" +STARTLINE T "Load these values into the curve editor to view the float animation curve.\n"}
+ addUserKnob {12 outputFloatValue l " "}
+ outputFloatValue {{(floatCTRL_fBm.translate.x) i} {(floatCTRL_fBm.translate.y) i}}
+ addUserKnob {26 ""}
+}
+ CheckerBoard2 {
+  inputs 0
+  linecolor 0
+  linewidth 60
+  name CheckerBoard1
+  xpos -144
+  ypos -391
+ }
+ Reformat {
+  type "to box"
+  box_width {{Input.width}}
+  box_height {{Input.height}}
+  box_fixed true
+  black_outside true
+  name Reformat1
+  xpos -144
+  ypos -319
+ }
+ Dot {
+  name Dot2
+  xpos -110
+  ypos -273
+ }
+ Input {
+  inputs 0
+  name Input
+  xpos 17
+  ypos -374
+ }
+ Switch {
+  inputs 2
+  which {{switchCheckerboard i}}
+  name Switch1
+  xpos 17
+  ypos -277
+ }
+set Nac853800 [stack 0]
+ Dot {
+  name Dot11
+  label "  "
+  note_font "Arial Black"
+  note_font_size 16
+  xpos 298
+  ypos -219
+ }
+ Dot {
+  name Dot12
+  label "  "
+  note_font "Arial Black"
+  note_font_size 16
+  xpos 298
+  ypos 365
+ }
+push $Nac853800
+ Dot {
+  name Dot10
+  label "  "
+  note_font "Arial Black"
+  note_font_size 16
+  xpos -87
+  ypos -151
+ }
+set Nac852c00 [stack 0]
+ Mirror {
+  Horizontal true
+  name Mirror8
+  xpos -121
+  ypos -133
+ }
+ Transform {
+  translate {{-input.format.w} 0}
+  center {1075 860}
+  shutteroffset centred
+  name Transform8
+  xpos -121
+  ypos -107
+ }
+push $Nac852c00
+ Dot {
+  name Dot9
+  label "  "
+  note_font "Arial Black"
+  note_font_size 16
+  xpos -197
+  ypos -151
+ }
+set Nac852000 [stack 0]
+ Mirror {
+  Horizontal true
+  Vertical true
+  name Mirror7
+  xpos -228
+  ypos -131
+ }
+ Transform {
+  translate {{-input.format.w} {input.format.h}}
+  center {1075 860}
+  shutteroffset centred
+  name Transform7
+  xpos -228
+  ypos -105
+ }
+push $Nac852000
+ Dot {
+  name Dot8
+  label "  "
+  note_font "Arial Black"
+  note_font_size 16
+  xpos -315
+  ypos -151
+ }
+set Nac851400 [stack 0]
+ Dot {
+  name Dot7
+  label "  "
+  note_font "Arial Black"
+  note_font_size 16
+  xpos -425
+  ypos -151
+ }
+set Nac851000 [stack 0]
+ Dot {
+  name Dot6
+  label "  "
+  note_font "Arial Black"
+  note_font_size 16
+  xpos -535
+  ypos -151
+ }
+set Nac850c00 [stack 0]
+ Dot {
+  name Dot5
+  label "  "
+  note_font "Arial Black"
+  note_font_size 16
+  xpos -645
+  ypos -151
+ }
+set Nac850800 [stack 0]
+ Dot {
+  name Dot4
+  label "  "
+  note_font "Arial Black"
+  note_font_size 16
+  xpos -748
+  ypos -151
+ }
+set Nac850400 [stack 0]
+ Mirror {
+  Vertical true
+  name Mirror2
+  xpos -782
+  ypos -134
+ }
+ Transform {
+  translate {0 {-input.format.h}}
+  center {1075 860}
+  shutteroffset centred
+  name Transform2
+  xpos -782
+  ypos -108
+ }
+push $Nac850800
+ Mirror {
+  Horizontal true
+  Vertical true
+  name Mirror3
+  xpos -679
+  ypos -133
+ }
+ Transform {
+  translate {{input.format.w} {-input.format.h}}
+  center {1075 860}
+  shutteroffset centred
+  name Transform3
+  xpos -679
+  ypos -107
+ }
+push $Nac850c00
+ Mirror {
+  Horizontal true
+  name Mirror4
+  xpos -569
+  ypos -134
+ }
+ Transform {
+  translate {{input.format.w} 0}
+  center {1075 860}
+  shutteroffset centred
+  name Transform4
+  xpos -569
+  ypos -108
+ }
+push $Nac851000
+ Mirror {
+  Horizontal true
+  Vertical true
+  name Mirror5
+  xpos -459
+  ypos -133
+ }
+ Transform {
+  translate {{input.format.w} {input.format.h}}
+  center {1075 860}
+  shutteroffset centred
+  name Transform5
+  xpos -459
+  ypos -107
+ }
+push 0
+push $Nac851400
+ Mirror {
+  Vertical true
+  name Mirror6
+  xpos -349
+  ypos -133
+ }
+ Transform {
+  translate {0 {input.format.h}}
+  center {1075 860}
+  shutteroffset centred
+  name Transform6
+  xpos -349
+  ypos -107
+ }
+push $Nac850400
+ Dot {
+  name Dot3
+  label "  "
+  note_font "Arial Black"
+  note_font_size 16
+  xpos -851
+  ypos -151
+ }
+ Mirror {
+  Horizontal true
+  Vertical true
+  name Mirror1
+  xpos -885
+  ypos -133
+ }
+ Transform {
+  translate {{-input.format.w} {-input.format.h}}
+  center {1075 860}
+  shutteroffset centred
+  name Transform1
+  xpos -885
+  ypos -107
+ }
+ Merge2 {
+  inputs 8+1
+  name Merge1
+  xpos -459
+  ypos -49
+ }
+push $Nac853800
+ Merge2 {
+  inputs 2
+  name Merge2
+  xpos 17
+  ypos -49
+  disable {{edgePulldown==2?0:1}}
+ }
+ Dot {
+  name Dot1
+  label "  "
+  note_font "Arial Black"
+  note_font_size 16
+  xpos 51
+  ypos 50
+ }
+set Naa757c00 [stack 0]
+ Transform {
+  translate {{noise((base-base(refFrame))*(jitterSpeed/bfreq)+base(refFrame),2.5,3.5)*jitterTranslate.w*globalAmt*jitterAmt} {noise(2.5,(base2-base2(refFrame))*(jitterSpeed/bfreq)+base2(refFrame),3.5)*jitterTranslate.h*globalAmt*jitterAmt}}
+  rotate {{noise((base-base(refFrame))*(jitterSpeed/bfreq)+base(refFrame),jitterOctaves,.5)*jitterRotate*globalAmt*jitterAmt}}
+  scale {1 1}
+  center {{toggleJitter==1?((noise(noise((base-base(refFrame))*(jitterSpeed/bfreq)+base(refFrame),2.5,3.5))*input.width)+input.width/2):(input.width/2)*globalAmt*jitterAmt} {toggleJitter==1?((noise(noise((base2-base2(refFrame))*(jitterSpeed/bfreq)+base2(refFrame),2.5,3.5))*input.height)+input.height/2):(input.height/2)*globalAmt*jitterAmt}}
+  filter {{jitterCTRL_fBm.filter}}
+  clamp {{jitterCTRL_fBm.clamp}}
+  black_outside {{jitterCTRL_fBm.black_outside}}
+  motionblur {{jitterCTRL_fBm.motionblur}}
+  shutter {{jitterCTRL_fBm.shutter}}
+  shutteroffset {{jitterCTRL_fBm.shutteroffset}}
+  shuttercustomoffset {{jitterCTRL_fBm.shuttercustomoffset}}
+  name jitterCTRL_noise
+  xpos 169
+  ypos 108
+  disable {{!toggleJitter}}
+  addUserKnob {20 User}
+  addUserKnob {7 base}
+  base {{parent.jitterCTRL_fBm.base}}
+  addUserKnob {7 base2}
+  base2 {{parent.jitterCTRL_fBm.base2}}
+  addUserKnob {7 bfreq l "base frequancy"}
+  bfreq {{parent.jitterCTRL_fBm.bfreq}}
+ }
+ Transform {
+  translate {{noise((base-base(refFrame))*(shakeSpeed/bfreq)+base(refFrame),2.5,3.5)*jitterTranslate.w*globalAmt*jitterAmt} {noise(2.5,(base2-base2(refFrame))*(shakeSpeed/bfreq)+base2(refFrame),3.5)*jitterTranslate.h*globalAmt*jitterAmt}}
+  rotate {{noise(((frame-refFrame)*shakeSpeed)+shakeSeed+refFrame,shakeOctaves,.5)*shakeRotate*globalAmt*shakeAmt}}
+  scale {1 1}
+  center {{toggleShake==1?((noise(noise((base-base(refFrame))*(shakeSpeed/bfreq)+base(refFrame),2.5,3.5))*input.width)+input.width/2):(input.width/2)*globalAmt*shakeAmt} {toggleShake==1?((noise(noise((base-base(refFrame))*(shakeSpeed/bfreq)+base(refFrame),2.5,3.5))*input.height)+input.height/2):(input.height/2)*globalAmt*shakeAmt}}
+  filter {{jitterCTRL_fBm.filter}}
+  clamp {{jitterCTRL_fBm.clamp}}
+  black_outside {{jitterCTRL_fBm.black_outside}}
+  motionblur {{jitterCTRL_fBm.motionblur}}
+  shutter {{jitterCTRL_fBm.shutter}}
+  shutteroffset {{jitterCTRL_fBm.shutteroffset}}
+  shuttercustomoffset {{jitterCTRL_fBm.shuttercustomoffset}}
+  name shakeCTRL_noise
+  xpos 169
+  ypos 134
+  disable {{!toggleShake}}
+  addUserKnob {20 User}
+  addUserKnob {7 base}
+  base {{parent.shakeCTRL_fBm.base}}
+  addUserKnob {7 base2}
+  base2 {{parent.shakeCTRL_fBm.base2}}
+  addUserKnob {7 bfreq l "base frequency"}
+  bfreq {{parent.shakeCTRL_fBm.bfreq}}
+ }
+ Transform {
+  translate {{noise((base-base(refFrame))*(floatSpeed/bfreq)+base(refFrame),2.5,3.5)*jitterTranslate.w*globalAmt*jitterAmt} {noise(2.5,(base2-base2(refFrame))*(floatSpeed/bfreq)+base2(refFrame),3.5)*jitterTranslate.h*globalAmt*jitterAmt}}
+  rotate {{noise((base-base(refFrame))*(floatSpeed/bfreq)+base(refFrame),floatOctaves,.5)*floatRotate*globalAmt*floatAmt}}
+  scale {1 1}
+  center {{toggleFloat==1?((noise(noise((base-base(refFrame))*(floatSpeed/bfreq)+base(refFrame),2.5,3.5))*input.width)+input.width/2):(input.width/2)*globalAmt*floatAmt} {toggleFloat==1?((noise(noise((base-base(refFrame))*(floatSpeed/bfreq)+base(refFrame),2.5,3.5))*input.height)+input.height/2):(input.height/2)*globalAmt*floatAmt}}
+  filter {{jitterCTRL_fBm.filter}}
+  clamp {{jitterCTRL_fBm.clamp}}
+  black_outside {{jitterCTRL_fBm.black_outside}}
+  motionblur {{jitterCTRL_fBm.motionblur}}
+  shutter {{jitterCTRL_fBm.shutter}}
+  shutteroffset {{jitterCTRL_fBm.shutteroffset}}
+  shuttercustomoffset {{jitterCTRL_fBm.shuttercustomoffset}}
+  name floatCTRL_noise
+  xpos 169
+  ypos 158
+  disable {{!toggleFloat}}
+  addUserKnob {20 User}
+  addUserKnob {7 base}
+  base {{parent.floatCTRL_fBm.base}}
+  addUserKnob {7 base2}
+  base2 {{parent.floatCTRL_fBm.base2}}
+  addUserKnob {7 bfreq l "base frequency"}
+  bfreq {{parent.floatCTRL_fBm.bfreq}}
+ }
+ Transform {
+  translate {{edgeTranslate.x} {edgeTranslate.y}}
+  rotate {{edgeRotate}}
+  scale {{edgeScale} {edgeScale}}
+  center {{"width/2 - translate"} {"height/2 - translate"}}
+  filter {{jitterCTRL_fBm.filter}}
+  black_outside {{edgePulldown==0?1:0}}
+  motionblur {{"toggleMoblur==0?0:\$gui?GUISamples:RenderSamples"}}
+  shutter {{jitterCTRL_fBm.shutter}}
+  shutteroffset {{jitterCTRL_fBm.shutteroffset}}
+  shuttercustomoffset {{jitterCTRL_fBm.shuttercustomoffset}}
+  name edgeScale3
+  xpos 169
+  ypos 200
+ }
+push $Naa757c00
+ Transform {
+  translate {{turbulence((base-base(refFrame))*(jitterSpeed/bfreq)+base(refFrame),2.5,3.5,jitterOctaves,2,.5)*jitterTranslate.w*globalAmt*jitterAmt} {turbulence((base2-base2(refFrame))*(jitterSpeed/bfreq)+base2(refFrame),10.5,11.5,jitterOctaves,2,.5)*jitterTranslate.h*globalAmt*jitterAmt}}
+  rotate {{turbulence((base-base(refFrame))*(jitterSpeed/bfreq)+base(refFrame),20.5,21.5,jitterOctaves,2,.5)*jitterRotate*globalAmt*jitterAmt}}
+  scale {1 1}
+  center {{toggleJitter==1?((turbulence((base-base(refFrame))*(jitterSpeed/bfreq)+base(refFrame),2.5,3.5,jitterOctaves,2,.5)*input.width)+input.width/2):(input.width/2)*globalAmt*jitterAmt} {toggleJitter==1?((turbulence((base2-base2(refFrame))*(jitterSpeed/bfreq)+base2(refFrame),10.5,11.5,jitterOctaves,2,.5)*input.height)+input.height/2):(input.height/2)*globalAmt*jitterAmt}}
+  filter {{jitterCTRL_fBm.filter x1 0}}
+  clamp {{jitterCTRL_fBm.clamp}}
+  black_outside {{jitterCTRL_fBm.black_outside}}
+  motionblur {{jitterCTRL_fBm.motionblur}}
+  shutter {{jitterCTRL_fBm.shutter}}
+  shutteroffset {{jitterCTRL_fBm.shutteroffset}}
+  shuttercustomoffset {{jitterCTRL_fBm.shuttercustomoffset}}
+  name jitterCTRL_turbulence
+  xpos 17
+  ypos 109
+  disable {{!toggleJitter}}
+  addUserKnob {20 User}
+  addUserKnob {7 base}
+  base {{parent.jitterCTRL_fBm.base}}
+  addUserKnob {7 base2}
+  base2 {{parent.jitterCTRL_fBm.base2}}
+  addUserKnob {7 bfreq l "base frequency"}
+  bfreq {{parent.jitterCTRL_fBm.bfreq}}
+ }
+ Transform {
+  translate {{turbulence((base-base(refFrame))*(shakeSpeed/bfreq)+base(refFrame),2.5,3.5,shakeOctaves,2,.5)*shakeTranslate.w*globalAmt*shakeAmt} {turbulence((base2-base2(refFrame))*(shakeSpeed/bfreq)+base2(refFrame),10.5,11.5,shakeOctaves,2,.5)*shakeTranslate.h*globalAmt*shakeAmt}}
+  rotate {{turbulence((base-base(refFrame))*(shakeSpeed/bfreq)+base(refFrame),20.5,21.5,shakeOctaves,2,.5)*shakeRotate*globalAmt*shakeAmt x7 70}}
+  scale {1 1}
+  center {{toggleShake==1?((turbulence((base-base(refFrame))*(shakeSpeed/bfreq)+base(refFrame),2.5,3.5,shakeOctaves,2,.5)*input.width)+input.width/2):(input.width/2)*globalAmt*shakeAmt} {toggleShake==1?((turbulence((base2-base2(refFrame))*(shakeSpeed/bfreq)+base2(refFrame),10.5,11.5,shakeOctaves,2,.5)*input.height)+input.height/2):(input.height/2)*globalAmt*shakeAmt}}
+  filter {{jitterCTRL_fBm.filter x14 2}}
+  clamp {{jitterCTRL_fBm.clamp}}
+  black_outside {{jitterCTRL_fBm.black_outside}}
+  motionblur {{jitterCTRL_fBm.motionblur}}
+  shutter {{jitterCTRL_turbulence.shutter}}
+  shutteroffset {{jitterCTRL_fBm.shutteroffset}}
+  shuttercustomoffset {{jitterCTRL_turbulence.shuttercustomoffset}}
+  name shakeCTRL_turbulence
+  xpos 17
+  ypos 135
+  disable {{!toggleShake}}
+  addUserKnob {20 User}
+  addUserKnob {7 base}
+  base {{parent.shakeCTRL_fBm.base}}
+  addUserKnob {7 base2}
+  base2 {{parent.shakeCTRL_fBm.base2}}
+  addUserKnob {7 bfreq l "base frequency"}
+  bfreq {{parent.shakeCTRL_fBm.bfreq}}
+ }
+ Transform {
+  translate {{turbulence((base-base(refFrame))*(floatSpeed/bfreq)+base(refFrame),2.5,3.5,floatOctaves,2,.5)*floatTranslate.w*globalAmt*floatAmt} {turbulence((base2-base2(refFrame))*(floatSpeed/bfreq)+base2(refFrame),10.5,11.5,floatOctaves,2,.5)*floatTranslate.h*globalAmt*floatAmt}}
+  rotate {{turbulence((base-base(refFrame))*(floatSpeed/bfreq)+base(refFrame),20.5,21.5,floatOctaves,2,.5)*floatRotate*globalAmt*floatAmt}}
+  scale {1 1}
+  center {{toggleFloat==1?((turbulence((base-base(refFrame))*(floatSpeed/bfreq)+base(refFrame),2.5,3.5,floatOctaves,2,.5)*input.width)+input.width/2):(input.width/2)*globalAmt*floatAmt} {toggleFloat==1?((turbulence((base2-base2(refFrame))*(floatSpeed/bfreq)+base2(refFrame),10.5,11.5,floatOctaves,2,.5)*input.height)+input.height/2):(input.height/2)*globalAmt*floatAmt}}
+  filter {{jitterCTRL_fBm.filter x14 2}}
+  clamp {{jitterCTRL_fBm.clamp}}
+  black_outside {{jitterCTRL_fBm.black_outside}}
+  motionblur {{jitterCTRL_fBm.motionblur}}
+  shutter {{jitterCTRL_fBm.shutter}}
+  shutteroffset {{jitterCTRL_fBm.shutteroffset}}
+  shuttercustomoffset {{jitterCTRL_fBm.shuttercustomoffset}}
+  name floatCTRL_turbulence
+  xpos 17
+  ypos 159
+  disable {{!toggleFloat}}
+  addUserKnob {20 User}
+  addUserKnob {7 base}
+  base {{parent.floatCTRL_fBm.base}}
+  addUserKnob {7 base2}
+  base2 {{parent.floatCTRL_fBm.base2}}
+  addUserKnob {7 bfreq l "base frequency"}
+  bfreq {{parent.floatCTRL_fBm.bfreq}}
+ }
+ Transform {
+  translate {{edgeTranslate.x} {edgeTranslate.y}}
+  rotate {{edgeRotate}}
+  scale {{edgeScale} {edgeScale}}
+  center {{"width/2 - translate"} {"height/2 - translate"}}
+  filter {{jitterCTRL_fBm.filter}}
+  black_outside {{edgePulldown==0?1:0}}
+  motionblur {{"toggleMoblur==0?0:\$gui?GUISamples:RenderSamples"}}
+  shutter {{jitterCTRL_fBm.shutter}}
+  shutteroffset {{jitterCTRL_fBm.shutteroffset}}
+  shuttercustomoffset {{jitterCTRL_fBm.shuttercustomoffset}}
+  name edgeScale2
+  xpos 17
+  ypos 204
+ }
+push $Naa757c00
+ Transform {
+  translate {{fBm((base-base(refFrame))*(jitterSpeed/bfreq)+base(refFrame),2.5,3.5,jitterOctaves,2,.5)*jitterTranslate.w*globalAmt*jitterAmt} {fBm((base2-base2(refFrame))*(jitterSpeed/bfreq)+base2(refFrame),10.5,11.5,jitterOctaves,2,.5)*jitterTranslate.h*globalAmt*jitterAmt}}
+  rotate {{fBm((base-base(refFrame))*(jitterSpeed/bfreq)+base(refFrame),20.5,21.5,jitterOctaves,2,.5)*jitterRotate*globalAmt*jitterAmt}}
+  scale {1 1}
+  center {{toggleJitter==1?((fBm((base-base(refFrame))*(jitterSpeed/bfreq)+base(refFrame),2.5,3.5,jitterOctaves,2,.5)*input.width)+input.width/2):(input.width/2)*globalAmt*jitterAmt} {toggleJitter==1?((fBm((base2-base2(refFrame))*(jitterSpeed/bfreq)+base2(refFrame),10.5,11.5,jitterOctaves,2,.5)*input.height)+input.height/2):(input.height/2)*globalAmt*jitterAmt}}
+  black_outside {{edgePulldown==0?1:0}}
+  motionblur {{"toggleMoblur==0?0:\$gui?GUISamples:RenderSamples"}}
+  shutteroffset centred
+  name jitterCTRL_fBm
+  selected true
+  xpos -128
+  ypos 103
+  disable {{!toggleJitter}}
+  addUserKnob {20 User}
+  addUserKnob {7 base}
+  base {{frame*bfreq+jitterSeed}}
+  addUserKnob {7 base2}
+  base2 {{frame*bfreq+jitterSeed+100}}
+  addUserKnob {7 bfreq l "base frequency"}
+  bfreq 3
+ }
+ Transform {
+  translate {{fBm((base-base(refFrame))*(shakeSpeed/bfreq)+base(refFrame),2.5,3.5,shakeOctaves,2,.5)*shakeTranslate.w*globalAmt*shakeAmt} {fBm((base2-base2(refFrame))*(shakeSpeed/bfreq)+base2(refFrame),10.5,11.5,shakeOctaves,2,.5)*shakeTranslate.h*globalAmt*shakeAmt}}
+  rotate {{fBm((base-base(refFrame))*(shakeSpeed/bfreq)+base(refFrame),20.5,21.5,shakeOctaves,2,.5)*shakeRotate*globalAmt*shakeAmt x7 70}}
+  scale {1 1}
+  center {{toggleShake==1?((fBm((base-base(refFrame))*(shakeSpeed/bfreq)+base(refFrame),2.5,3.5,shakeOctaves,2,.5)*input.width)+input.width/2):(input.width/2)*globalAmt*shakeAmt} {toggleShake==1?((fBm((base2-base2(refFrame))*(shakeSpeed/bfreq)+base2(refFrame),10.5,11.5,shakeOctaves,2,.5)*input.height)+input.height/2):(input.height/2)*globalAmt*shakeAmt}}
+  filter {{jitterCTRL_fBm.filter x14 2}}
+  clamp {{jitterCTRL_fBm.clamp}}
+  black_outside {{jitterCTRL_fBm.black_outside}}
+  motionblur {{jitterCTRL_fBm.motionblur}}
+  shutter {{jitterCTRL_fBm.shutter}}
+  shutteroffset {{jitterCTRL_fBm.shutteroffset}}
+  shuttercustomoffset {{jitterCTRL_fBm.shuttercustomoffset}}
+  name shakeCTRL_fBm
+  xpos -128
+  ypos 127
+  disable {{!toggleShake}}
+  addUserKnob {20 User}
+  addUserKnob {7 base}
+  base {{frame*bfreq+shakeSeed}}
+  addUserKnob {7 base2}
+  base2 {{frame*bfreq+shakeSeed+100}}
+  addUserKnob {7 bfreq l "base frequancy"}
+  bfreq 1.5
+ }
+ Transform {
+  translate {{fBm((base-base(refFrame))*(floatSpeed/bfreq)+base(refFrame),2.5,3.5,floatOctaves,2,.5)*floatTranslate.w*globalAmt*floatAmt} {fBm((base2-base2(refFrame))*(floatSpeed/bfreq)+base2(refFrame),10.5,11.5,floatOctaves,2,.5)*floatTranslate.h*globalAmt*floatAmt}}
+  rotate {{fBm((base-base(refFrame))*(floatSpeed/bfreq)+base(refFrame),20.5,21.5,floatOctaves,2,.5)*floatRotate*globalAmt*floatAmt}}
+  scale {1 1}
+  center {{toggleFloat==1?((fBm((base-base(refFrame))*(floatSpeed/bfreq)+base(refFrame),2.5,3.5,floatOctaves,2,.5)*input.width)+input.width/2):(input.width/2)*globalAmt*floatAmt} {toggleFloat==1?((fBm((base2-base2(refFrame))*(floatSpeed/bfreq)+base2(refFrame),10.5,11.5,floatOctaves,2,.5)*input.height)+input.height/2):(input.height/2)*globalAmt*floatAmt}}
+  filter {{jitterCTRL_fBm.filter x14 2}}
+  clamp {{jitterCTRL_fBm.clamp}}
+  black_outside {{jitterCTRL_fBm.black_outside}}
+  motionblur {{jitterCTRL_fBm.motionblur}}
+  shutter {{jitterCTRL_fBm.shutter}}
+  shutteroffset {{jitterCTRL_fBm.shutteroffset}}
+  shuttercustomoffset {{jitterCTRL_fBm.shuttercustomoffset}}
+  name floatCTRL_fBm
+  xpos -128
+  ypos 151
+  disable {{!toggleFloat}}
+  addUserKnob {20 User}
+  addUserKnob {7 base}
+  base {{frame*bfreq+floatSeed}}
+  addUserKnob {7 base2}
+  base2 {{frame*bfreq+floatSeed+100}}
+  addUserKnob {7 bfreq l "base frequency"}
+  bfreq 0.06
+ }
+ Transform {
+  translate {{edgeTranslate.x} {edgeTranslate.y}}
+  rotate {{edgeRotate}}
+  scale {{edgeScale} {edgeScale}}
+  center {{"width/2 - translate"} {"height/2 - translate"}}
+  filter {{jitterCTRL_fBm.filter}}
+  black_outside {{edgePulldown==0?1:0}}
+  motionblur {{"toggleMoblur==0?0:\$gui?GUISamples:RenderSamples"}}
+  shutter {{jitterCTRL_fBm.shutter}}
+  shutteroffset {{jitterCTRL_fBm.shutteroffset}}
+  shuttercustomoffset {{jitterCTRL_fBm.shuttercustomoffset}}
+  name edgeScale1
+  xpos -128
+  ypos 206
+ }
+ Switch {
+  inputs 3
+  which {{noiseType i}}
+  name Switch4
+  xpos 17
+  ypos 242
+ }
+ CopyBBox {
+  inputs 2
+  name CopyBBox1
+  xpos 17
+  ypos 362
+ }
+ Output {
+  name Output1
+  xpos 17
+  ypos 460
+ }
+end_group

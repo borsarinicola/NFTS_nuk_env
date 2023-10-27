@@ -1,0 +1,122 @@
+Group {
+name PxF_TimeMerge
+help "Combine previous and next frames with various Merge modes. A better version of the standard TimeEcho node."
+knobChanged "m = nuke.thisNode()\nkc = nuke.thisKnob()\n\nif kc.name() in \['numFrames', 'operation', 'frameSkip', 'offset']:\n    i = nuke.toNode('img')\n    o = nuke.toNode('Keymix1')\n    \n    for n in nuke.allNodes():\n      if \"static\" not in n\['label'].getValue():\n          nuke.delete(n)\n    \n    \n    numFrames = int(m\['numFrames'].value())\n    frameSkip = int(m\['frameSkip'].value())\n    operation = m\['operation'].value()\n    offset = m\['offset'].value()\n    bg = i\n    tiktok = 1\n    if offset == 'start':\n        z = -1\n    else:\n        z = 1\n    for x in range(1,numFrames,1):\n\n        t1 = nuke.nodes.TimeOffset()\n        t1.setInput(0, i)\n        t1\['time_offset'].setValue(frameSkip*z*tiktok*-1)\n        t1\['label'].setValue('\[value time_offset]')\n        \n        m1 = nuke.nodes.Merge2()\n        m1\['operation'].setValue(operation)\n        m1.setInput(0,bg)\n        m1.setInput(1, t1)\n        bg = m1\n        \n        if offset == 'centered':\n            if x == numFrames-2:\n                f1 = frameSkip*z*tiktok\n                \n            if x == numFrames-1:\n                f2 = frameSkip*z*tiktok\n                if f1 < f2:\n                    m\['endFrame'].setValue(f2)\n                    m\['startFrame'].setValue(f1)\n                else:\n                    m\['endFrame'].setValue(f1)\n                    m\['startFrame'].setValue(f2)\n               \n            if tiktok == -1:\n                z = z + 1\n            \n            tiktok = tiktok*-1\n            \n        if offset == 'end':\n            if x == numFrames-1:\n                m\['startFrame'].setValue(0)\n                m\['endFrame'].setValue(frameSkip*z)\n            z = z + 1\n            \n        if offset == 'start':\n            if x == numFrames-1:\n                m\['endFrame'].setValue(0)\n                m\['startFrame'].setValue(frameSkip*z)\n            z = z - 1\n \n        \n       \n\n    o.setInput(0,bg)\n    m\['startFrame'].setEnabled(False)\n    m\['endFrame'].setEnabled(False)\n  "
+tile_color 0x73351fff
+addUserKnob {20 User}
+addUserKnob {4 operation t "Which blend mode to use to combine the frames." M {over under min max plus from divide multiply "" ""}}
+operation max
+addUserKnob {3 numFrames l "frames to look at" t "How many frames to combine."}
+numFrames 5
+addUserKnob {3 frameSkip l "frame skip" t "How many frames to skip between steps. Useful to speed up render times when the source clip moves very slowly."}
+frameSkip 1
+addUserKnob {3 startFrame l "frame range" t "Gives an indication of which frame range relative to the current frame is being used.\nNot adjustable by the user. Use 'frames to look at' and 'frame skip' to adjust." +DISABLED}
+startFrame -2
+addUserKnob {3 endFrame l "" -STARTLINE +DISABLED}
+endFrame 2
+addUserKnob {4 offset t "Direction of the time offset.\n\nstart: Will use previous frames.\ncentered: Will use previous and following frames.\nend: Will use following frames." M {centered start end ""}}
+addUserKnob {7 mix t "Dissolve between the original (0) and the full effect (1)."}
+mix 1
+addUserKnob {26 ""}
+addUserKnob {26 Credits l "" t "PxF_TimeMerge 1.0 - &copy; 2022-2023 - Xavier Bourque - pixelfudger.com \n\nPixelfudger gizmos are free to use for personal and commercial use as long as you leave the credit text intact in the gizmo's knobs and in the source files. " +STARTLINE T "<font size=2>PxF_TimeMerge 1.0 - &copy; 2022-2023 - </font><a href=\"http://www.xavierbourque.com\"><font color=\"#bbbbbb\" size=2>Xavier Bourque</a></font> - <a href=\"http://www.pixelfudger.com\"><font color=\"#bbbbbb\" size=2>pixelfudger.com</a></font> - <a href=\"http://www.pixelfudger.com/userguides/PxF_TimeMerge.html\"><font color=\"#bbbbbb\" size=2>Video Tutorial</a></font>"}
+}
+Input {
+inputs 0
+name mask
+label static
+xpos -180
+ypos -624
+number 1
+}
+Input {
+inputs 0
+name img
+label static
+xpos -1577
+ypos -1156
+}
+set Ndedb0000 [stack 0]
+Dot {
+name Dot1
+label static
+note_font_size 22
+xpos -1543
+ypos -746
+}
+set Ndedb0400 [stack 0]
+push $Ndedb0000
+TimeOffset {
+time_offset 2
+time ""
+name TimeOffset4
+label "\[value time_offset]"
+}
+push $Ndedb0000
+TimeOffset {
+time_offset -2
+time ""
+name TimeOffset3
+label "\[value time_offset]"
+}
+push $Ndedb0000
+TimeOffset {
+time_offset 1
+time ""
+name TimeOffset2
+label "\[value time_offset]"
+}
+push $Ndedb0000
+TimeOffset {
+time_offset -1
+time ""
+name TimeOffset1
+label "\[value time_offset]"
+}
+push $Ndedb0000
+Merge2 {
+inputs 2
+operation max
+name Merge1
+}
+Merge2 {
+inputs 2
+operation max
+name Merge2
+}
+Merge2 {
+inputs 2
+operation max
+name Merge3
+}
+Merge2 {
+inputs 2
+operation max
+name Merge4
+}
+Keymix {
+inputs 3
+invertMask true
+bbox B
+name Keymix1
+label static
+selected true
+xpos -385
+ypos -591
+disable {{"\[exists parent.input1] ? 0 : 1" x1 0}}
+}
+push $Ndedb0400
+Dissolve {
+inputs 2
+which {{parent.mix}}
+name Dissolve1
+label static
+xpos -385
+ypos -518
+}
+Output {
+name Output1
+label static
+xpos -385
+ypos -436
+}
+end_group

@@ -1,0 +1,59 @@
+<root tasktype="hiero.exporters.FnBinProcessor.BinProcessor" presetname="Transcode Clips Photo - JPEG MOV">
+    <versionIndex valuetype="int">1</versionIndex>
+    <versionPadding valuetype="int">2</versionPadding>
+    <exportTemplate valuetype="tuple">
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{binpath}/{clip}.{ext}</SequenceItem>
+            <SequenceItem valuetype="hiero.exporters.FnTranscodeExporter.TranscodePreset">
+                <root tasktype="hiero.exporters.FnTranscodeExporter.TranscodeExporter" presetname="">
+                    <file_type valuetype="str">mov</file_type>
+                    <reformat valuetype="dict">
+                        <to_type valuetype="str">None</to_type>
+                        <scale valuetype="float">1.0</scale>
+                        <resize valuetype="str">width</resize>
+                        <center valuetype="bool">True</center>
+                        <filter valuetype="str">Cubic</filter>
+                    </reformat>
+                    <channels valuetype="str">rgb</channels>
+                    <views valuetype="list">
+                        <SequenceItem valuetype="str">all</SequenceItem>
+                    </views>
+                    <mov valuetype="dict">
+                        <mov64_codec valuetype="str">jpeg&#x09;Photo - JPEG</mov64_codec>
+                    </mov>
+                    <includeAudio valuetype="bool">True</includeAudio>
+                    <deleteAudio valuetype="bool">True</deleteAudio>
+                    <keepNukeScript valuetype="bool">False</keepNukeScript>
+                    <readAllLinesForExport valuetype="bool">False</readAllLinesForExport>
+                    <useSingleSocket valuetype="bool">False</useSingleSocket>
+                    <burninDataEnabled valuetype="bool">False</burninDataEnabled>
+                    <burninData valuetype="dict">
+                        <burnIn_textSize valuetype="NoneType">None</burnIn_textSize>
+                        <burnIn_padding valuetype="NoneType">None</burnIn_padding>
+                        <burnIn_font valuetype="NoneType">None</burnIn_font>
+                        <burnIn_topLeft valuetype="NoneType">None</burnIn_topLeft>
+                        <burnIn_topMiddle valuetype="NoneType">None</burnIn_topMiddle>
+                        <burnIn_topRight valuetype="NoneType">None</burnIn_topRight>
+                        <burnIn_bottomLeft valuetype="NoneType">None</burnIn_bottomLeft>
+                        <burnIn_bottomMiddle valuetype="NoneType">None</burnIn_bottomMiddle>
+                        <burnIn_bottomRight valuetype="NoneType">None</burnIn_bottomRight>
+                    </burninData>
+                    <additionalNodesEnabled valuetype="bool">False</additionalNodesEnabled>
+                    <additionalNodesData valuetype="list" />
+                    <method valuetype="str">Blend</method>
+                    <includeEffects valuetype="bool">True</includeEffects>
+                    <includeAnnotations valuetype="bool">False</includeAnnotations>
+                    <numChannels valuetype="str">stereo</numChannels>
+                    <codec valuetype="str">linear PCM (wav)</codec>
+                    <sampleRate valuetype="str">44100 Hz</sampleRate>
+                    <bitDepth valuetype="str">24 bit</bitDepth>
+                    <bitRate valuetype="str">320 kbp/s</bitRate>
+                    <writeNodeName valuetype="str">Write_{ext}</writeNodeName>
+                </root>
+            </SequenceItem>
+        </SequenceItem>
+    </exportTemplate>
+    <exportRoot valuetype="str">{projectroot}</exportRoot>
+    <startFrameIndex valuetype="int">1001</startFrameIndex>
+    <startFrameSource valuetype="str">Source</startFrameSource>
+</root>

@@ -1,0 +1,65 @@
+<root tasktype="hiero.exporters.FnShotProcessor.ShotProcessor" presetname="Transcode Shots DPX">
+    <excludeTags valuetype="list" />
+    <includeTags valuetype="list" />
+    <versionIndex valuetype="int">1</versionIndex>
+    <versionPadding valuetype="int">2</versionPadding>
+    <exportTemplate valuetype="tuple">
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/{shot}.####.{ext}</SequenceItem>
+            <SequenceItem valuetype="hiero.exporters.FnTranscodeExporter.TranscodePreset">
+                <root tasktype="hiero.exporters.FnTranscodeExporter.TranscodeExporter" presetname="">
+                    <file_type valuetype="str">dpx</file_type>
+                    <reformat valuetype="dict">
+                        <to_type valuetype="str">None</to_type>
+                        <scale valuetype="float">1.0</scale>
+                        <resize valuetype="str">width</resize>
+                        <center valuetype="bool">True</center>
+                        <filter valuetype="str">Cubic</filter>
+                    </reformat>
+                    <channels valuetype="str">rgb</channels>
+                    <views valuetype="list">
+                        <SequenceItem valuetype="str">all</SequenceItem>
+                    </views>
+                    <dpx valuetype="dict">
+                        <datatype valuetype="str">10 bit</datatype>
+                    </dpx>
+                    <keepNukeScript valuetype="bool">False</keepNukeScript>
+                    <readAllLinesForExport valuetype="bool">False</readAllLinesForExport>
+                    <useSingleSocket valuetype="bool">False</useSingleSocket>
+                    <burninDataEnabled valuetype="bool">False</burninDataEnabled>
+                    <burninData valuetype="dict">
+                        <burnIn_textSize valuetype="NoneType">None</burnIn_textSize>
+                        <burnIn_padding valuetype="NoneType">None</burnIn_padding>
+                        <burnIn_font valuetype="NoneType">None</burnIn_font>
+                        <burnIn_topLeft valuetype="NoneType">None</burnIn_topLeft>
+                        <burnIn_topMiddle valuetype="NoneType">None</burnIn_topMiddle>
+                        <burnIn_topRight valuetype="NoneType">None</burnIn_topRight>
+                        <burnIn_bottomLeft valuetype="NoneType">None</burnIn_bottomLeft>
+                        <burnIn_bottomMiddle valuetype="NoneType">None</burnIn_bottomMiddle>
+                        <burnIn_bottomRight valuetype="NoneType">None</burnIn_bottomRight>
+                    </burninData>
+                    <additionalNodesEnabled valuetype="bool">False</additionalNodesEnabled>
+                    <additionalNodesData valuetype="list" />
+                    <method valuetype="str">Blend</method>
+                    <includeEffects valuetype="bool">True</includeEffects>
+                    <includeAudio valuetype="bool">False</includeAudio>
+                    <deleteAudio valuetype="bool">True</deleteAudio>
+                    <includeAnnotations valuetype="bool">False</includeAnnotations>
+                    <numChannels valuetype="str">stereo</numChannels>
+                    <codec valuetype="str">linear PCM (wav)</codec>
+                    <sampleRate valuetype="str">44100 Hz</sampleRate>
+                    <bitDepth valuetype="str">24 bit</bitDepth>
+                    <bitRate valuetype="str">320 kbp/s</bitRate>
+                    <writeNodeName valuetype="str">Write_{ext}</writeNodeName>
+                </root>
+            </SequenceItem>
+        </SequenceItem>
+    </exportTemplate>
+    <exportRoot valuetype="str">{projectroot}</exportRoot>
+    <cutHandles valuetype="int">12</cutHandles>
+    <cutUseHandles valuetype="bool">False</cutUseHandles>
+    <cutLength valuetype="bool">True</cutLength>
+    <includeRetimes valuetype="bool">False</includeRetimes>
+    <startFrameIndex valuetype="int">1001</startFrameIndex>
+    <startFrameSource valuetype="str">Source</startFrameSource>
+</root>

@@ -1,0 +1,11 @@
+DeepExpression {
+ temp_name3 t
+ temp_expr3 "\[value thickness]/2"
+ chans1 deep
+ deep.front deep.front-t
+ deep.back deep.back+t
+ name DeepThickness
+ selected true
+ addUserKnob {20 Thickness}
+ addUserKnob {7 thickness R 0 100}
+}

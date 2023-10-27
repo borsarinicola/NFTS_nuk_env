@@ -15,6 +15,7 @@ import nuke
 
 
 def nDollargui():
+    """insert the $GUI expression in the diable parameter the selected nodes"""
     selection = nuke.selectedNodes() #store selection into list
    
     for node in selection:
@@ -24,3 +25,18 @@ def nDollargui():
         else:
             node.knob('disable').clearAnimated()
             node.knob('disable').setValue(0)
+
+
+def nExecuting():
+    """insert the nuke.executing function in the diable parameter the selected nodes"""
+    for node in nuke.selectedNodes():
+
+        try:
+            if not node.knob("disable").isAnimated():
+                node.knob("disable").setExpression("[python {1 - nuke.executing()}]")
+            else:
+                node.knob("disable").clearAnimated()
+                node.knob("disable").setValue(0)
+
+        except AttributeError:
+            continue

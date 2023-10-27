@@ -169,7 +169,7 @@ class ThumbnailExportTask(hiero.core.TaskBase):
 
         thumb.save(self._thumbFile)
       except:
-        print 'Unable to save thumbnail for %s' % str(self._item)
+        print('Unable to save thumbnail for %s' % str(self._item))
 
     self._finished = True
     

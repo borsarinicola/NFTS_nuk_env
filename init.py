@@ -1,109 +1,62 @@
 ####################################
 
-'''
+"""
 NFTS - National Film and Television School.
-latest update by Nicola Borsari: 2019-11-08
-'''
+latest update by Nicola Borsari: 2023-10-14
+"""
 
 ####################################
 
-'''
-Import standard Python modules.
-'''
+# Import standard Python modules.
 
-
-import nuke
 import os
-import shutil
-import network_drive_remapping #imports the custom py that maps the letters between os for ISIS and servers
-
-
-####################################
-
-'''
-Add plugin paths.
-'''
-
-nuke.pluginAddPath('./gizmos')
-nuke.pluginAddPath('./gizmos/pixelfudger')
-nuke.pluginAddPath('./gizmos/v_tools')
-nuke.pluginAddPath('./gizmos/cryptomatte')
-nuke.pluginAddPath('./gizmos/legacy')
-nuke.pluginAddPath('./python')
-nuke.pluginAddPath('./icons')
-nuke.pluginAddPath('./3DE4')
-
-
-
-#add 3DEqualizer
-from equalizer_version_check import *
+import glob
+import nuke  # pylint: disable=import-error
 
 ####################################
 
-
-'''
-Install Cryptomatte
-'''
-
-import cryptomatte_utilities
-cryptomatte_utilities.setup_cryptomatte()
-
+# Import custom Python modules.
 
 ####################################
 
-# NFTS CUSTOM PIPELINE, FUNCTIONS AND OVERRIDES
+# Save env root in custom environment variable.
 
+env_root = os.path.abspath(os.path.dirname(__file__)).replace("\\", "/")
+os.environ["NFTS_COMP_ENV_ROOT"] = env_root
 
-#check the existence of versioning in the file name
-def script_has_version():
-    filename = nuke.root().knob('name').value()
-    try:
-        nukescripts.version_get(filename, 'v')
-        return True
-    except:
-        return False
+# Add plugin paths.
 
+nuke.pluginAddPath("./NFTS_pipe")  # load NFTS pipe tools
+nuke.pluginAddPath("./NukeSurvivalToolkit")
+nuke.pluginAddPath("./gizmos")
+nuke.pluginAddPath("./python")
+nuke.pluginAddPath("./icons")
+nuke.pluginAddPath("./3DE4")
 
-# define a custom invremental save that also vesions up every write not in the script
+# add 3DE4
+import equalizer_version_check  # pylint: disable=import-error, unused-import, wrong-import-position, wrong-import-order
 
-def incrementalSave():
- 
+# recursively add folders in NFTS to the plugin path
+import tools_loader  # pylint: disable=import-error, wrong-import-position, wrong-import-order
 
-    nodes = nuke.allNodes('Write') + nuke.allNodes('DeepWrite')
+tools_loader.recursively_add_plugin_path(tools_loader.NFTS_gizmos_root)
 
-    try:
-        timeline_write = nuke.root().knob('timeline_write_node').value()
-        nodes.remove(nuke.toNode(timeline_write))
-    except:
-        pass
+# add 3DEqualizer
 
-    if script_has_version():
-        nukescripts.clear_selection_recursive()
-        for node in nodes:
-            node.knob("selected").setValue(True)
-            nukescripts.version_up()
-            nukescripts.clear_selection_recursive()
-
-    nukescripts.script_version_up()
-    return
-
+# recursively add keentools folders. version/platform management is done at the tool lever
+for version in glob.glob(os.path.join(os.path.dirname(__file__), "KeenTools", "*_*.*")):
+    if os.path.isdir(version):
+        nuke.pluginAddPath(os.path.join(version))
 
 
 ####################################
 
 
-# old write pipeline (for legagy purposes)  - we need these to avoid old scripts braking
+# #Install Cryptomatte for Nuke 12 or Older
+if nuke.NUKE_VERSION_MAJOR < 13:
+    nuke.pluginAddPath("./cryptomatte")
+    import cryptomatte_utilities  # pylint: disable=import-error
 
-
-def write_studio_pipeline():
-    pass
-
-def writeBeforePipeline():
-    pass
-
-def writeAfterPipeline():
-    pass
-
+    cryptomatte_utilities.setup_cryptomatte()
 
 ####################################
-

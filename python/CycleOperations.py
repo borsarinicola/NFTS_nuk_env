@@ -203,7 +203,7 @@ def Shuffle(n, forwards):
 		if not labelText in currLabel:
 
 			# add new line and original value before new label text, if a label already exists
-			if currLabel is not '':
+			if currLabel != '':
 				label.setValue(currLabel + '\n' + labelText)
 			else:
 				label.setValue(labelText)

@@ -1,30 +1,33 @@
 ####################################
 
-'''
+"""
 NFTS - National Film and Television School.
-latest update by Nicola Borsari: 2019-11-29
-'''
+latest update by Nicola Borsari: 2023-10-24
+"""
 
 ####################################
 
-'''
+"""
 
 This file should be used to add help functionalities only.
 to add to the existing Nuke help Nuke menu use h.addCommand 
 
-'''
+"""
 
 #####################################
 
-#import standard modules
+# import standard modules
 
-import os, sys, nuke, nukescripts
+import webbrowser
+import nuke # pylint: disable=import-error
 
-# add environment help 
+# add environment help
 
 menubar = nuke.menu("Nuke")
-h = menubar.menu("&Help")
+h = menubar.menu("NFTS").addMenu("Help")
 
 
-h.addCommand('NFTS Environment Help', 'nukescripts.start("https://github.com/borsarinicola/nfts_nuk_env")')
-h.addCommand('Deadline Guidelines', 'nukescripts.start("file://digitalfxserver/CompEnvironment/documentation/deadline10_guidelines.pdf")')
+h.addCommand(
+    "NFTS Environment Help",
+    lambda: webbrowser.open("https://github.com/borsarinicola/nfts_nuk_env"),
+)

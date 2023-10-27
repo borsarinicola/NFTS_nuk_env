@@ -1,0 +1,1515 @@
+Group {
+ name PxF_EnvLight
+ inputs 3
+ help "Creates a spherical light rig.\n\nPoint lights are positioned at each vertex of a sphere.\n\nThe RGB values of the \"map\" input are used to drive the color/intensity of each light. Typically a lat/long HDR panorama will be used for the light map.\n\nThe \"axis\" input is used to scale and position the light rig. Typically the light rig should be big enough for all your geometry to fit inside of it.\n\nThe \"refl\" input is the texture used on the emissive object. The emissive object will be reflected by geometry with a reflection shader.\n\nPxF_EnvLight is meant to light geometry rendered via Nuke's RayRender node. Make sure to apply shader nodes to your geometry (usually \"diffuse\" and \"reflection\").\n\nNote that only still images are supported at this time. Animated light maps are not supported."
+ knobChanged "m = nuke.thisNode()\nkc = nuke.thisKnob()\n\nif kc.name() in \[\"rows\", \"columns\", \"inputChange\", \"sampleLights\"]:\n#if True:\n    for n in nuke.allNodes():\n      if \"STATIC\" not in n\['label'].getValue():\n        nuke.delete(n)\n\n    a = nuke.toNode(\"Axis1\")\n    s = nuke.nodes.Scene()\n    s.setInput(0, nuke.toNode(\"TransformGeo1\"))\n    s.setInput(1, nuke.toNode(\"sun_light\"))\n    nuke.toNode(\"Output1\").setInput(0,s)\n    c = nuke.toNode(\"map\")\n    w = c.width()\n    h = c.height()\n    \n\n    #get all the points from our 1x1 sphere\n    pythonGeoNode = nuke.toNode('PythonGeo1')\n    cs = pythonGeoNode.knob('geo').getGeometry()\[0].points()\n    \n    lp = int(len(cs)/3)\n    ps = \[\[] for i in range(lp)]\n \n\n    for i, z in enumerate(cs):\n        ps\[int(i/3)].append(z)\n\n    \n    i = int(2)\n    for p in ps:\n        t = nuke.nodes.Light()\n        t\['label'].setValue(\"lightrig\")\n        t\['disable'].setExpression(\"parent.enableLights?0:1\")\n        t\['display'].setExpression(\"parent.displayLights\")\n        t\['cast_shadows'].setExpression(\"parent.shadows\")\n        t\['shadow_mode'].setExpression(\"parent.shadow_mode\")\n        t\['intensity'].setExpression(\"parent.intensity\")\n        t\['uniform_scale'].setExpression(\"parent.scale\")\n        t.addKnob(nuke.Double_Knob('lat'))\n        t.addKnob(nuke.Double_Knob('long'))\n        t.addKnob(nuke.Double_Knob('x'))\n        t.addKnob(nuke.Double_Knob('y'))\n        t\['translate'].setValue(p)\n        t\['lat'].setExpression(\"atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))\")\n        t\['long'].setExpression(\"atan2(translate.x,translate.z)\")\n        t\['x'].setExpression(\"((long+pi)/(2*pi))*\" + str(w))\n        t\['y'].setExpression(\"((lat+(pi*0.5))/pi)*\" + str(h))\n        x = t\['x'].value()\n        y = t\['y'].value()            \n        r = c.sample(\"red\", x, y)\n        g = c.sample(\"green\", x, y)\n        b = c.sample(\"blue\", x, y)\n        #t\['color'].setValue(\[r,g,b])\n        t\['color'].setSingleValue(False)\n        t\['color'].setExpression(\"pow((\" + str(r) + \" * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)\", 0)\n        t\['color'].setExpression(\"pow((\" + str(g) + \" * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)\", 1)\n        t\['color'].setExpression(\"pow((\" + str(b) + \" * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)\", 2)\n        t.setInput(0,a)\n        s.setInput(i, t)\n        i = i + 1\n    m\['lights'].setValue(i-1)\n    \n "
+ tile_color 0x733520ff
+ addUserKnob {20 Light_Rig l "Light Rig"}
+ addUserKnob {22 sampleLights l "Sample Lights" t "Click this every time you make a change to the light map so that lights get updated with the current RGB values." T "dummy=\"this is a dummy line to trigger knobChanged\"" +STARTLINE}
+ addUserKnob {3 rows t "How many rows of lights in the light rig."}
+ rows 8
+ addUserKnob {3 columns t "How many columns of lights in the light rig."}
+ columns 8
+ addUserKnob {3 lights t "How many lights are in the rig. Use \"rows\" and \"columns\" to adjust how many lights are in use.\n\nMore lights add precision (especially in the shadows), but render times will be longer.\n\nThe total number of lights will be a bit less than rows*columns (rows at the top and bottom of the sphere have less columns)." +DISABLED}
+ lights 59
+ addUserKnob {6 enableLights l enable t "Enable lights in the light rig." -STARTLINE}
+ enableLights true
+ addUserKnob {6 displayLights l display t "Display lights in the 3D view.\nDoes not affect the rendered image." -STARTLINE}
+ displayLights true
+ addUserKnob {7 scale t "Scale of the lights in the light rig. Will not affect the rendered image. Used to adjust the size of the light icons in the 3D viewer.\n\nConnect an axis to the 'axis' input to scale the light rig."}
+ scale 0.1
+ addUserKnob {6 shadows t "Enables shadows for every light in the rig." +STARTLINE}
+ shadows true
+ addUserKnob {4 shadow_mode l "shadow mode" t "Shadow casting modes that affect shadows cast by objects, based on the objects’ opacity: \n• solid - objects that cast shadows are considered to be completely solid. This option can be used with both ScanlineRender and RayRender. Fastest mode. \n• clipped alpha - objects that cast shadows are considered to be transparent if the object’s alpha is below the light’s clipping threshold control in the Shadows tab. This option is only relevant if you are using ScanlineRender to render your shadows. \n• full alpha - shadows are calculated based on how light is reduced when it passes through non-opaque occluders. This option is relevant if you are using ScanlineRender or RayRender to render your shadows. Slowest Mode." M {solid "clipped alpha" "full alpha" "" ""}}
+ addUserKnob {26 ""}
+ addUserKnob {26 Credits l " " t "PxF_EnvLight 1.0 - &copy; 2022-2023 - Xavier Bourque - pixelfudger.com\nPixelfudger gizmos are free to use for personal and commercial use as long as you leave the credit text intact in the gizmo's knobs and in the source files. " T "<font size=2>PxF_EnvLight 1.0 - &copy; 2022-2023 - </font><a href=\"http://www.xavierbourque.com\"><font color=\"#bbbbbb\" size=2>Xavier Bourque</a></font> - <a href=\"http://www.pixelfudger.com\"><font color=\"#bbbbbb\" size=2>pixelfudger.com</a></font> - <a href=\"http://www.pixelfudger.com/userguides/PxF_EnvLight.html\"><font color=\"#bbbbbb\" size=2>Video Tutorial</a></font>"}
+ addUserKnob {20 colorTab l Color}
+ addUserKnob {18 color t "Adjust the gain of every light in the rig. \n\nThe rgb values sampled from the light map are multiplied by the gain.\n\nUse this to color your light rig."}
+ color {1 1 1}
+ addUserKnob {6 color_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {7 intensity t "Adjusts the intensity of every light in the rig.\n\nThe value sampled from the light map is multiplied by this value.\n\nUse this to adjust the overall \"brightness\" of your scene."}
+ intensity 1
+ addUserKnob {18 gamma t "Applies a simple gamma to color values sampled from the light map to every light in the rig.\n\nNormally should be left at 1, but it can be used lighten or darken shadows."}
+ gamma 1
+ addUserKnob {6 gamma_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {20 Sun}
+ addUserKnob {6 sunEnable l enable t "Enable the \"sun\".\n\nThe sun is a single point light that can be positioned manually using x,y coordinates on the lat/long image in the 'map' input." +STARTLINE}
+ addUserKnob {12 sunPos l position t "The x,y position of the sun on the lat/long image.\n\nPut your lat/long image in the viewer and adjust the sun position using the 'sunPos' controller.\n\nThe x,y position is automatically converted to 3D coordinates so that the sun is in the right place in the light rig."}
+ sunPos {100 100}
+ addUserKnob {18 sunColor l color t "Adjust the color of the sun light. Use 'sample' to automatically set the sun color to the corresponding RGB values in the lat/long image." R 0 10}
+ sunColor {1 1 1}
+ addUserKnob {6 sunColor_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {22 sample t "After setting the 'sunPos', click 'sample' to pick the RGB values in the lat/long image under the sun position." -STARTLINE T "m = nuke.thisNode()\nc = nuke.toNode(\"refl\")\nx = m\['sunPos'].value(0)\ny = m\['sunPos'].value(1)\n\nr = c.sample(\"red\", x, y)\ng = c.sample(\"green\", x, y)\nb = c.sample(\"blue\", x, y)\n\nm\['sunColor'].setValue(r,0)\nm\['sunColor'].setValue(g,1)\nm\['sunColor'].setValue(b,2)\n"}
+ addUserKnob {7 sunIntensity l intensity t "Adjusts the intensity of the sun light."}
+ sunIntensity 1
+ addUserKnob {6 sunShadows l shadows t "Enable shadows for the sun light." +STARTLINE}
+ sunShadows true
+ addUserKnob {6 sunColor_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {20 Emissive_Object l "Emissive Object"}
+ addUserKnob {6 emiEnable l enable t "Enable the emissive object.\n\nFor an EnvLight, the emissive object is a sphere with the light map applied to it as a texture.\n\nUse the emissive object to see the reflection of the environment map on reflective objects.\n\nLights in the light rig will still be active even if the emission object is disabled." +STARTLINE}
+ emiEnable true
+ addUserKnob {6 emiTransparent l transparent t "Set the alpha of the emissive object to zero.\n\nTo keep the emissive object visible to reflections but invisible to the camera (i.e. the beauty/rgba pass):\n\n1) Enable the emissive object.\n\n2) Make the emissive object transparent.\n\n3) In RayRender, under AOVs, turn on \"output AOV\" and \"remove AOV from beauty pass\".\n\n4) Send \"emissive\" to any layer except \"rgba\". " +STARTLINE}
+ emiTransparent true
+ addUserKnob {18 emiColor l color t "Adjust the gain of the emissive object.\n\nBy default the emissive object will inherit the overall intensity of the light rig.\n\nUse this to adjust the gain of the emissive object without affecting the light rig."}
+ emiColor {1 1 1}
+ addUserKnob {6 emiColor_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {7 emiIntensity l intensity t "Adjust the intensity of the emissive object.\n\nBy default the emissive object will inherit the overall intensity of the light rig.\n\nUse this to adjust the intensity of the emissive object without affecting the light rig."}
+ emiIntensity 1
+ addUserKnob {3 emiRows l rows t "How many rows in the emissive sphere."}
+ emiRows 64
+ addUserKnob {3 emiColumns l columns t "How many columns in the emissive sphere"}
+ emiColumns 64
+}
+ Input {
+  inputs 0
+  name map
+  label STATIC
+  xpos -418
+  ypos -73
+ }
+ Sphere {
+  cast_shadow false
+  receive_shadow false
+  rows {{parent.rows}}
+  columns {{parent.columns}}
+  name Sphere1
+  label STATIC
+  xpos -418
+  ypos 153
+  disable {{"parent.sphereEnable ? 0:1" x14 1}}
+ }
+ PythonGeo {
+  name PythonGeo1
+  label STATIC
+  xpos -418
+  ypos 204
+ }
+ Input {
+  inputs 0
+  name axis
+  label STATIC
+  xpos 2559
+  ypos -349
+  number 1
+ }
+set Nb0b56400 [stack 0]
+ Axis2 {
+  rotate {0 180 0}
+  name Axis1
+  label STATIC
+  xpos 2569
+  ypos -268
+ }
+set Nb0b55d00 [stack 0]
+ Light {
+  color {{"pow((0.024509806186 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0333333350718 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0691176503897 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {0 1 0}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point58
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0259803943336 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0343137271702 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0730392187834 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {-0.2705978453 0.9238796234 0.2705980241}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point57
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0144607853144 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0223039221019 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0534313768148 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {-0.3826832771 0.9238796234 4.563452283e-09}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point56
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0174019616097 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0254901982844 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0573529452085 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {-0.2705979943 0.9238796234 -0.2705979049}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point55
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0200980398804 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0284313745797 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0632352977991 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {-3.345523325e-08 0.9238796234 -0.3826832771}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point54
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0176470596343 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.026960786432 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0656862780452 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {0.2705979347 0.9238796234 -0.2705979347}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point53
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0318627469242 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0460784323514 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.100000008941 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {0.3826832771 0.9238796234 -1.672761663e-08}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point52
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0313725508749 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0455882363021 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.103921577334 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {0.2705979347 0.9238796234 0.2705979347}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point51
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0382352955639 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0504902005196 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0995098128915 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {0 0.9238796234 0.3826832771}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point50
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0200980398804 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0308823548257 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0769607871771 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {-0.4999998212 0.7071067691 0.5000001788}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point49
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0181372556835 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0279411785305 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0705882385373 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {-0.7071067691 0.7071067691 8.432163412e-09}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point48
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0181372556835 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0289215706289 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0750000029802 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {-0.5000000596 0.7071067691 -0.4999999106}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point47
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0186274517328 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0294117666781 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.074509806931 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {-6.181723933e-08 0.7071067691 -0.7071067691}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point46
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.019117647782 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0328431390226 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0867647081614 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {0.4999999702 0.7071067691 -0.4999999702}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point45
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0666666701436 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0852941200137 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.160784319043 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {0.7071067691 0.7071067691 -3.090861966e-08}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point44
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.136274516582 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.158823534846 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.228431388736 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {0.4999999702 0.7071067691 0.4999999702}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point43
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0519607886672 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0696078464389 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.135294124484 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {0 0.7071067691 0.7071067691}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point42
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0460784323514 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0656862780452 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.138235300779 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {-0.6532812119 0.3826835155 0.6532816887}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point41
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0421568639576 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0627451017499 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.147058829665 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {-0.9238795042 0.3826835155 1.101715252e-08}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point40
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0470588281751 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0715686306357 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.157843142748 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {-0.6532815695 0.3826835155 -0.6532813311}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point39
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0411764718592 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0617647096515 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.140196084976 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {-8.076811042e-08 0.3826835155 -0.9238795042}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point38
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0392156876624 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0617647096515 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.147058829665 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {0.6532814503 0.3826835155 -0.6532814503}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point37
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0686274543405 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.105882361531 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.214705899358 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {0.9238795042 0.3826835155 -4.038405521e-08}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point36
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.35686275363 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.378431409597 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.466666698456 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {0.6532814503 0.3826835155 0.6532814503}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point35
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0588235333562 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.088235296309 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.186274513602 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {0 0.3826835155 0.9238795042}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point34
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.127450987697 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.104901969433 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0568627491593 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {-0.7071065307 4.371138829e-08 0.7071070075}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point33
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.135294124484 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0637254938483 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0421568639576 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {-1 4.371138829e-08 1.192488064e-08}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point32
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0115196080878 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0124387266114 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0124387266114 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {-0.7071068883 4.371138829e-08 -0.7071066499}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point31
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0666666701436 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.060784317553 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0490196123719 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {-8.742277657e-08 4.371138829e-08 -1}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point30
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0121323540807 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0149509813637 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0198529418558 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {0.7071067691 4.371138829e-08 -0.7071067691}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point29
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.033823531121 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0357843153179 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0370098054409 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {1 4.371138829e-08 -4.371138829e-08}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point28
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0294117666781 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0397058837116 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0546568669379 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {0.7071067691 4.371138829e-08 0.7071067691}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point27
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0433823540807 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0382352955639 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0352941192687 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {0 4.371138829e-08 1}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point26
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0100490199402 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0177696086466 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0164215695113 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {-0.6532812119 -0.3826834261 0.6532816887}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point25
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0877451002598 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0789215713739 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0578431412578 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {-0.9238795042 -0.3826834261 1.101715252e-08}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point24
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.232352957129 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.194117665291 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.126470595598 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {-0.6532815695 -0.3826834261 -0.6532813311}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point23
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.112254910171 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0995098128915 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0730392187834 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {-8.076811042e-08 -0.3826834261 -0.9238795042}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point22
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0808823555708 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0710784345865 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0544117689133 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {0.6532814503 -0.3826834261 -0.6532814503}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point21
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0155637264252 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0253676492721 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.029779413715 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {0.9238795042 -0.3826834261 -4.038405521e-08}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point20
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0500000044703 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0598039254546 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0661764740944 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {0.6532814503 -0.3826834261 0.6532814503}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point19
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.00882352981716 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0171568635851 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0177696086466 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {0 -0.3826834261 0.9238795042}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point18
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.102941185236 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0921568647027 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0656862780452 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {-0.4999998212 -0.7071067691 0.5000001788}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point17
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.067647062242 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.058333337307 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0431372560561 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {-0.7071067691 -0.7071067691 8.432163412e-09}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point16
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0627451017499 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0534313768148 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0392156876624 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {-0.5000000596 -0.7071067691 -0.4999999106}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point15
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.031004903838 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0273284334689 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0248774532229 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {-6.181723933e-08 -0.7071067691 -0.7071067691}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point14
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.114215694368 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.101470597088 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0764705911279 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {0.4999999702 -0.7071067691 -0.4999999702}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point13
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0808823555708 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0627451017499 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0333333350718 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {0.7071067691 -0.7071067691 -3.090861966e-08}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point12
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0848039239645 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0779411792755 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0500000044703 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {0.4999999702 -0.7071067691 0.4999999702}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point11
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0318627469242 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.021568628028 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.00539215700701 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {0 -0.7071067691 0.7071067691}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point10
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0936274528503 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0808823555708 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0593137294054 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {-0.2705979645 -0.9238795042 0.2705981433}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point9
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.115686282516 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.103921577334 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0754901990294 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {-0.3826834559 -0.9238795042 4.563454503e-09}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point8
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.172549024224 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.160784319043 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.108823537827 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {-0.2705981135 -0.9238795042 -0.2705980241}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point7
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0818627476692 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0681372582912 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0475490242243 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {-3.345525101e-08 -0.9238795042 -0.3826834559}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point6
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0901960805058 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0774509832263 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0544117689133 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {0.2705980539 -0.9238795042 -0.2705980539}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point5
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0975490286946 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0852941200137 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0578431412578 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {0.3826834559 -0.9238795042 -1.672762551e-08}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point4
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.00603553978726 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.00582107855007 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.00664828484878 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {0.2705980539 -0.9238795042 0.2705980539}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point3
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0681372582912 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0568627491593 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0436274521053 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {0 -0.9238795042 0.3826834559}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point2
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Light {
+  color {{"pow((0.0838235318661 * parent.color.r * parent.intensity / parent.lights * 25), 1/parent.gamma.r)"} {"pow((0.0779411792755 * parent.color.g * parent.intensity / parent.lights * 25), 1/parent.gamma.g)"} {"pow((0.0588235333562 * parent.color.b * parent.intensity / parent.lights * 25), 1/parent.gamma.b)"}}
+  intensity {{parent.intensity}}
+  display {{parent.displayLights}}
+  translate {0 -1 0}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.shadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name Point1
+  label lightrig
+  disable {{parent.enableLights?0:1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{((long+pi)/(2*pi))*4096}}
+  addUserKnob {7 y}
+  y {{((lat+(pi*0.5))/pi)*2048}}
+ }
+push $Nb0b55d00
+ Axis2 {
+  rotate {{curve} {(parent.sunPos.x/map.width*360)+90} {parent.sunPos.y/map.width*360}}
+  name Axis1_SUN_ROT
+  label STATIC
+  xpos 2182
+  ypos 374
+ }
+ Light {
+  color {{parent.sunColor.r} {parent.sunColor.g} {parent.sunColor.b}}
+  intensity {{parent.sunIntensity}}
+  translate {0 -1 0}
+  uniform_scale {{parent.scale}}
+  cast_shadows {{parent.sunShadows}}
+  shadow_mode {{parent.shadow_mode}}
+  name sun_light
+  label STATIC
+  selected true
+  xpos 2161
+  ypos 747
+  disable {{"parent.sunEnable ? 0 : 1" x1 1}}
+  addUserKnob {20 User}
+  addUserKnob {7 lat}
+  lat {{atan2(translate.y,sqrt(translate.x*translate.x+translate.z*translate.z))}}
+  addUserKnob {7 long}
+  long {{atan2(translate.x,translate.z)}}
+  addUserKnob {7 x}
+  x {{parent.sunPos.x}}
+  addUserKnob {7 y}
+  y {{parent.sunPos.y}}
+ }
+push $Nb0b56400
+ Input {
+  inputs 0
+  name refl
+  label STATIC
+  xpos -209
+  ypos -71
+  number 2
+ }
+set Nb0878800 [stack 0]
+push $Nb0878800
+ Emission {
+  inputs 2
+  emission 1
+  name Emission2
+  label STATIC
+  xpos 112
+  ypos 48
+ }
+ Sphere {
+  render_mode off
+  cast_shadow false
+  receive_shadow false
+  rows {{parent.emiRows}}
+  columns {{parent.emiColumns}}
+  name Sphere3
+  label "STATIC\npreview object"
+  xpos 112
+  ypos 187
+  disable {{parent.emiEnable?0:1}}
+ }
+push $Nb0878800
+push $Nb0878800
+ Shuffle {
+  red black
+  green black
+  blue black
+  alpha black
+  name Shuffle2
+  label STATIC
+  xpos -41
+  ypos 35
+ }
+push $Nb0878800
+ Shuffle {
+  red black
+  green black
+  blue black
+  name Shuffle1
+  label STATIC
+  xpos -142
+  ypos 32
+ }
+ Switch {
+  inputs 2
+  which {{parent.emiTransparent}}
+  name Switch1
+  label STATIC
+  xpos -142
+  ypos 85
+ }
+ Emission {
+  inputs 2
+  emission {{parent.emiIntensity*emiColor.r} {parent.emiIntensity*emiColor.g} {parent.emiIntensity*emiColor.b}}
+  name Emission1
+  label STATIC
+  xpos -210
+  ypos 123
+ }
+ Sphere {
+  display off
+  cast_shadow false
+  receive_shadow false
+  rows {{parent.emiRows}}
+  columns {{parent.emiColumns}}
+  name Sphere2
+  label "STATIC\nrender object"
+  xpos -210
+  ypos 186
+  disable {{parent.emiEnable?0:1}}
+ }
+ Scene {
+  inputs 2
+  name Scene2
+  label STATIC
+  xpos -200
+  ypos 312
+ }
+ TransformGeo {
+  inputs 2
+  name TransformGeo1
+  label STATIC
+  xpos -210
+  ypos 807
+ }
+ Scene {
+  inputs 60
+  name Scene1
+ }
+ Output {
+  name Output1
+  label STATIC
+  xpos 3989
+  ypos 1931
+ }
+end_group

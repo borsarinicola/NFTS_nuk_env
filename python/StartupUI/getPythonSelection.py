@@ -28,7 +28,7 @@ class SelectedShotAction(QAction):
     """Get the Python selection and stuff it in: hiero.selectedItems"""
     self.updateActiveViewSelection()
     
-    print "Python selection stored in: hiero.selectedItems:\n", self._selection
+    print("Python selection stored in: hiero.selectedItems:\n", self._selection)
     hiero.selectedItems = self._selection
   
   def updateActiveViewSelection(self):

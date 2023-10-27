@@ -25,7 +25,7 @@ def Gizmo2Group():
 	    inputs = []
 	    for x in range(0, gizmo.maximumInputs()):
 	        if gizmo.input(x):
-	            # print 'input: %s' % (gizmo.input(x).knob('name').value())
+	            # print('input: %s' % (gizmo.input(x).knob('name').value()))
 	            inputs.append(gizmo.input(x))
 	        else:
 	            inputs.append(False)
@@ -48,7 +48,7 @@ def Gizmo2Group():
 	        newGroup.setInput(x,None) 
 	        if inputs[x]:
 	            newGroup.connectInput(x, inputs[x])
-	        # print 'connecting output: %s to input: %s' % (inputs[x].knob('name').value(), newGroup.input(x).name())
+	        # print('connecting output: %s to input: %s' % (inputs[x].knob('name').value(), newGroup.input(x).name()))
 	    return newGroup
 	     
 	def convertGizmosToGroups():

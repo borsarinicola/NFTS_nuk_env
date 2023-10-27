@@ -1,0 +1,84 @@
+<root tasktype="hiero.exporters.FnShotProcessor.ShotProcessor" presetname="Basic Nuke Shot">
+    <excludeTags valuetype="list" />
+    <includeTags valuetype="list" />
+    <versionIndex valuetype="int">1</versionIndex>
+    <versionPadding valuetype="int">2</versionPadding>
+    <exportTemplate valuetype="tuple">
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/nuke/script/{shot}_comp{_nameindex}_{version}.{ext}</SequenceItem>
+            <SequenceItem valuetype="hiero.exporters.FnNukeShotExporter.NukeShotPreset">
+                <root tasktype="hiero.exporters.FnNukeShotExporter.NukeShotExporter" presetname="">
+                    <enable valuetype="bool">True</enable>
+                    <readPaths valuetype="list" />
+                    <writePaths valuetype="list">
+                        <SequenceItem valuetype="str">{shot}/nuke/renders/{shot}_comp{_nameindex}_{version}.####.{ext}</SequenceItem>
+                    </writePaths>
+                    <timelineWriteNode valuetype="str">{shot}/nuke/renders/{shot}_comp{_nameindex}_{version}.####.{ext}</timelineWriteNode>
+                    <collateTracks valuetype="bool">False</collateTracks>
+                    <collateShotNames valuetype="bool">False</collateShotNames>
+                    <annotationsPreCompPaths valuetype="list" />
+                    <includeAnnotations valuetype="bool">False</includeAnnotations>
+                    <showAnnotations valuetype="bool">True</showAnnotations>
+                    <includeEffects valuetype="bool">True</includeEffects>
+                    <connectTracks valuetype="bool">False</connectTracks>
+                    <collateSequence valuetype="bool">False</collateSequence>
+                    <collateCustomStart valuetype="bool">True</collateCustomStart>
+                    <additionalNodesEnabled valuetype="bool">False</additionalNodesEnabled>
+                    <additionalNodesData valuetype="list" />
+                    <method valuetype="str">Blend</method>
+                    <reformat valuetype="dict">
+                        <to_type valuetype="str">Plate Resolution</to_type>
+                        <resize valuetype="str">width</resize>
+                        <center valuetype="bool">True</center>
+                        <filter valuetype="str">Cubic</filter>
+                    </reformat>
+                    <postProcessScript valuetype="bool">True</postProcessScript>
+                    <useRelativePaths valuetype="bool">False</useRelativePaths>
+                </root>
+            </SequenceItem>
+        </SequenceItem>
+        <SequenceItem valuetype="tuple">
+            <SequenceItem valuetype="str">{shot}/nuke/renders/{shot}_comp{_nameindex}_{version}.####.{ext}</SequenceItem>
+            <SequenceItem valuetype="hiero.exporters.FnExternalRender.NukeRenderPreset">
+                <root tasktype="hiero.exporters.FnExternalRender.NukeRenderTask" presetname="">
+                    <file_type valuetype="str">dpx</file_type>
+                    <reformat valuetype="dict">
+                        <to_type valuetype="str">None</to_type>
+                        <scale valuetype="float">1.0</scale>
+                        <resize valuetype="str">width</resize>
+                        <center valuetype="bool">True</center>
+                        <filter valuetype="str">Cubic</filter>
+                    </reformat>
+                    <channels valuetype="str">rgb</channels>
+                    <views valuetype="list">
+                        <SequenceItem valuetype="str">all</SequenceItem>
+                    </views>
+                    <dpx valuetype="dict">
+                        <datatype valuetype="str">10 bit</datatype>
+                    </dpx>
+                    <writeNodeName valuetype="str">Write_{ext}</writeNodeName>
+                    <burninDataEnabled valuetype="bool">False</burninDataEnabled>
+                    <burninData valuetype="dict">
+                        <burnIn_textSize valuetype="NoneType">None</burnIn_textSize>
+                        <burnIn_padding valuetype="NoneType">None</burnIn_padding>
+                        <burnIn_font valuetype="NoneType">None</burnIn_font>
+                        <burnIn_topLeft valuetype="NoneType">None</burnIn_topLeft>
+                        <burnIn_topMiddle valuetype="NoneType">None</burnIn_topMiddle>
+                        <burnIn_topRight valuetype="NoneType">None</burnIn_topRight>
+                        <burnIn_bottomLeft valuetype="NoneType">None</burnIn_bottomLeft>
+                        <burnIn_bottomMiddle valuetype="NoneType">None</burnIn_bottomMiddle>
+                        <burnIn_bottomRight valuetype="NoneType">None</burnIn_bottomRight>
+                    </burninData>
+                    <create_directories valuetype="bool">True</create_directories>
+                </root>
+            </SequenceItem>
+        </SequenceItem>
+    </exportTemplate>
+    <exportRoot valuetype="str">{projectroot}</exportRoot>
+    <cutHandles valuetype="int">12</cutHandles>
+    <cutUseHandles valuetype="bool">False</cutUseHandles>
+    <cutLength valuetype="bool">True</cutLength>
+    <includeRetimes valuetype="bool">False</includeRetimes>
+    <startFrameIndex valuetype="int">1001</startFrameIndex>
+    <startFrameSource valuetype="str">Source</startFrameSource>
+</root>
