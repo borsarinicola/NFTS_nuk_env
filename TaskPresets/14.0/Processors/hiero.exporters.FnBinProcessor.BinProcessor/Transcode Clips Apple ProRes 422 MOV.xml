@@ -1,7 +1,7 @@
 <root tasktype="hiero.exporters.FnBinProcessor.BinProcessor" presetname="Transcode Clips Apple ProRes 422 MOV">
     <versionIndex valuetype="int">1</versionIndex>
     <versionPadding valuetype="int">2</versionPadding>
-    <exportTemplate valuetype="tuple">
+    <exportTemplate valuetype="list">
         <SequenceItem valuetype="tuple">
             <SequenceItem valuetype="str">{binpath}/{clip}.{ext}</SequenceItem>
             <SequenceItem valuetype="hiero.exporters.FnTranscodeExporter.TranscodePreset">
@@ -14,6 +14,7 @@
                         <center valuetype="bool">True</center>
                         <filter valuetype="str">Cubic</filter>
                     </reformat>
+                    <colourspace valuetype="str">default</colourspace>
                     <channels valuetype="str">rgb</channels>
                     <views valuetype="list">
                         <SequenceItem valuetype="str">all</SequenceItem>

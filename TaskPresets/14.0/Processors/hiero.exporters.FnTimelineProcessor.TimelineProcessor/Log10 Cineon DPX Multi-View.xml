@@ -14,6 +14,7 @@
                         <center valuetype="bool">True</center>
                         <filter valuetype="str">Cubic</filter>
                     </reformat>
+                    <colourspace valuetype="str">default</colourspace>
                     <channels valuetype="str">rgb</channels>
                     <views valuetype="list">
                         <SequenceItem valuetype="str">all</SequenceItem>

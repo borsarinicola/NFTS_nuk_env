@@ -16,12 +16,12 @@
                         <center valuetype="bool">True</center>
                         <resize valuetype="str">width</resize>
                     </reformat>
+                    <colourspace valuetype="str">AlexaV3LogC</colourspace>
                     <channels valuetype="str">rgb</channels>
                     <views valuetype="list">
                         <SequenceItem valuetype="str">all</SequenceItem>
                     </views>
                     <bitDepth valuetype="str">24 bit</bitDepth>
-                    <colourspace valuetype="str">AlexaV3LogC</colourspace>
                     <includeAudio valuetype="bool">False</includeAudio>
                     <useSingleSocket valuetype="bool">False</useSingleSocket>
                     <numChannels valuetype="str">stereo</numChannels>

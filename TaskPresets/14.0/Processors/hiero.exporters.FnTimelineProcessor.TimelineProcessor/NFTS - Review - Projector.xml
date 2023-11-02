@@ -18,12 +18,12 @@
                         <resize valuetype="str">width</resize>
                         <name valuetype="str">HD_1080</name>
                     </reformat>
+                    <colourspace valuetype="str">Gamma2.4</colourspace>
                     <channels valuetype="str">rgb</channels>
                     <views valuetype="list">
                         <SequenceItem valuetype="str">all</SequenceItem>
                     </views>
                     <bitDepth valuetype="str">24 bit</bitDepth>
-                    <colourspace valuetype="str">Gamma2.4</colourspace>
                     <includeEffects valuetype="bool">True</includeEffects>
                     <includeAudio valuetype="bool">True</includeAudio>
                     <useSingleSocket valuetype="bool">False</useSingleSocket>

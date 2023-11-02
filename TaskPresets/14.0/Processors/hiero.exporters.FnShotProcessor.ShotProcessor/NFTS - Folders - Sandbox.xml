@@ -64,11 +64,11 @@
                         <center valuetype="bool">True</center>
                         <resize valuetype="str">width</resize>
                     </reformat>
+                    <colourspace valuetype="str">linear</colourspace>
                     <channels valuetype="str">rgba</channels>
                     <views valuetype="list">
                         <SequenceItem valuetype="str">all</SequenceItem>
                     </views>
-                    <colourspace valuetype="str">linear</colourspace>
                     <create_directories valuetype="bool">True</create_directories>
                     <burninDataEnabled valuetype="bool">False</burninDataEnabled>
                     <dpx valuetype="dict">
@@ -217,9 +217,9 @@
         </SequenceItem>
     </exportTemplate>
     <exportRoot valuetype="str">{projectroot}</exportRoot>
-    <cutHandles valuetype="int">12</cutHandles>
-    <cutUseHandles valuetype="bool">False</cutUseHandles>
-    <cutLength valuetype="bool">False</cutLength>
+    <cutHandles valuetype="int">10</cutHandles>
+    <cutUseHandles valuetype="bool">True</cutUseHandles>
+    <cutLength valuetype="bool">True</cutLength>
     <includeRetimes valuetype="bool">False</includeRetimes>
     <startFrameIndex valuetype="int">1001</startFrameIndex>
     <startFrameSource valuetype="str">Custom</startFrameSource>

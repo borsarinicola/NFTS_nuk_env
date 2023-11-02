@@ -5,7 +5,7 @@
     <versionPadding valuetype="int">3</versionPadding>
     <exportTemplate valuetype="list">
         <SequenceItem valuetype="tuple">
-            <SequenceItem valuetype="str">sandbox/{shot}/in/{project_code}_{shot}_{track}_dist_lin/{project_code}_{shot}_{track}_dist_lin_{version}.%04d.{ext}</SequenceItem>
+            <SequenceItem valuetype="str">sandbox/{shot}/in/{project_code}_{shot}_{track}_dist_lin/{project_code}_{shot}_{track}_dist_lin_{version}/{project_code}_{shot}_{track}_dist_lin_{version}.%04d.{ext}</SequenceItem>
             <SequenceItem valuetype="hiero.exporters.FnTranscodeExporter.TranscodePreset">
                 <root tasktype="hiero.exporters.FnTranscodeExporter.TranscodeExporter" presetname="hiero.exporters.FnTranscodeExporter.TranscodeExporter">
                     <file_type valuetype="str">exr</file_type>
@@ -16,12 +16,12 @@
                         <center valuetype="bool">True</center>
                         <resize valuetype="str">width</resize>
                     </reformat>
+                    <colourspace valuetype="str">linear</colourspace>
                     <channels valuetype="str">rgb</channels>
                     <views valuetype="list">
                         <SequenceItem valuetype="str">all</SequenceItem>
                     </views>
                     <bitDepth valuetype="str">24 bit</bitDepth>
-                    <colourspace valuetype="str">linear</colourspace>
                     <includeEffects valuetype="bool">False</includeEffects>
                     <includeAudio valuetype="bool">False</includeAudio>
                     <useSingleSocket valuetype="bool">False</useSingleSocket>
