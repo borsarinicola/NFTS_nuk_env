@@ -23,9 +23,10 @@ import hiero_fps
 
 def find_menu(name):
     """
-    Find an action by its name. This is used to find a menu item in the context menu.
-    If the action is not found None is returned
-    @param name - Name of the action to find
+    Find a menu by its name. This is used to find a menu item in the main menubar.
+    If the menu is not found it gets added
+    @param name - Name of the menu to find
+    @return the menu object
     """
     # Returns the action that matches the name of the action.
     for action in hiero.ui.menuBar().actions():

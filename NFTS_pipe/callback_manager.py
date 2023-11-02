@@ -3,7 +3,7 @@ NFTS - National Film and Television School.
 latest update by Nicola Borsari: 2023-10-16
 
 Here we are collecting helper functions to deal with the
-registration/unregistration of pipleine callbaks.
+registration/unregistration of pipeline callbacks.
 """
 
 import nuke  # pylint: disable=import-error

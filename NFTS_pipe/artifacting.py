@@ -18,7 +18,7 @@ def is_artifact():
     """
     Check if script is artifact. This is used to detect if
     the user is trying to run script with artifact token
-    @return True if artifact False
+    @return bool - True if artifact or False if not
     """
     script_filepath = nuke.root()["name"].value()
     script_name = os.path.basename(script_filepath)
@@ -32,7 +32,7 @@ def build_artifact_name():
     """
     Build artifact name from script name. This is used to determine
     the name of the artifact to be used when creating a new artifact.
-    @return artifact name as a string or None if not an artifact.
+    @return artifact name as a string.
     """
     script_filepath = nuke.root()["name"].value()
     script_name = os.path.basename(script_filepath)
