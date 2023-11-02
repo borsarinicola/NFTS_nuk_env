@@ -2,7 +2,7 @@
 
 """
 NFTS - National Film and Television School.
-latest update by Nicola Borsari: 2023-10-14
+latest update by Nicola Borsari: 2023-11-02
 """
 
 ####################################
@@ -44,7 +44,7 @@ tools_loader.recursively_add_plugin_path(tools_loader.NFTS_gizmos_root)
 # add 3DEqualizer
 
 # recursively add keentools folders. version/platform management is done at the tool lever
-for version in glob.glob(os.path.join(os.path.dirname(__file__), "KeenTools", "*_*.*")):
+for version in glob.glob(os.path.join(env_root, "KeenTools", "*_*.*")):
     if os.path.isdir(version):
         nuke.pluginAddPath(os.path.join(version))
 
