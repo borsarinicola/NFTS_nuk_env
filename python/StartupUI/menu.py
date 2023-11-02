@@ -54,3 +54,8 @@ remove_user_presets_action = hiero.ui.createMenuAction(
     "Remove All User Presets", hiero_presets.remove_all_user_presets
 )
 presets_submenu.addAction(remove_user_presets_action)
+
+reload_presets_action = hiero.ui.createMenuAction(
+    "Reaload All Local Presets", hiero_presets.reload_presets
+)
+presets_submenu.addAction(reload_presets_action)

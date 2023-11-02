@@ -1,6 +1,6 @@
 """
 NFTS - National Film and Television School.
-latest update by Nicola Borsari: 2023-10-24
+latest update by Nicola Borsari: 2023-11-09
 
 This module contains functions to override clip's FPS interpretation.
 """
@@ -45,6 +45,7 @@ def reset_to_safe_presets():
     """
     shutil.rmtree(THIS_PRESET, ignore_errors=True)
     shutil.copytree(SAFE_PRESET, THIS_PRESET)
+    reload_presets()
 
 
 def remove_all_user_presets():
@@ -54,6 +55,33 @@ def remove_all_user_presets():
     home = os.getenv("HOME")
     presets = os.path.join(home, ".nuke", "TaskPresets")
     shutil.rmtree(presets, ignore_errors=True)
+    reload_presets()
+
+
+def reload_presets():
+    """
+    Unregisters all local presets available in this session and forces a reload
+    of the shared and user presets
+    """
+    preset_paths = [
+        os.path.join(os.getenv("HOME"), ".nuke/TaskPresets", HIERO_VERSION),
+        os.path.join(PRESETS_PATH, HIERO_VERSION),
+    ]
+
+    # remove all local presets that are currently loaded as this prevents them being duplicated
+    for preset_path in preset_paths:
+        registry = hiero.exporters.registry
+
+        preset_names = [
+            processor.name() for processor in hiero.exporters.registry.localPresets()
+        ]
+
+        for preset_name in preset_names:
+            registry.removeProcessorPreset(preset_name)
+
+        # reload the presets in again
+        registry.loadPresets(preset_path)
+        print("reloaded presets in " + preset_path)
 
 
 # running this here makes this execute on Hiero start

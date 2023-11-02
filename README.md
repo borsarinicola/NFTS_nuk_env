@@ -85,7 +85,8 @@ There's a small collection of Hiero tools available.
 Safe for custom tokens or Export Presets they are all available in the <code>NFTS/NFTS Hiero Tools</code> menu.
 <ul>
   <li><strong>Presets/Reset Environment Presets</strong> - Replaces the centrally installed presets for the current hiero version with <code>NFTS_Safe_TaskPresets</code></li>
-    <li><strong>Presets/Remove All User Presets</strong> - Removes the TaskPresets stored in <code>~/.nuke/TaskPresets</code></li>
+  <li><strong>Presets/Remove All User Presets</strong> - Removes the TaskPresets stored in <code>~/.nuke/TaskPresets</code></li>
+  <li><strong>Presets/Reload All Local Presets</strong> - Forces a reload of user and environment presets in the current Hiero session</li>
   <li><strong>Change Clip FPS</strong> - Reinterprets the framerate of the selected clip(s) in the media bin</li>
   <li><strong>Custom <i>{project_code}</i> token</strong> - A three letter project code auto-generated using the hiero project name</li>
   <li><strong>Custom Tokens for <i>{width}</i>, <i>{height}</i> and <i>{rez}</i></strong> - Returning respectively 1920, 1080 and 1920x1080 for a FullHD Clip</li>
