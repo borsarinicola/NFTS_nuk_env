@@ -21,7 +21,7 @@ Most of the custom pipeline is designed to work on fully set-up shots. Meaning i
 
 <h4>CODE STRUCTURE</h4>
 The core pipeline tools are stored the <code>$NUKE_PATH/NFTS_pipe</code> folder. Any code added to this root will be added to the NukePluginPath.
-It's divided ina few helper scripts, their functions is documented inside the relative docstring:
+It's divided in a few helper modules, their functionality is documented inside the relative docstrings:
 
 <ul>
   <li>init.py</li>
